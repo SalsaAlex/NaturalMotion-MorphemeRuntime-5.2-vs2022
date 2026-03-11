@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NMHybridIK", "NMHybridIK_WIN32.vcxproj", "{351BA87A-E918-43AD-24A4-562170385FD1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+		Target BE32 Debug|x86 = Target BE32 Debug|x86
+		Target BE32 Release|x86 = Target BE32 Release|x86
+		Target LE32 Debug|x86 = Target LE32 Debug|x86
+		Target LE32 Release|x86 = Target LE32 Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{351BA87A-E918-43AD-24A4-562170385FD1}.Debug|x86.ActiveCfg = Debug|Win32
+		{351BA87A-E918-43AD-24A4-562170385FD1}.Debug|x86.Build.0 = Debug|Win32
+		{351BA87A-E918-43AD-24A4-562170385FD1}.Release|x86.ActiveCfg = Release|Win32
+		{351BA87A-E918-43AD-24A4-562170385FD1}.Release|x86.Build.0 = Release|Win32
+		{351BA87A-E918-43AD-24A4-562170385FD1}.Target BE32 Debug|x86.ActiveCfg = Target BE32 Debug|Win32
+		{351BA87A-E918-43AD-24A4-562170385FD1}.Target BE32 Debug|x86.Build.0 = Target BE32 Debug|Win32
+		{351BA87A-E918-43AD-24A4-562170385FD1}.Target BE32 Release|x86.ActiveCfg = Target BE32 Release|Win32
+		{351BA87A-E918-43AD-24A4-562170385FD1}.Target BE32 Release|x86.Build.0 = Target BE32 Release|Win32
+		{351BA87A-E918-43AD-24A4-562170385FD1}.Target LE32 Debug|x86.ActiveCfg = Target LE32 Debug|Win32
+		{351BA87A-E918-43AD-24A4-562170385FD1}.Target LE32 Debug|x86.Build.0 = Target LE32 Debug|Win32
+		{351BA87A-E918-43AD-24A4-562170385FD1}.Target LE32 Release|x86.ActiveCfg = Target LE32 Release|Win32
+		{351BA87A-E918-43AD-24A4-562170385FD1}.Target LE32 Release|x86.Build.0 = Target LE32 Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F826254A-532A-4491-90E2-F0373514F39A}
+	EndGlobalSection
+EndGlobal

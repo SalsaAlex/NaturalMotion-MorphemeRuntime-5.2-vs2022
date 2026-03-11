@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "euphoriaCoreBehaviours", "euphoriaCoreBehaviours_WIN32.vcxproj", "{803A87AF-A134-4F6A-F8BC-18F3ED2CB1E4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{803A87AF-A134-4F6A-F8BC-18F3ED2CB1E4}.Debug|x86.ActiveCfg = Debug|Win32
+		{803A87AF-A134-4F6A-F8BC-18F3ED2CB1E4}.Debug|x86.Build.0 = Debug|Win32
+		{803A87AF-A134-4F6A-F8BC-18F3ED2CB1E4}.Release|x86.ActiveCfg = Release|Win32
+		{803A87AF-A134-4F6A-F8BC-18F3ED2CB1E4}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F36B589F-DD96-4C4E-809D-11947FFFBD29}
+	EndGlobalSection
+EndGlobal

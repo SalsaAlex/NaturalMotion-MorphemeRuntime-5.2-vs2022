@@ -1,0 +1,12 @@
+/bin/
+/obj/
+/lib/
+*.ipch
+Browse.VC.db
+Solution.VC.db
+UpgradeLog.htm
+fileList.bin
+DocumentLayout.json
+DocumentLayout.backup.json
+.suo
+*.vsidx
