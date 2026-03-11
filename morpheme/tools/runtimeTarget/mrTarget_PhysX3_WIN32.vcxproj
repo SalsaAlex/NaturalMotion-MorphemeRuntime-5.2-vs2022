@@ -15,18 +15,19 @@
     <ProjectGuid>{59436FB4-280D-4BDD-DC89-E3D5DEA07E1E}</ProjectGuid>
     <RootNamespace>mrTarget_PhysX3</RootNamespace>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <CharacterSet>Unicode</CharacterSet>
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <CharacterSet>Unicode</CharacterSet>
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -63,11 +64,12 @@
       <PreprocessorDefinitions>NM_PHYSX3;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_CONSOLE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsDriver_PhysX3_debug.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelCHECKED.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelClothCHECKED.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3ExtensionsCHECKED.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3VehicleCHECKED.lib";"$(PHYSX3_PATH)\Lib\win32\PhysXProfileSDKCHECKED.lib";"$(PHYSX3_PATH)\Lib\win32\PhysXVisualDebuggerSDKCHECKED.lib";"$(PHYSX3_PATH)\Lib\win32\PvdRuntimeCHECKED.lib";"$(PHYSX3_PATH)\Lib\win32\PxTaskCHECKED.lib";"$(PHYSX3_PATH)\Lib\win32\RepX3CHECKED.lib";"$(PHYSX3_PATH)\Lib\win32\SceneQueryCHECKED.lib";"$(PHYSX3_PATH)\Lib\win32\SimulationControllerCHECKED.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3CHECKED_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3CharacterKinematicCHECKED_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3CommonCHECKED_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3CookingCHECKED_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3GpuCHECKED_x86.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsComms2_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsCore_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeComms2_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeSimpleBundle_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_debug.lib";WS2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsDriver_PhysX3_debug.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelAABBDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelClothDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelDynamicsDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelParticlesDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3CharacterKinematicDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3CommonDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3CookingDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3DEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3ExtensionsDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3VehicleDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\SceneQueryDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\SimulationControllerDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\PxFoundationDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PxPvdSDKDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PxTaskDEBUG_x86.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsComms2_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsCore_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeComms2_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeSimpleBundle_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_debug.lib";WS2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
       <ManifestFile>$(IntDir)intermediate.manifest</ManifestFile>

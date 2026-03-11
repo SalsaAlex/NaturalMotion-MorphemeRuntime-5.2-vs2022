@@ -237,7 +237,7 @@ bool PhysicsSDK::init(float physicsToleranceScale)
   scale.mass   *= physicsToleranceScale * physicsToleranceScale * physicsToleranceScale;
   scale.speed  *= physicsToleranceScale;
 
-  physx::PxFoundation* foundation = PxCreateFoundation(PX_PHYSICS_VERSION, sm_physXAllocator, sm_physXErrorStream);
+  physx::PxFoundation* foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, sm_physXAllocator, sm_physXErrorStream);
   NMP_ASSERT(foundation);
 
   physx::PxPhysics* physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, scale, true);
