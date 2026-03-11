@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include\physics\JoltPhys" />
+    <Filter Include="include\physics" />
+    <Filter Include="include" />
+    <Filter Include="src\JoltPhys" />
+    <Filter Include="src" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\physics\JoltPhys\mrCharacterControllerInterfaceJoltPhys.h">
+      <Filter>include\physics\JoltPhys</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\JoltPhys\mrPhysicsDriverDataJoltPhys.h">
+      <Filter>include\physics\JoltPhys</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\JoltPhys\mrPhysicsRigJoltPhys.h">
+      <Filter>include\physics\JoltPhys</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\JoltPhys\mrPhysicsRigJoltPhysArticulation.h">
+      <Filter>include\physics\JoltPhys</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\JoltPhys\mrPhysicsRigJoltPhysJointed.h">
+      <Filter>include\physics\JoltPhys</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\JoltPhys\mrPhysicsSceneJoltPhys.h">
+      <Filter>include\physics\JoltPhys</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\JoltPhys\mrJoltPhys.h">
+      <Filter>include\physics\JoltPhys</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\JoltPhys\mrJoltPhysConfigure.h">
+      <Filter>include\physics\JoltPhys</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\JoltPhys\mrJoltPhysDeprecated.h">
+      <Filter>include\physics\JoltPhys</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\JoltPhys\mrJoltPhysIncludes.h">
+      <Filter>include\physics\JoltPhys</Filter>
+    </ClInclude>
+    <ClCompile Include="src\JoltPhys\mrCharacterControllerInterfaceJoltPhys.cpp">
+      <Filter>src\JoltPhys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JoltPhys\mrPhysicsDriverDataJoltPhys.cpp">
+      <Filter>src\JoltPhys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JoltPhys\mrPhysicsRigJoltPhys.cpp">
+      <Filter>src\JoltPhys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JoltPhys\mrPhysicsRigJoltPhysArticulation.cpp">
+      <Filter>src\JoltPhys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JoltPhys\mrPhysicsRigJoltPhysJointed.cpp">
+      <Filter>src\JoltPhys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JoltPhys\mrPhysicsSceneJoltPhys.cpp">
+      <Filter>src\JoltPhys</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
