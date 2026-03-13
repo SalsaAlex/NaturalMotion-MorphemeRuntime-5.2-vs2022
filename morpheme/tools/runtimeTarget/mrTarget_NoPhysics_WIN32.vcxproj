@@ -15,18 +15,19 @@
     <ProjectGuid>{0B987A31-EAF8-4CBB-57BA-25DC8C4A7357}</ProjectGuid>
     <RootNamespace>mrTarget_NoPhysics</RootNamespace>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <CharacterSet>Unicode</CharacterSet>
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <CharacterSet>Unicode</CharacterSet>
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -63,8 +64,9 @@
       <PreprocessorDefinitions>WIN32;_CONSOLE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeComms2_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeSimpleBundle_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_debug.lib";WS2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>

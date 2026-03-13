@@ -108,21 +108,25 @@
     <TargetName>morphemePhysicsDriver_PhysX3_target_LE32_debug</TargetName>
     <IntDir>..\..\..\obj\win32\vs$(VisualStudioVersion)\morphemePhysicsDriver_PhysX3\target_le32_debug\</IntDir>
     <OutDir>..\..\..\lib\win32\vs$(VisualStudioVersion)\</OutDir>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target LE32 Release|Win32'">
     <TargetName>morphemePhysicsDriver_PhysX3_target_LE32</TargetName>
     <IntDir>..\..\..\obj\win32\vs$(VisualStudioVersion)\morphemePhysicsDriver_PhysX3\target_le32_release\</IntDir>
     <OutDir>..\..\..\lib\win32\vs$(VisualStudioVersion)\</OutDir>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target BE32 Debug|Win32'">
     <TargetName>morphemePhysicsDriver_PhysX3_target_BE32_debug</TargetName>
     <IntDir>..\..\..\obj\win32\vs$(VisualStudioVersion)\morphemePhysicsDriver_PhysX3\target_be32_debug\</IntDir>
     <OutDir>..\..\..\lib\win32\vs$(VisualStudioVersion)\</OutDir>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target BE32 Release|Win32'">
     <TargetName>morphemePhysicsDriver_PhysX3_target_BE32</TargetName>
     <IntDir>..\..\..\obj\win32\vs$(VisualStudioVersion)\morphemePhysicsDriver_PhysX3\target_be32_release\</IntDir>
     <OutDir>..\..\..\lib\win32\vs$(VisualStudioVersion)\</OutDir>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -185,8 +189,9 @@
       <ProgramDatabaseFileName>$(OutDir)morphemePhysicsDriver_PhysX3_target_LE32_debug.pdb</ProgramDatabaseFileName>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -209,8 +214,9 @@
       <ProgramDatabaseFileName>$(OutDir)morphemePhysicsDriver_PhysX3_target_LE32.pdb</ProgramDatabaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -233,8 +239,9 @@
       <ProgramDatabaseFileName>$(OutDir)morphemePhysicsDriver_PhysX3_target_BE32_debug.pdb</ProgramDatabaseFileName>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -257,8 +264,9 @@
       <ProgramDatabaseFileName>$(OutDir)morphemePhysicsDriver_PhysX3_target_BE32.pdb</ProgramDatabaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

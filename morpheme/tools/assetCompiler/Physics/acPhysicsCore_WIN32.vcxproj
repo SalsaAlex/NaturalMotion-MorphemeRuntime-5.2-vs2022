@@ -23,30 +23,31 @@
     <ProjectGuid>{60F55A8E-5C51-47D3-708E-7A41A0F307B1}</ProjectGuid>
     <RootNamespace>acPhysicsCore</RootNamespace>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Target LE32 Debug|Win32'">
     <CharacterSet>Unicode</CharacterSet>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Target LE32 Release|Win32'">
     <CharacterSet>Unicode</CharacterSet>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Target BE32 Debug|Win32'">
     <CharacterSet>Unicode</CharacterSet>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Target BE32 Release|Win32'">
     <CharacterSet>Unicode</CharacterSet>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -103,8 +104,9 @@
       <PreprocessorDefinitions>AC_PHYSICS_CORE_EXPORTS;NM_TARGET_BIGENDIAN=0;WIN32;_DEBUG;_USRDLL;_WINDLL;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsCore_target_LE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\acCore_target_LE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_LE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_LE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL_debug.lib";%(AdditionalDependencies)</AdditionalDependencies>
@@ -130,8 +132,9 @@
       <PreprocessorDefinitions>AC_PHYSICS_CORE_EXPORTS;NDEBUG;NM_ENABLE_EXCEPTIONS=1;NM_TARGET_BIGENDIAN=0;WIN32;_USRDLL;_WINDLL;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsCore_target_LE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\acCore_target_LE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_LE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_LE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL.lib";%(AdditionalDependencies)</AdditionalDependencies>
@@ -157,8 +160,9 @@
       <PreprocessorDefinitions>AC_PHYSICS_CORE_EXPORTS;NM_TARGET_BIGENDIAN=1;WIN32;_DEBUG;_USRDLL;_WINDLL;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsCore_target_BE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\acCore_target_BE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_BE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_BE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_BE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_BE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL_debug.lib";%(AdditionalDependencies)</AdditionalDependencies>
@@ -184,8 +188,9 @@
       <PreprocessorDefinitions>AC_PHYSICS_CORE_EXPORTS;NDEBUG;NM_ENABLE_EXCEPTIONS=1;NM_TARGET_BIGENDIAN=1;WIN32;_USRDLL;_WINDLL;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsCore_target_BE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\acCore_target_BE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_BE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_BE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_BE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_BE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL.lib";%(AdditionalDependencies)</AdditionalDependencies>

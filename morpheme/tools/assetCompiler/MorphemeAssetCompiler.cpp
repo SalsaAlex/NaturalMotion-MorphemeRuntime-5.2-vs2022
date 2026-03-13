@@ -63,7 +63,6 @@
 #include "assetProcessor/AnimSource/animSourceCompressorMBA.h"
 #include "assetProcessor/AnimSource/animSourceCompressorNSA.h"
 #include "assetProcessor/AnimSource/animSourceCompressorQSA.h"
-
 #include "ACOptions.h"
 
 #if defined(NM_ENABLE_FBX)
@@ -2642,6 +2641,8 @@ int32_t __cdecl main(int argc, char** argv)
   memWrapper.init();
 
   ACOptions acOptions;
+
+  Sleep(10 * 1000); //wait for debugger to attach
 
 #if NM_ENABLE_EXCEPTIONS
 

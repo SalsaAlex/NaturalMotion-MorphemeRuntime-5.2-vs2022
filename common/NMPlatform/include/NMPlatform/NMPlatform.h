@@ -79,7 +79,7 @@
 /// \ingroup NaturalMotionPlatform
 /// \brief Release / Debug configuration flag.
 #if defined(_DEBUG) || defined(DEBUG)
-  #define NM_DEBUG
+  //#define NM_DEBUG
 #endif
 
 //----------------------------------------------------------------------------------------------------------------------

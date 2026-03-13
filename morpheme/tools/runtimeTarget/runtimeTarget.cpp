@@ -379,7 +379,7 @@ int runtimeTarget(const NMP::CommandLineProcessor& commandLineArguments)
   bool autoKillTarget = false;
   commandLineArguments.getOptionValue("-autoKillTarget", &autoKillTarget);
 
-  Sleep(5 * 1000); //wait for debugger to attach
+  Sleep(10 * 1000); //wait for debugger to attach
 
   bool finished = false;
   while (!finished)

@@ -254,10 +254,10 @@ void TransformsAccumulator::maxAbsQuatElements(NMP::Quat& quat) const
 
   for (uint32_t i = 0; i < m_numChannelSets; ++i)
   {
-    quat.x = NMP::maximum(quat.x, fabs(m_channelQuat[i].x));
-    quat.y = NMP::maximum(quat.y, fabs(m_channelQuat[i].y));
-    quat.z = NMP::maximum(quat.z, fabs(m_channelQuat[i].z));
-    quat.w = NMP::maximum(quat.w, fabs(m_channelQuat[i].w));
+    quat.x = NMP::maximum(quat.x, fabsf(m_channelQuat[i].x));
+    quat.y = NMP::maximum(quat.y, fabsf(m_channelQuat[i].y));
+    quat.z = NMP::maximum(quat.z, fabsf(m_channelQuat[i].z));
+    quat.w = NMP::maximum(quat.w, fabsf(m_channelQuat[i].w));
   }
 }
 
@@ -268,9 +268,9 @@ void TransformsAccumulator::maxAbsPosElements(NMP::Vector3& pos) const
 
   for (uint32_t i = 0; i < m_numChannelSets; ++i)
   {
-    pos.x = NMP::maximum(pos.x, fabs(m_channelPos[i].x));
-    pos.y = NMP::maximum(pos.y, fabs(m_channelPos[i].y));
-    pos.z = NMP::maximum(pos.z, fabs(m_channelPos[i].z));
+    pos.x = NMP::maximum(pos.x, fabsf(m_channelPos[i].x));
+    pos.y = NMP::maximum(pos.y, fabsf(m_channelPos[i].y));
+    pos.z = NMP::maximum(pos.z, fabsf(m_channelPos[i].z));
   }
 }
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2011 NaturalMotion.  All Rights Reserved.
+    // Copyright (c) 2011 NaturalMotion.  All Rights Reserved.
 // Not to be copied, adapted, modified, used, distributed, sold,
 // licensed or commercially exploited in any manner without the
 // written consent of NaturalMotion.

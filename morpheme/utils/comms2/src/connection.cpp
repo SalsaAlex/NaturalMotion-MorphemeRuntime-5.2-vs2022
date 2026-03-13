@@ -140,6 +140,11 @@ bool Connection::isDebuggingNetwork(InstanceID instanceID) const
 //----------------------------------------------------------------------------------------------------------------------
 bool Connection::startDebuggingNetwork(InstanceID instanceID)
 {
+  //if(m_debuggedNetworks.size() >= 32
+  //{
+  //    NMP_MSG("MorphemeComms: can't debug more than %d networks.\n", 32);
+  //    return false;
+  //}
   if (!isDebuggingNetwork(instanceID))
   {
     m_debuggedNetworks.push_back(instanceID);

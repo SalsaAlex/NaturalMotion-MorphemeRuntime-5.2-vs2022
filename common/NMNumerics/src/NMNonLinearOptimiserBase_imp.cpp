@@ -195,7 +195,7 @@ NonLinearOptimiserStatus::eType NonLinearOptimiserBase<ScalarType>::compute(cons
     ScalarType fdEps = NMNONLINEAR_FDEPS;
     for (uint32_t i = 0; i < numUnknowns; ++i)
     {
-      m_fdDeltas[i] = fdEps * (static_cast<ScalarType>(1) + abs(m_P[i]));
+      m_fdDeltas[i] = fdEps * (static_cast<ScalarType>(1) + abs((int)m_P[i]));
     }
 
   }
@@ -378,7 +378,7 @@ NonLinearOptimiserStatus::eType NonLinearOptimiserBase<ScalarType>::compute(cons
           {
             fResNormBest = static_cast<ScalarType>(0.9) * m_fResNorm;
           }
-          curStepSize = abs(newStepSize) + std::numeric_limits<ScalarType>::epsilon();
+          curStepSize = abs((int)newStepSize) + std::numeric_limits<ScalarType>::epsilon();
 
           // Update the lambda parameter
           if (fResNormBest < fResNormEst)
@@ -464,10 +464,10 @@ NonLinearOptimiserStatus::eType NonLinearOptimiserBase<ScalarType>::compute(cons
 
     // Termination on change in parameter vector. Test the maximum of the
     // absolute values in the search direction is smaller than tolP
-    ScalarType termPval = abs(m_searchDir[0]);
+    ScalarType termPval = abs((int)m_searchDir[0]);
     for (uint32_t i = 1; i < numUnknowns; ++i)
     {
-      ScalarType t = abs(m_searchDir[i]);
+      ScalarType t = abs((int)m_searchDir[i]);
       if (t > termPval) termPval = t;
     }
     if (termPval < m_tolP)
@@ -480,14 +480,14 @@ NonLinearOptimiserStatus::eType NonLinearOptimiserBase<ScalarType>::compute(cons
       // Gradient in the search direction is less than tolFun and the
       // maximum component of function gradient is less than 10*(tolFun+tolP)
       ScalarType a = m_fGrad[0] * m_searchDir[0];
-      ScalarType b = abs(m_fGrad[0]);
+      ScalarType b = abs((int)m_fGrad[0]);
       for (uint32_t i = 1; i < numUnknowns; ++i)
       {
         a += (m_fGrad[i] * m_searchDir[i]); // Gradient in search direction
-        ScalarType t = abs(m_fGrad[i]);
+        ScalarType t = abs((int)m_fGrad[i]);
         if (t > b) b = t;
       }
-      if (abs(a) < m_tolFunc && b < 10 * (m_tolFunc + m_tolP))
+      if (abs((int)a) < m_tolFunc && b < 10 * (m_tolFunc + m_tolP))
       {
         m_status = NonLinearOptimiserStatus::Converged;
         break;

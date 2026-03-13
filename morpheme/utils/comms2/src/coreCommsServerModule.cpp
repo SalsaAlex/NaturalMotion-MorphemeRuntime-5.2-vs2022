@@ -157,10 +157,10 @@ void CoreCommsServerModule::sendInstanceFrameData(InstanceID instanceID, Connect
         dataMgr->getTriggeredNodeEventMessages(instanceID, messageIDs, numActiveNodes);
       NMP_ASSERT(numTriggeredMessageIDs == numTriggeredMessages);
 
-      MCOMMS::NodeEventMessagesPacket* nodeEventMessages =
-        MCOMMS::NodeEventMessagesPacket::create(connection->getDataBuffer(), numTriggeredMessages);
-      memcpy(nodeEventMessages->getIDs(), messageIDs, numTriggeredMessages * sizeof(MCOMMS::NetworkMessageID));
-      mcommsSerializeDataPacket(*nodeEventMessages);
+      //MCOMMS::NodeEventMessagesPacket* nodeEventMessages =
+      //  MCOMMS::NodeEventMessagesPacket::create(connection->getDataBuffer(), numTriggeredMessages);
+      //memcpy(nodeEventMessages->getIDs(), messageIDs, numTriggeredMessages * sizeof(MCOMMS::NetworkMessageID));
+      //mcommsSerializeDataPacket(*nodeEventMessages);
 
       childAllocator->memFree(messageIDs);
     }
@@ -218,9 +218,9 @@ void CoreCommsServerModule::sendInstanceFrameData(InstanceID instanceID, Connect
           bool scatterResult = dataMgr->getScatterBlendWeightData(instanceID, nodeID, barycentricWeights, childNodeIDs, desiredMotionParams, achievedMotionParams, wasProjected);
           if(scatterResult)
           {
-            MCOMMS::ScatterBlendWeightsPacket* scatterBlendWeights =
-              MCOMMS::ScatterBlendWeightsPacket::create(connection->getDataBuffer(), nodeID, barycentricWeights, childNodeIDs, desiredMotionParams, achievedMotionParams, wasProjected);
-            mcommsSerializeDataPacket(*scatterBlendWeights);
+            //MCOMMS::ScatterBlendWeightsPacket* scatterBlendWeights =
+            //  MCOMMS::ScatterBlendWeightsPacket::create(connection->getDataBuffer(), nodeID, barycentricWeights, childNodeIDs, desiredMotionParams, achievedMotionParams, wasProjected);
+            //mcommsSerializeDataPacket(*scatterBlendWeights);
           }
         }
       }

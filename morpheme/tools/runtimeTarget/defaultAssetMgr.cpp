@@ -194,6 +194,11 @@ DefaultAssetMgr::~DefaultAssetMgr()
   clearCachedData();
 }
 
+bool has_suffix(const std::string& str, const std::string& suffix){
+    return str.size() >= suffix.size() &&
+        str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
+
 //----------------------------------------------------------------------------------------------------------------------
 bool DefaultAssetMgr::loadNetworkDefinition(
   const MCOMMS::GUID&                guid,
@@ -208,7 +213,10 @@ bool DefaultAssetMgr::loadNetworkDefinition(
   }
 
   static char filename[128];
-  NMP_SPRINTF(filename, 128, "%s.nmb", networkDefName);
+  if(!has_suffix(networkDefName, ".nmb"))
+    NMP_SPRINTF(filename, 128, "%s.nmb", networkDefName);
+  else
+    NMP_SPRINTF(filename, 128, "%s", networkDefName);
 
   // File size
   uint32_t fileSize = connection->getFileSize(filename);

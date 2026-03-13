@@ -208,10 +208,10 @@ SolverLUStatus::eType SolverLU<ScalarType>::doDecomposition()
 
     // Find the largest absolute element value within the vector
     uint32_t pi = 0; // pivot index (relative to diagonal)
-    ScalarType pv = abs(m_v[0]);
+    ScalarType pv = abs((int)m_v[0]);
     for (uint32_t i = 1; i < m; ++i)
     {
-      ScalarType val = abs(m_v[i]);
+      ScalarType val = abs((int)m_v[i]);
       if (val > pv)
       {
         pv = val;

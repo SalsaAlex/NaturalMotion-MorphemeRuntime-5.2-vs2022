@@ -1079,10 +1079,10 @@ void AnimSourceCompressorQSA::writeDebugQSAInfo(
   const ChannelSetOverrides* overrides = m_inputAnimResampled->getChannelSetOverrides();
   NMP_VERIFY(overrides);
   uint32_t numOverrides = overrides->getNumChannelSetOverrides();
-  const uint32_t* buffer = overrides->getChannelSetOverrides();
+  const uint32_t* _buffer = overrides->getChannelSetOverrides();
   for (uint32_t i = 0; i < numOverrides; ++i)
   {
-    fprintf(filePointer, "rig chan = %4d\n", buffer[i]);
+    fprintf(filePointer, "rig chan = %4d\n", _buffer[i]);
   }
 
   //-----------------------

@@ -1654,12 +1654,12 @@ inline ActiveNodesPacket* ActiveNodesPacket::create(NetworkDataBuffer* buffer, u
 
 //----------------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------
-inline NodeEventMessagesPacket* NodeEventMessagesPacket::create(NetworkDataBuffer* buffer, uint32_t numNodes)
-{
-  NodeEventMessagesPacket* nodeEventMessages = (NodeEventMessagesPacket*)ID32sPacket::create(buffer, numNodes);
-  nodeEventMessages->hdr.m_id = pk_NodeEventMessages;
-  return nodeEventMessages;
-}
+//inline NodeEventMessagesPacket* NodeEventMessagesPacket::create(NetworkDataBuffer* buffer, uint32_t numNodes)
+//{
+//  NodeEventMessagesPacket* nodeEventMessages = (NodeEventMessagesPacket*)ID32sPacket::create(buffer, numNodes);
+//  nodeEventMessages->hdr.m_id = pk_NodeEventMessages;
+//  return nodeEventMessages;
+//}
 
 //----------------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------
@@ -1787,33 +1787,33 @@ inline char* FilePacket::getData() const
 
 //----------------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------
-inline ConnectScriptCommandPacket* ConnectScriptCommandPacket::create(NetworkDataBuffer* buffer, const char* str)
-{
-  size_t l = strlen(str);
-  uint32_t len = (uint32_t)l;
-  ConnectScriptCommandPacket* pkt = buffer->reserveMemory<ConnectScriptCommandPacket*>(sizeof(ConnectScriptCommandPacket) + len + 1);
-  pkt->setupHeader(NM_PKT_MAGIC_A, NM_PKT_MAGIC_CTRL, pk_ConnectScriptCommand, (PacketLen)(sizeof(ConnectScriptCommandPacket) + len + 1));
-  NMP_STRNCPY_S(pkt->getStr(), len + 1, str);
-  pkt->getStr()[len] = '\0';
-  return pkt;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-inline void ConnectScriptCommandPacket::serialize()
-{
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-inline void ConnectScriptCommandPacket::deserialize()
-{
-  serialize();
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-inline char* ConnectScriptCommandPacket::getStr() const
-{
-  return (char*)(this + 1);
-}
+//inline ConnectScriptCommandPacket* ConnectScriptCommandPacket::create(NetworkDataBuffer* buffer, const char* str)
+//{
+//  size_t l = strlen(str);
+//  uint32_t len = (uint32_t)l;
+//  ConnectScriptCommandPacket* pkt = buffer->reserveMemory<ConnectScriptCommandPacket*>(sizeof(ConnectScriptCommandPacket) + len + 1);
+//  pkt->setupHeader(NM_PKT_MAGIC_A, NM_PKT_MAGIC_CTRL, pk_ConnectScriptCommand, (PacketLen)(sizeof(ConnectScriptCommandPacket) + len + 1));
+//  NMP_STRNCPY_S(pkt->getStr(), len + 1, str);
+//  pkt->getStr()[len] = '\0';
+//  return pkt;
+//}
+//
+////----------------------------------------------------------------------------------------------------------------------
+//inline void ConnectScriptCommandPacket::serialize()
+//{
+//}
+//
+////----------------------------------------------------------------------------------------------------------------------
+//inline void ConnectScriptCommandPacket::deserialize()
+//{
+//  serialize();
+//}
+//
+////----------------------------------------------------------------------------------------------------------------------
+//inline char* ConnectScriptCommandPacket::getStr() const
+//{
+//  return (char*)(this + 1);
+//}
 
 //----------------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------
@@ -2539,57 +2539,57 @@ inline GUID* TargetStatusCtrlPacket::getGUIDs() const
 //----------------------------------------------------------------------------------------------------------------------
 // ScatterBlendWeightsPacket
 //----------------------------------------------------------------------------------------------------------------------
-inline ScatterBlendWeightsPacket* ScatterBlendWeightsPacket::create(
-  NetworkDataBuffer* buffer,
-  commsNodeID        scatterBlendNodeID,
-  float              barycentricWeights[3],
-  commsNodeID        childNodeIDs[3],
-  float              desiredMotionParams[2],
-  float              achievedMotionParams[2],
-  bool               wasProjected)
-{
-  uint32_t len =
-    sizeof(ScatterBlendWeightsPacket);
-
-  ScatterBlendWeightsPacket* packet =
-    buffer->reserveMemory<ScatterBlendWeightsPacket*>(len);
-
-  packet->setupHeader(NM_PKT_MAGIC_A, NM_PKT_MAGIC_FD, pk_ScatterBlendWeights, len);
-  packet->m_scatterBlendNodeID = scatterBlendNodeID;
-
-  packet->m_barycentricWeights[0] = barycentricWeights[0];
-  packet->m_barycentricWeights[1] = barycentricWeights[1];
-  packet->m_barycentricWeights[2] = barycentricWeights[2];
-
-  packet->m_childNodeIDs[0] = childNodeIDs[0];
-  packet->m_childNodeIDs[1] = childNodeIDs[1];
-  packet->m_childNodeIDs[2] = childNodeIDs[2];
-
-  packet->m_desiredMotionParams[0] = desiredMotionParams[0];
-  packet->m_desiredMotionParams[1] = desiredMotionParams[1];
-
-  packet->m_achievedMotionParams[0] = achievedMotionParams[0];
-  packet->m_achievedMotionParams[1] = achievedMotionParams[1];
-
-  packet->m_wasProjected = wasProjected;
-
-  return packet;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-inline void ScatterBlendWeightsPacket::serialize()
-{
-  NMP::netEndianSwap(m_scatterBlendNodeID);
-  NMP::netEndianSwapArray(m_childNodeIDs, 3);
-  NMP::netEndianSwapArray(m_barycentricWeights, 3);
-  NMP::netEndianSwapArray(m_desiredMotionParams, 2);
-  NMP::netEndianSwapArray(m_achievedMotionParams, 2);
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-inline void ScatterBlendWeightsPacket::deserialize()
-{
-  serialize();
-}
+//inline ScatterBlendWeightsPacket* ScatterBlendWeightsPacket::create(
+//  NetworkDataBuffer* buffer,
+//  commsNodeID        scatterBlendNodeID,
+//  float              barycentricWeights[3],
+//  commsNodeID        childNodeIDs[3],
+//  float              desiredMotionParams[2],
+//  float              achievedMotionParams[2],
+//  bool               wasProjected)
+//{
+//  uint32_t len =
+//    sizeof(ScatterBlendWeightsPacket);
+//
+//  ScatterBlendWeightsPacket* packet =
+//    buffer->reserveMemory<ScatterBlendWeightsPacket*>(len);
+//
+//  packet->setupHeader(NM_PKT_MAGIC_A, NM_PKT_MAGIC_FD, pk_ScatterBlendWeights, len);
+//  packet->m_scatterBlendNodeID = scatterBlendNodeID;
+//
+//  packet->m_barycentricWeights[0] = barycentricWeights[0];
+//  packet->m_barycentricWeights[1] = barycentricWeights[1];
+//  packet->m_barycentricWeights[2] = barycentricWeights[2];
+//
+//  packet->m_childNodeIDs[0] = childNodeIDs[0];
+//  packet->m_childNodeIDs[1] = childNodeIDs[1];
+//  packet->m_childNodeIDs[2] = childNodeIDs[2];
+//
+//  packet->m_desiredMotionParams[0] = desiredMotionParams[0];
+//  packet->m_desiredMotionParams[1] = desiredMotionParams[1];
+//
+//  packet->m_achievedMotionParams[0] = achievedMotionParams[0];
+//  packet->m_achievedMotionParams[1] = achievedMotionParams[1];
+//
+//  packet->m_wasProjected = wasProjected;
+//
+//  return packet;
+//}
+//
+////----------------------------------------------------------------------------------------------------------------------
+//inline void ScatterBlendWeightsPacket::serialize()
+//{
+//  NMP::netEndianSwap(m_scatterBlendNodeID);
+//  NMP::netEndianSwapArray(m_childNodeIDs, 3);
+//  NMP::netEndianSwapArray(m_barycentricWeights, 3);
+//  NMP::netEndianSwapArray(m_desiredMotionParams, 2);
+//  NMP::netEndianSwapArray(m_achievedMotionParams, 2);
+//}
+//
+////----------------------------------------------------------------------------------------------------------------------
+//inline void ScatterBlendWeightsPacket::deserialize()
+//{
+//  serialize();
+//}
 
 //----------------------------------------------------------------------------------------------------------------------

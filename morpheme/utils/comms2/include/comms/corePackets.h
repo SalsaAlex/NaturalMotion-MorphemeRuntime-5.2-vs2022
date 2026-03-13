@@ -61,9 +61,9 @@ struct ReplyPacket : public PacketBase
 
   uint32_t    m_requestId;
   ResultValue m_result;
-  uint16_t    m_requestedCmd; ///< Holds the original request type.
 
-  uint8_t m_pad[2];
+  uint16_t    m_requestedCmd; ///< Holds the original request type.
+  uint16_t m_pad = 0;
 };
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1028,13 +1028,13 @@ private:
 };
 
 //----------------------------------------------------------------------------------------------------------------------
-struct NodeEventMessagesPacket : public ID32sPacket
-{
-  static inline NodeEventMessagesPacket* create(NetworkDataBuffer* buffer, uint32_t numNodes);
-
-private:
-  inline NodeEventMessagesPacket(); // avoids call.
-};
+//struct NodeEventMessagesPacket : public ID32sPacket
+//{
+//  static inline NodeEventMessagesPacket* create(NetworkDataBuffer* buffer, uint32_t numNodes);
+//
+//private:
+//  inline NodeEventMessagesPacket(); // avoids call.
+//};
 
 //----------------------------------------------------------------------------------------------------------------------
 struct RootStateMachineNodesPacket : public ID16sPacket
@@ -1107,18 +1107,18 @@ struct FilePacket : public PacketBase
 };
 
 //----------------------------------------------------------------------------------------------------------------------
-struct ConnectScriptCommandPacket : public PacketBase
-{
-  static inline ConnectScriptCommandPacket* create(NetworkDataBuffer* buffer, const char* str);
-
-  inline void deserialize();
-  inline void serialize();
-
-  inline char* getStr() const;
-
-private:
-  inline ConnectScriptCommandPacket(); // avoid calls.
-};
+//struct ConnectScriptCommandPacket : public PacketBase
+//{
+//  static inline ConnectScriptCommandPacket* create(NetworkDataBuffer* buffer, const char* str);
+//
+//  inline void deserialize();
+//  inline void serialize();
+//
+//  inline char* getStr() const;
+//
+//private:
+//  inline ConnectScriptCommandPacket(); // avoid calls.
+//};
 
 //----------------------------------------------------------------------------------------------------------------------
 struct NetworkCreatedReplyPacket : public ReplyPacket
@@ -1457,33 +1457,33 @@ struct TargetStatusCtrlPacket : public PacketBase
 };
 
 //----------------------------------------------------------------------------------------------------------------------
-struct ScatterBlendWeightsPacket : public PacketBase
-{
-  inline ScatterBlendWeightsPacket();
-
-  static inline ScatterBlendWeightsPacket* create(
-    NetworkDataBuffer* buffer,
-    commsNodeID        scatterBlendNodeID,
-    float              barycentricWeights[3],
-    commsNodeID        childNodeIDs[3],
-    float              desiredMotionParams[2],
-    float              achievedMotionParams[2],
-    bool               wasProjected);
-
-  inline void deserialize();
-  inline void serialize();
-
-  commsNodeID m_scatterBlendNodeID;
-  commsNodeID m_childNodeIDs[3];
-  float       m_barycentricWeights[3];
-
-  // These in the space of the scatter blend native units. i.e.
-  // Angle - radians
-  // Distance - runtime units
-  float       m_desiredMotionParams[2];
-  float       m_achievedMotionParams[2];
-  bool        m_wasProjected;
-};
+//struct ScatterBlendWeightsPacket : public PacketBase
+//{
+//  inline ScatterBlendWeightsPacket();
+//
+//  static inline ScatterBlendWeightsPacket* create(
+//    NetworkDataBuffer* buffer,
+//    commsNodeID        scatterBlendNodeID,
+//    float              barycentricWeights[3],
+//    commsNodeID        childNodeIDs[3],
+//    float              desiredMotionParams[2],
+//    float              achievedMotionParams[2],
+//    bool               wasProjected);
+//
+//  inline void deserialize();
+//  inline void serialize();
+//
+//  commsNodeID m_scatterBlendNodeID;
+//  commsNodeID m_childNodeIDs[3];
+//  float       m_barycentricWeights[3];
+//
+//  // These in the space of the scatter blend native units. i.e.
+//  // Angle - radians
+//  // Distance - runtime units
+//  float       m_desiredMotionParams[2];
+//  float       m_achievedMotionParams[2];
+//  bool        m_wasProjected;
+//};
 
 #include "corePackets.inl"
 
