@@ -1409,131 +1409,131 @@ uint32_t AttribDataUIntArray::serializeTx(
 //----------------------------------------------------------------------------------------------------------------------
 // AttribDataUInt64Array functions.
 //----------------------------------------------------------------------------------------------------------------------
-NMP::Memory::Format AttribDataUInt64Array::getMemoryRequirements(uint32_t numValues)
-{
-  NMP::Memory::Format result(sizeof(AttribDataUInt64Array), MR_ATTRIB_DATA_ALIGNMENT);
-
-  // Add space for the array of bools.
-  result += NMP::Memory::Format(sizeof(uint64_t) * numValues, NMP_NATURAL_TYPE_ALIGNMENT);
-
-  // Make sure size is a multiple of the alignment requirement.
-  result.size = NMP::Memory::align(result.size, MR_ATTRIB_DATA_ALIGNMENT);
-
-  return result;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-AttribDataUInt64Array* AttribDataUInt64Array::init(NMP::Memory::Resource& resource, uint32_t numValues, uint16_t refCount)
-{
-  NMP::Memory::Format memReqsHdr(sizeof(AttribDataUInt64Array), MR_ATTRIB_DATA_ALIGNMENT);
-  AttribDataUInt64Array* result = (AttribDataUInt64Array*) resource.alignAndIncrement(memReqsHdr);
-
-  result->setType(ATTRIB_TYPE_UINT64_ARRAY);
-  result->setRefCount(refCount);
-
-  // Array of uints.
-  NMP::Memory::Format memReqsData(sizeof(uint64_t) * numValues, NMP_NATURAL_TYPE_ALIGNMENT);
-  result->m_values = (uint64_t*) resource.alignAndIncrement(memReqsData);
-
-  // Initialise.
-  result->m_numValues = numValues;
-  for (uint32_t i = 0; i < numValues; ++i)
-  {
-    result->m_values[i] = 0;
-  }
-
-  // Multiple of the attrib data alignment
-  resource.align(MR_ATTRIB_DATA_ALIGNMENT);
-
-  return result;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-AttribDataHandle AttribDataUInt64Array::create(
-  NMP::MemoryAllocator* allocator,
-  AttribDataCreateDesc* desc)
-{
-  AttribDataHandle result;
-
-  NMP_ASSERT(desc);
-  const AttribDataArrayCreateDesc* targetDesc = (AttribDataArrayCreateDesc*)desc;
-
-  result.m_format = getMemoryRequirements(targetDesc->m_numEntries);
-  NMP::Memory::Resource resource = NMPAllocatorAllocateFromFormat(allocator, result.m_format);
-  NMP_ASSERT(resource.ptr);
-  result.m_attribData = init(resource, targetDesc->m_numEntries, targetDesc->m_refCount);
-
-  // Backchain the allocator so we know what to free this attribData with when we destroy it.
-  result.m_attribData->m_allocator = allocator;
-
-  return result;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-AttribDataHandle AttribDataUInt64Array::create(NMP::MemoryAllocator* allocator, uint32_t numValues, uint16_t refCount)
-{
-  AttribDataHandle result;
-
-  result.m_format = getMemoryRequirements(numValues);
-  NMP::Memory::Resource resource = NMPAllocatorAllocateFromFormat(allocator, result.m_format);
-  NMP_ASSERT(resource.ptr);
-  result.m_attribData = init(resource, numValues, refCount);
-
-  // Backchain the allocator so we know what to free this attribData with when we destroy it.
-  result.m_attribData->m_allocator = allocator;
-
-  return result;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-#ifndef NM_HOST_CELL_SPU
-void AttribDataUInt64Array::locate(AttribData* target)
-{
-  AttribDataUInt64Array* result = (AttribDataUInt64Array*) target;
-
-  AttribData::locate(target);
-
-  NMP::endianSwap(result->m_numValues);
-
-  NMP::endianSwap(result->m_values);
-  REFIX_PTR_RELATIVE(uint64_t, result->m_values, result);
-
-  // Fixup each of the actual uint values.
-  for (uint32_t i = 0; i < result->m_numValues; ++i)
-  {
-    NMP::endianSwap(result->m_values[i]);
-  }
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-void AttribDataUInt64Array::dislocate(AttribData* target)
-{
-  AttribDataUInt64Array* result = (AttribDataUInt64Array*) target;
-
-  for (uint32_t i = 0; i < result->m_numValues; ++i)
-  {
-    NMP::endianSwap(result->m_values[i]);
-  }
-
-  UNFIX_PTR_RELATIVE(uint64_t, result->m_values, result);
-  NMP::endianSwap(result->m_values);
-
-  NMP::endianSwap(result->m_numValues);
-
-  AttribData::dislocate(target);
-}
-#endif // NM_HOST_CELL_SPU
-
-//----------------------------------------------------------------------------------------------------------------------
-void AttribDataUInt64Array::relocate(AttribData* target, void* location)
-{
-  AttribDataUInt64Array* result = (AttribDataUInt64Array*) target;
-  void* ptr = location;
-  NMP_ASSERT(NMP_IS_ALIGNED(ptr, MR_ATTRIB_DATA_ALIGNMENT));
-  ptr = (void*)(((size_t)ptr) + sizeof(AttribDataUInt64Array));
-  NMP_ASSERT(NMP_IS_ALIGNED(ptr, NMP_NATURAL_TYPE_ALIGNMENT));
-  result->m_values = (uint64_t*)ptr;
-}
+//NMP::Memory::Format AttribDataUInt64Array::getMemoryRequirements(uint32_t numValues)
+//{
+//  NMP::Memory::Format result(sizeof(AttribDataUInt64Array), MR_ATTRIB_DATA_ALIGNMENT);
+//
+//  // Add space for the array of bools.
+//  result += NMP::Memory::Format(sizeof(uint64_t) * numValues, NMP_NATURAL_TYPE_ALIGNMENT);
+//
+//  // Make sure size is a multiple of the alignment requirement.
+//  result.size = NMP::Memory::align(result.size, MR_ATTRIB_DATA_ALIGNMENT);
+//
+//  return result;
+//}
+//
+////----------------------------------------------------------------------------------------------------------------------
+//AttribDataUInt64Array* AttribDataUInt64Array::init(NMP::Memory::Resource& resource, uint32_t numValues, uint16_t refCount)
+//{
+//  NMP::Memory::Format memReqsHdr(sizeof(AttribDataUInt64Array), MR_ATTRIB_DATA_ALIGNMENT);
+//  AttribDataUInt64Array* result = (AttribDataUInt64Array*) resource.alignAndIncrement(memReqsHdr);
+//
+//  result->setType(ATTRIB_TYPE_UINT64_ARRAY);
+//  result->setRefCount(refCount);
+//
+//  // Array of uints.
+//  NMP::Memory::Format memReqsData(sizeof(uint64_t) * numValues, NMP_NATURAL_TYPE_ALIGNMENT);
+//  result->m_values = (uint64_t*) resource.alignAndIncrement(memReqsData);
+//
+//  // Initialise.
+//  result->m_numValues = numValues;
+//  for (uint32_t i = 0; i < numValues; ++i)
+//  {
+//    result->m_values[i] = 0;
+//  }
+//
+//  // Multiple of the attrib data alignment
+//  resource.align(MR_ATTRIB_DATA_ALIGNMENT);
+//
+//  return result;
+//}
+//
+////----------------------------------------------------------------------------------------------------------------------
+//AttribDataHandle AttribDataUInt64Array::create(
+//  NMP::MemoryAllocator* allocator,
+//  AttribDataCreateDesc* desc)
+//{
+//  AttribDataHandle result;
+//
+//  NMP_ASSERT(desc);
+//  const AttribDataArrayCreateDesc* targetDesc = (AttribDataArrayCreateDesc*)desc;
+//
+//  result.m_format = getMemoryRequirements(targetDesc->m_numEntries);
+//  NMP::Memory::Resource resource = NMPAllocatorAllocateFromFormat(allocator, result.m_format);
+//  NMP_ASSERT(resource.ptr);
+//  result.m_attribData = init(resource, targetDesc->m_numEntries, targetDesc->m_refCount);
+//
+//  // Backchain the allocator so we know what to free this attribData with when we destroy it.
+//  result.m_attribData->m_allocator = allocator;
+//
+//  return result;
+//}
+//
+////----------------------------------------------------------------------------------------------------------------------
+//AttribDataHandle AttribDataUInt64Array::create(NMP::MemoryAllocator* allocator, uint32_t numValues, uint16_t refCount)
+//{
+//  AttribDataHandle result;
+//
+//  result.m_format = getMemoryRequirements(numValues);
+//  NMP::Memory::Resource resource = NMPAllocatorAllocateFromFormat(allocator, result.m_format);
+//  NMP_ASSERT(resource.ptr);
+//  result.m_attribData = init(resource, numValues, refCount);
+//
+//  // Backchain the allocator so we know what to free this attribData with when we destroy it.
+//  result.m_attribData->m_allocator = allocator;
+//
+//  return result;
+//}
+//
+////----------------------------------------------------------------------------------------------------------------------
+//#ifndef NM_HOST_CELL_SPU
+//void AttribDataUInt64Array::locate(AttribData* target)
+//{
+//  AttribDataUInt64Array* result = (AttribDataUInt64Array*) target;
+//
+//  AttribData::locate(target);
+//
+//  NMP::endianSwap(result->m_numValues);
+//
+//  NMP::endianSwap(result->m_values);
+//  REFIX_PTR_RELATIVE(uint64_t, result->m_values, result);
+//
+//  // Fixup each of the actual uint values.
+//  for (uint32_t i = 0; i < result->m_numValues; ++i)
+//  {
+//    NMP::endianSwap(result->m_values[i]);
+//  }
+//}
+//
+////----------------------------------------------------------------------------------------------------------------------
+//void AttribDataUInt64Array::dislocate(AttribData* target)
+//{
+//  AttribDataUInt64Array* result = (AttribDataUInt64Array*) target;
+//
+//  for (uint32_t i = 0; i < result->m_numValues; ++i)
+//  {
+//    NMP::endianSwap(result->m_values[i]);
+//  }
+//
+//  UNFIX_PTR_RELATIVE(uint64_t, result->m_values, result);
+//  NMP::endianSwap(result->m_values);
+//
+//  NMP::endianSwap(result->m_numValues);
+//
+//  AttribData::dislocate(target);
+//}
+//#endif // NM_HOST_CELL_SPU
+//
+////----------------------------------------------------------------------------------------------------------------------
+//void AttribDataUInt64Array::relocate(AttribData* target, void* location)
+//{
+//  AttribDataUInt64Array* result = (AttribDataUInt64Array*) target;
+//  void* ptr = location;
+//  NMP_ASSERT(NMP_IS_ALIGNED(ptr, MR_ATTRIB_DATA_ALIGNMENT));
+//  ptr = (void*)(((size_t)ptr) + sizeof(AttribDataUInt64Array));
+//  NMP_ASSERT(NMP_IS_ALIGNED(ptr, NMP_NATURAL_TYPE_ALIGNMENT));
+//  result->m_values = (uint64_t*)ptr;
+//}
 
 //----------------------------------------------------------------------------------------------------------------------
 // AttribDataFloatArray functions.

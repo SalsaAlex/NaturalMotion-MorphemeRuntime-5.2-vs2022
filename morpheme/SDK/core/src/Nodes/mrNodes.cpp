@@ -781,14 +781,14 @@ void registerCoreAttribDataTypes()
     AttribDataUIntArray::relocate,
     NULL,
     MR_NULL_NO_OUTPUT_DEBUGGING(AttribDataUIntArray::serializeTx));
-  manager.registerAttrDataType(
-    REG_FUNC_ARGS(ATTRIB_TYPE_UINT64_ARRAY),
-    NMP_NULL_ON_SPU(AttribDataUInt64Array::locate),
-    NMP_NULL_ON_SPU(AttribDataUInt64Array::dislocate),
-    NULL,
-    AttribDataUInt64Array::relocate,
-    NULL,
-    NULL);
+  //manager.registerAttrDataType(
+  //  REG_FUNC_ARGS(ATTRIB_TYPE_UINT64_ARRAY),
+  //  NMP_NULL_ON_SPU(AttribDataUInt64Array::locate),
+  //  NMP_NULL_ON_SPU(AttribDataUInt64Array::dislocate),
+  //  NULL,
+  //  AttribDataUInt64Array::relocate,
+  //  NULL,
+  //  NULL);
   manager.registerAttrDataType(
     REG_FUNC_ARGS(ATTRIB_TYPE_INT_ARRAY),
     NMP_NULL_ON_SPU(AttribDataIntArray::locate),

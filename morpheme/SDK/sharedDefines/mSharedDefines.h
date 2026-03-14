@@ -377,7 +377,7 @@ enum AttribDataTypeEnum
   ATTRIB_TYPE_BOOL_ARRAY,   ///< An array of bools.
   ATTRIB_TYPE_INT_ARRAY,    ///< An array of signed integers.
   ATTRIB_TYPE_UINT_ARRAY,   ///< An array of unsigned integers.
-  ATTRIB_TYPE_UINT64_ARRAY, ///< An array of unsigned 64 bit integers.
+  //ATTRIB_TYPE_UINT64_ARRAY, ///< An array of unsigned 64 bit integers. // LordRadai/Morpheme4
   ATTRIB_TYPE_FLOAT_ARRAY,  ///< An array of floats.
 
   ATTRIB_TYPE_UPDATE_PLAYBACK_POS,              ///< For setting an absolute time position or updating time with a delta value.
@@ -396,6 +396,9 @@ enum AttribDataTypeEnum
   ATTRIB_TYPE_SOURCE_ANIM,                      ///< A source animation in any format.
 
   ATTRIB_TYPE_RIG_TO_ANIM_MAP,                  ///< Maps rig channels to animation channels.
+  ATTRIB_TYPE_UNKNOWN1,
+  ATTRIB_TYPE_UNKNOWN2,
+  ATTRIB_TYPE_UNKNOWN3,
 
   ATTRIB_TYPE_SOURCE_EVENT_TRACKS,              ///< A set of source discrete event tracks.
 
@@ -423,15 +426,15 @@ enum AttribDataTypeEnum
   ATTRIB_TYPE_STATE_MACHINE_DEF,          ///< Holds the full definition of a state machine.
   ATTRIB_TYPE_STATE_MACHINE,              ///< Holds the current state of a state machine.
 
-  ATTRIB_TYPE_PHYSICS_RIG,                ///< Holds a pointer to the PhysicsRig
-  ATTRIB_TYPE_PHYSICS_RIG_DEF,            ///< Holds a pointer to the PhysicsRigDef
+  ATTRIB_TYPE_PHYSICS_RIG,                ///< Holds a pointer to the PhysicsRig                                        (morpheme 3.6.2 index: 43)
+  ATTRIB_TYPE_PHYSICS_RIG_DEF,            ///< Holds a pointer to the PhysicsRigDef                                     (morpheme 3.6.2 index: 44)
   ATTRIB_TYPE_CHARACTER_PROPERTIES,       ///< The current world root transform of the Network/game character and information reflecting
                                           ///<  the state of the Networks associated character controller if there is one.
   ATTRIB_TYPE_CHARACTER_CONTROLLER_DEF,   ///< Holds a pointer to the character controller def
-  ATTRIB_TYPE_ANIM_TO_PHYSICS_MAP,        ///< Stores the bone look up table from anim to physics and physics to
+  ATTRIB_TYPE_ANIM_TO_PHYSICS_MAP,        ///< Stores the bone look up table from anim to physics and physics to        (morpheme 3.6.2 index: 47)
                                           ///<  anim.
 
-  ATTRIB_TYPE_PHYSICS_SETUP,              ///< Wraps the params needed for the physics node.
+  ATTRIB_TYPE_PHYSICS_SETUP,              ///< Wraps the params needed for the physics node.        (morpheme 3.6.2 index: 48)
   ATTRIB_TYPE_PHYSICS_SETUP_ANIM_SET,     ///< Wraps the params needed for the physics node (anim set specific).
   ATTRIB_TYPE_PHYSICS_STATE,              ///< Stores physics state variables.
   ATTRIB_TYPE_PHYSICS_INITIALISATION,     ///< Physics initialisation
@@ -464,7 +467,7 @@ enum AttribDataTypeEnum
   ATTRIB_TYPE_DEAD_BLEND_STATE,           ///< Active state data of a dead blend.
 
   ATTRIB_TYPE_TRAJECTORY_OVERRIDE_DEF,
-
+    
   ATTRIB_TYPE_BLEND_NXM_DEF,              ///< Definition data of a blend NxM.
 
   ATTRIB_TYPE_ANIM_MIRRORED_MAPPING,      ///< Mapping info used when mirroring an animation.
