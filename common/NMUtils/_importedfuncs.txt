@@ -1,0 +1,4 @@
+this only includes the functions imported from naturalmotion dlls (ex: nmutils.dll, nmtl.dll)
+
+            NMTL.dll
+                  4   ?NMTLGetDefaultAllocator@nmtl@@YAPAVallocator@1@XZ

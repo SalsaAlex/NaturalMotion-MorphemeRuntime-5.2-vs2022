@@ -1,0 +1,48 @@
+this only includes the functions imported from naturalmotion dlls (ex: nmutils.dll, nmtl.dll)
+
+            LuaPlus.dll
+                181   luaL_loadbuffer
+                1F3   lua_tostring
+                1EB   lua_settop
+                 63   ?Create@LuaState@LuaPlus@@SAPAV12@_N0@Z
+                 6A   ?Destroy@LuaState@LuaPlus@@SAXPAV12@@Z
+                 C2   ?IsBoolean@LuaObject@LuaPlus@@QBE_NXZ
+                 7C   ?GetBoolean@LuaObject@LuaPlus@@QBE_NXZ
+                 D4   ?IsNumber@LuaObject@LuaPlus@@QBE_NXZ
+                 CC   ?IsInteger@LuaObject@LuaPlus@@QBE_NXZ
+                 A7   ?GetNumber@LuaObject@LuaPlus@@QBENXZ
+                 D8   ?IsTable@LuaObject@LuaPlus@@QBE_NXZ
+                 D6   ?IsString@LuaObject@LuaPlus@@QBE_NXZ
+                 B0   ?GetString@LuaObject@LuaPlus@@QBEPB_WXZ
+                1B4   lua_gettop
+                1F7   lua_type
+                  5   ??0LuaObject@LuaPlus@@QAE@ABVLuaStackObject@1@@Z
+                 B4   ?GetTableCount@LuaObject@LuaPlus@@QAEHXZ
+                 3E   ?ArgError@LuaState@LuaPlus@@QAEHHPB_W@Z
+                 80   ?GetByName@LuaObject@LuaPlus@@QAE?AV12@PB_W@Z
+                 D0   ?IsNil@LuaObject@LuaPlus@@QBE_NXZ
+                 22   ??4LuaObject@LuaPlus@@QAEAAV01@ABVLuaStackObject@1@@Z
+                11A   ?Reset@LuaObject@LuaPlus@@QAEXXZ
+                 21   ??4LuaObject@LuaPlus@@QAEAAV01@ABV01@@Z
+                 1A   ??1LuaObject@LuaPlus@@QAE@XZ
+                  9   ??0LuaObject@LuaPlus@@QAE@XZ
+
+            NMTL.dll
+                  4   ?NMTLGetDefaultAllocator@nmtl@@YAPAVallocator@1@XZ
+
+            NMUtils.dll
+                2CD   ?wstringToString@NMutils@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@ABV?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@3@@Z
+                25A   ?roundToNearestInteger@NMutils@@YAHN@Z
+                1E3   ?log@BasicLogger@NMutils@@UAEXW4Level@12@PBD@Z
+                1E4   ?log@BasicLogger@NMutils@@UAEXW4Level@12@PB_W@Z
+                1EE   ?logf@BasicLogger@NMutils@@UAAXW4Level@12@PB_WZZ
+                 5F   ??1BasicLogger@NMutils@@UAE@XZ
+                28D   ?trimLeadingWhitespace@NMutils@@YAXAAV?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@@Z
+                104   ?FILM@Time@NMutils@@2NB
+                106   ?PAL@Time@NMutils@@2NB
+                105   ?NTSC@Time@NMutils@@2NB
+                167   ?getBottomRight@NMBox2D@NMutils@@QBE?AVNMPoint2D@2@XZ
+                 30   ??0NMBox2D@NMutils@@QAE@ABVNMPoint2D@1@0@Z
+                26A   ?setDimensions@NMBox2D@NMutils@@QAEXMMW4EXPANSIONPOINTS@12@@Z
+                280   ?stringToWstring@NMutils@@YA?AV?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@PBD@Z
+                27F   ?stringToWstring@NMutils@@YA?AV?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@ABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@3@@Z

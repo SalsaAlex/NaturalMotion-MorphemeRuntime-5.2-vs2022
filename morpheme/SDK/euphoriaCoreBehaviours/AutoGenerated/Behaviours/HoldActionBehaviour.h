@@ -233,7 +233,7 @@ public:
     m_cp.EdgeStart.set(data->m_vector3Data->m_values[0], data->m_vector3Data->m_values[1], data->m_vector3Data->m_values[2]);
     m_cp.EdgeEnd.set(data->m_vector3Data->m_values[4], data->m_vector3Data->m_values[5], data->m_vector3Data->m_values[6]);
     m_cp.EdgeNormal.set(data->m_vector3Data->m_values[8], data->m_vector3Data->m_values[9], data->m_vector3Data->m_values[10]);
-    m_cp.PhysicsObjectID = (void*) (data->m_uint64s->m_values[0]);
+    //m_cp.PhysicsObjectID = (void*) (data->m_uint64s->m_values[0]);
     m_cp.PullUpAmount = data->m_floats->m_values[1];
     m_cp.PullUpStrengthScale = data->m_floats->m_values[2];
     m_cp.HoldImportance[0] = data->m_floats->m_values[3];

@@ -4,6 +4,9 @@
     <Filter Include="include\NMTL" />
     <Filter Include="include" />
     <Filter Include="src" />
+    <Filter Include="include\NMTL\_morphemeconnect_hook">
+      <UniqueIdentifier>{5ff760b9-0243-4dd7-99ad-8bb1c1626e2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\NMTL\algorithm.h">
@@ -76,6 +79,14 @@
       <Filter>include\NMTL</Filter>
     </ClInclude>
     <ClCompile Include="src\nmtl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClInclude Include="include\_morphemeconnect_hook\morphemeConnectCore_magicnums.h">
+      <Filter>include\NMTL\_morphemeconnect_hook</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="_morphemeconnect_hook.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

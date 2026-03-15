@@ -72,7 +72,7 @@ NM_FORCEINLINE float nmfabs(float value)
 #if defined(NM_HOST_X360)
   return __fabs(value);
 #else
-  return fabs(value);
+  return fabsf(value);
 #endif // NM_HOST_X360
 }
 

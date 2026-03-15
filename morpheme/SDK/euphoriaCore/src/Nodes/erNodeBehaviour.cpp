@@ -585,7 +585,7 @@ Task* nodeBehaviourQueueUpdateTransformsPrePhysics(
         if (isConnected)
         {
           AttribDataPhysicsObjectPointer* attrib = net->updateOptionalInputCPConnection<AttribDataPhysicsObjectPointer>(inputCPConnection, activeAnimSetIndex);
-          behaviourState->m_uint64s->m_values[uint64ParamIndex] = reinterpret_cast<size_t>(attrib->m_value);
+          //behaviourState->m_uint64s->m_values[uint64ParamIndex] = reinterpret_cast<size_t>(attrib->m_value);
         }
 
         ++uint64ParamIndex;

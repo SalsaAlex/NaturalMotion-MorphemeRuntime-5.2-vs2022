@@ -1,0 +1,80 @@
+this only includes the functions imported from naturalmotion dlls (ex: nmutils.dll, nmtl.dll)
+
+            NMTL.dll
+                  4   ?NMTLGetDefaultAllocator@nmtl@@YAPAVallocator@1@XZ
+
+            NMX2.dll
+               205B   ?is@Node@nmx@@QBE_NI@Z
+               2933   ?unlock@Attribute@nmx@@QAEXXZ
+               20DD   ?lockVertexBuffer@Attribute@nmx@@QAEPAVVertexBuffer@2@XZ
+               1BF0   ?getAttribute@Node@nmx@@QAE?AVAttribute@2@I@Z
+               1DD3   ?getNextSibling@Node@nmx@@QBEPAV12@XZ
+               1EF4   ?getTypeId@Node@nmx@@QBEIXZ
+               1C75   ?getChildDataNode@sgTransformNode@nmx@@QBEPAVNode@2@I@Z
+               1CF2   ?getFirstChild@Node@nmx@@QBEPAV12@XZ
+               1D5F   ?getLocalMatrix@sgTransformNode@nmx@@QBEABVMatrix@2@XZ
+               1DBD   ?getName@Node@nmx@@QBEABVString@2@XZ
+               25C0   ?resize@AttributeArray@nmx@@QAE?AVStatus@2@I@Z
+               1C04   ?getAttributeArray@Node@nmx@@QAE?AVAttributeArray@2@I@Z
+               1748   ?connect@Attribute@nmx@@QAE?AVStatus@2@ABV12@_N1@Z
+
+            NMX2Extensions.dll
+                67C   ?setInverseBindPoseMatrix@SkinDeformerNode@nmx@@QAEXABVMatrix@2@I@Z
+                684   ?setMatrix@SkinDeformerNode@nmx@@QAEXABVMatrix@2@I@Z
+
+            NMX2Foundation.dll
+                C58   ?set@Vector3@nmx@@QAEXMMM@Z
+                68E   ?addStream@VertexBuffer@nmx@@QAE_NPAVVertexStream@2@@Z
+                BD7   ?resize@?$pod_vector@H@nmxf@@QAEXI@Z
+                965   ?getIntArray@VertexStream@nmx@@QAEPAVIntArray@2@XZ
+                B06   ?normalise@Vector3Array@nmx@@QAEXXZ
+                BE8   ?resize@?$pod_vector@VVector3@nmx@@@nmxf@@QAEXI@Z
+                99E   ?getVector3Array@VertexStream@nmx@@QAEPAVVector3Array@2@XZ
+                83D   ?create@VertexStream@nmx@@SAPAV12@IW4StreamType@12@@Z
+                CF5   ?toQuat@Matrix@nmx@@QBEXAAVQuat@2@@Z
+                109   ??0Quat@nmx@@QAE@XZ
+                D1F   ?wideStringToAsciiString@nmx@@YAPADPB_WAAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+                83F   ?createShallow@VertexStream@nmx@@SAPAV12@ABV12@I@Z
+                B75   ?push_back@?$pod_vector@M@nmxf@@QAEXABM@Z
+                B73   ?push_back@?$pod_vector@H@nmxf@@QAEXABH@Z
+                 F1   ??0Matrix@nmx@@QAE@XZ
+                960   ?getFloatArray@VertexStream@nmx@@QAEPAVFloatArray@2@XZ
+                6A8   ?asciiStringToWideString@nmx@@YAPA_WPBDAAVString@1@@Z
+
+            XMD.dll
+               1AEE   ?GetIndices@XVertexArray@XMU@@QBEXAAV?$pod_vector@I@XM2@@@Z
+               1601   ?CreateNode@XModel@XMD@@QAEPAVXBase@2@W4Type@XFn@2@@Z
+               1EC4   ?Normals@XVertexArray@XMU@@QBEABVXRealArray@XM2@@XZ
+               22B1   ?Vertices@XVertexArray@XMU@@QBEABVXRealArray@XM2@@XZ
+               1BCF   ?GetNumVertices@XVertexArray@XMU@@QBEIXZ
+               2062   ?Set@XPoseStream@XMD@@QAE_NABVXQuaternion@XM2@@@Z
+               2064   ?Set@XPoseStream@XMD@@QAE_NABVXVector3@XM2@@@Z
+               1603   ?CreatePoseStream@XAnimatedAttribute@XMD@@QAEPAVXPoseStream@2@XZ
+               15F1   ?CreateAnimatedAttribute@XAnimatedNode@XMD@@QAEPAVXAnimatedAttribute@2@I@Z
+               1602   ?CreateNodeAnimation@XAnimationTake@XMD@@QAEPAVXAnimatedNode@2@PAVXBase@2@@Z
+               3323   ?resize@?$pod_vector@VXQuaternion@XM2@@@XM2@@QAEXI@Z
+               2033   ?RotationKeys@XSampledKeys@XMD@@QAEAAVXQuaternionArray@XM2@@XZ
+               229F   ?TranslationKeys@XSampledKeys@XMD@@QAEAAVXVector3Array@XM2@@XZ
+               332D   ?resize@?$pod_vector@VXVector3@XM2@@@XM2@@QAEXI@Z
+               203C   ?ScaleKeys@XSampledKeys@XMD@@QAEAAVXVector3Array@XM2@@XZ
+               15AA   ?AddSampledKeys@XAnimCycle@XMD@@QAEPAVXSampledKeys@2@I@Z
+               1AD4   ?GetID@XBase@XMD@@QBEIXZ
+               1595   ?AddChild@XBone@XMD@@QAE_NPAV12@@Z
+               1B6F   ?GetName@XBase@XMD@@QBEPBDXZ
+                42D   ??0XSkinPruner@XMU@@QAE@PBVXGeometry@XMD@@I@Z
+               1BAF   ?GetNumInfluences@XSkinPruner@XMU@@QBEIXZ
+               1E41   ?Mappings@XVertexArray@XMU@@QBEABV?$pod_vector@I@XM2@@XZ
+               1AF0   ?GetInfluence@XSkinPruner@XMU@@QBEII@Z
+               1773   ?FindNode@XModel@XMD@@QBEPBVXBase@2@I@Z
+               1B04   ?GetInverse@XBone@XMD@@QBEABVXMatrix@XM2@@_N@Z
+               1DB8   ?GetWorld@XBone@XMD@@QBEABVXMatrix@XM2@@_N@Z
+               2177   ?SetName@XBase@XMD@@QAEXPBD@Z
+               17A6   ?Get@XSkinPruner@XMU@@QBEXIAAUXMUJointCluster@2@@Z
+                564   ??1XMUJointCluster@XMU@@QAE@XZ
+                59F   ??1XSkinPruner@XMU@@UAE@XZ
+               20F9   ?SetFramesPerSecond@XAnimationTake@XMD@@QAEXM@Z
+               20F7   ?SetFrameRate@XAnimCycle@XMD@@QAEXM@Z
+               1ABC   ?GetFramesPerSecond@XAnimCycle@XMD@@QBEMXZ
+               20F8   ?SetFrameTimes@XAnimCycle@XMD@@QAEXMMI@Z
+                4B6   ??1?$pod_vector@I@XM2@@QAE@XZ
+                392   ??0XMUJointCluster@XMU@@QAE@XZ

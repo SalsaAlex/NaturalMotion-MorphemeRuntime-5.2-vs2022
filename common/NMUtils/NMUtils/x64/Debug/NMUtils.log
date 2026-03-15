@@ -1,0 +1,8 @@
+﻿  NMUtils_NMColourRGBA.cpp
+  NMUtils_NMPoint.cpp
+  NMUtils_NMPoint2D.cpp
+  NMUtils_Time.cpp
+  NMUtils_utils.cpp
+  Generating Code...
+     Creating library D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\NMUtils\x64\Debug\NMUtils.lib and object D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\NMUtils\x64\Debug\NMUtils.exp
+  NMUtils.vcxproj -> D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\NMUtils\x64\Debug\NMUtils.dll

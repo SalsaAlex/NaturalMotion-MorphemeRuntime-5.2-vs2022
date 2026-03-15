@@ -442,14 +442,14 @@ MR::NodeDef* NodeBehaviourBuilder::init(
       for (uint32_t i = 0; i < numUint64s; ++i)
       {
         sprintf_s(paramName, "UInt64_%d_%d", i, animSetIndex);
-        if (nodeDefDataBlock->readUInt64(value, paramName))
-        {
-          behaviourParameters->m_uint64s->m_values[i] = value;
-        }
-        else
-        {
-          behaviourParameters->m_uint64s->m_values[i] = 0;
-        }
+        //if (nodeDefDataBlock->readUInt64(value, paramName))
+        //{
+        //  behaviourParameters->m_uint64s->m_values[i] = value;
+        //}
+        //else
+        //{
+        //  behaviourParameters->m_uint64s->m_values[i] = 0;
+        //}
       }
     }
 

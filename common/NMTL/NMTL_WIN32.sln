@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NMTL", "NMTL_WIN32.vcxproj", "{BA13B81C-4721-4169-EC83-D3600C9BE1F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug Tool|x86 = Debug Tool|x86
+		Release Tool|x86 = Release Tool|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA13B81C-4721-4169-EC83-D3600C9BE1F6}.Debug Tool|x86.ActiveCfg = Debug Tool|Win32
+		{BA13B81C-4721-4169-EC83-D3600C9BE1F6}.Debug Tool|x86.Build.0 = Debug Tool|Win32
+		{BA13B81C-4721-4169-EC83-D3600C9BE1F6}.Release Tool|x86.ActiveCfg = Release Tool|Win32
+		{BA13B81C-4721-4169-EC83-D3600C9BE1F6}.Release Tool|x86.Build.0 = Release Tool|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {24DF3049-F4D7-440C-9B99-9A4E2A0D5EB8}
+	EndGlobalSection
+EndGlobal

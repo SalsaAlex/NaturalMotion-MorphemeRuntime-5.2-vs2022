@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{f36dadf0-555e-4310-b3d9-fb43c6889f91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{41d63f39-020b-482f-b4b9-28356197bac3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\NMUtils_NMColourRGBA.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NMUtils_NMPoint.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NMUtils_NMPoint2D.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NMUtils_Time.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NMUtils_utils.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\NMUtils_NMColourRGBA.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NMUtils_NMPoint.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NMUtils_NMPoint2D.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NMUtils_Time.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NMUtils_utils.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

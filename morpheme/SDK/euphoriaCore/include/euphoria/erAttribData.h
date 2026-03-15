@@ -89,7 +89,7 @@ public:
 
   MR::AttribDataIntArray*   m_ints;
   MR::AttribDataFloatArray* m_floats;
-  MR::AttribDataUInt64Array* m_uint64s;
+  //MR::AttribDataUInt64Array* m_uint64s;
 
   // Types must match up with the manifest lua file.
   struct OutputControlParam
@@ -142,7 +142,7 @@ public:
 
   MR::AttribDataIntArray*     m_ints;
   MR::AttribDataFloatArray*   m_floats;
-  MR::AttribDataUInt64Array*  m_uint64s;
+  //MR::AttribDataUInt64Array*  m_uint64s;
   MR::AttribDataFloatArray*   m_vector3Data; // stored as 4 floats per vector3
   bool m_startedBehaviour;
 };

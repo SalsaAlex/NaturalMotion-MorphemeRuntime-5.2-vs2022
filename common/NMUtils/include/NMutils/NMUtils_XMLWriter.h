@@ -1,0 +1,5 @@
+
+namespace NMutils
+{
+	
+} //namepsace NMutils

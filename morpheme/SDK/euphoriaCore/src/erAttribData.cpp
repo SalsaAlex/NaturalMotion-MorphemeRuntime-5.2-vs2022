@@ -252,9 +252,9 @@ void AttribDataBehaviourParameters::locate(MR::AttribData* target)
   REFIX_PTR_RELATIVE(MR::AttribDataFloatArray, result->m_floats, result);
   MR::AttribDataFloatArray::locate(result->m_floats);
 
-  NMP::endianSwap(result->m_uint64s);
-  REFIX_PTR_RELATIVE(MR::AttribDataUInt64Array, result->m_uint64s, result);
-  MR::AttribDataUInt64Array::locate(result->m_uint64s);
+  //NMP::endianSwap(result->m_uint64s);
+  //REFIX_PTR_RELATIVE(MR::AttribDataUInt64Array, result->m_uint64s, result);
+  //MR::AttribDataUInt64Array::locate(result->m_uint64s);
 
   NMP::endianSwap(result->m_controlParameterInputsTypes);
   REFIX_PTR_RELATIVE(MR::AttribDataIntArray, result->m_controlParameterInputsTypes, result);
@@ -283,9 +283,9 @@ void AttribDataBehaviourParameters::dislocate(MR::AttribData* target)
   UNFIX_PTR_RELATIVE(MR::AttribDataFloatArray, result->m_floats, result);
   NMP::endianSwap(result->m_floats);
 
-  MR::AttribDataUInt64Array::dislocate(result->m_uint64s);
-  UNFIX_PTR_RELATIVE(MR::AttribDataUInt64Array, result->m_uint64s, result);
-  NMP::endianSwap(result->m_uint64s);
+  //MR::AttribDataUInt64Array::dislocate(result->m_uint64s);
+  //UNFIX_PTR_RELATIVE(MR::AttribDataUInt64Array, result->m_uint64s, result);
+  //NMP::endianSwap(result->m_uint64s);
 
   MR::AttribDataIntArray::dislocate(result->m_controlParameterInputsTypes);
   UNFIX_PTR_RELATIVE(MR::AttribDataIntArray, result->m_controlParameterInputsTypes, result);
@@ -320,11 +320,11 @@ void AttribDataBehaviourParameters::relocate(MR::AttribData* target, void* locat
   format = MR::AttribDataFloatArray::getMemoryRequirements(result->m_floats->m_numValues);
   offset += NMP::Memory::align(format.size, MR_ATTRIB_DATA_ALIGNMENT);
 
-  MR::AttribDataUInt64Array* uint64s = (MR::AttribDataUInt64Array*)(((size_t)result) + offset);
-  result->m_uint64s = (MR::AttribDataUInt64Array*)(((size_t)location) + offset);
-  MR::AttribDataUInt64Array::relocate(uint64s, result->m_uint64s);
-  format = MR::AttribDataUInt64Array::getMemoryRequirements(result->m_uint64s->m_numValues);
-  offset += NMP::Memory::align(format.size, MR_ATTRIB_DATA_ALIGNMENT);
+  //MR::AttribDataUInt64Array* uint64s = (MR::AttribDataUInt64Array*)(((size_t)result) + offset);
+  //result->m_uint64s = (MR::AttribDataUInt64Array*)(((size_t)location) + offset);
+  //MR::AttribDataUInt64Array::relocate(uint64s, result->m_uint64s);
+  //format = MR::AttribDataUInt64Array::getMemoryRequirements(result->m_uint64s->m_numValues);
+  //offset += NMP::Memory::align(format.size, MR_ATTRIB_DATA_ALIGNMENT);
 
   MR::AttribDataIntArray* controlParameterInputsTypes = (MR::AttribDataIntArray*)(((size_t)result) + offset);
   result->m_controlParameterInputsTypes = (MR::AttribDataIntArray*)(((size_t)location) + offset);
@@ -389,7 +389,7 @@ NMP::Memory::Format AttribDataBehaviourParameters::getMemoryRequirements(
 
   result += MR::AttribDataIntArray::getMemoryRequirements(numInts);
   result += MR::AttribDataFloatArray::getMemoryRequirements(numFloats);
-  result += MR::AttribDataUInt64Array::getMemoryRequirements(numUint64s);
+  //result += MR::AttribDataUInt64Array::getMemoryRequirements(numUint64s);
 
   result += MR::AttribDataIntArray::getMemoryRequirements(numControlParameterInputs);  // types
   result += MR::AttribDataIntArray::getMemoryRequirements(numControlParameterOutputs); // types
@@ -425,7 +425,7 @@ AttribDataBehaviourParameters* AttribDataBehaviourParameters::init(
 
   result->m_ints   = MR::AttribDataIntArray::init(resource, numInts);
   result->m_floats = MR::AttribDataFloatArray::init(resource, numFloats);
-  result->m_uint64s = MR::AttribDataUInt64Array::init(resource, numUInt64s);
+  //result->m_uint64s = MR::AttribDataUInt64Array::init(resource, numUInt64s);
 
   result->m_numInputCPInts = numInputCPInts;
   result->m_numInputCPFloats = numInputCPFloats;
@@ -484,7 +484,7 @@ NMP::Memory::Format AttribDataBehaviourState::getMemoryRequirements(
 
   result += MR::AttribDataIntArray::getMemoryRequirements(numInts);
   result += MR::AttribDataFloatArray::getMemoryRequirements(numFloats);
-  result += MR::AttribDataUInt64Array::getMemoryRequirements(numUInt64s);
+  //result += MR::AttribDataUInt64Array::getMemoryRequirements(numUInt64s);
   result += MR::AttribDataFloatArray::getMemoryRequirements(numVector3s * 4);
   // Make sure size is a multiple of the alignment requirement.
   result.size = NMP::Memory::align(result.size, MR_ATTRIB_DATA_ALIGNMENT);
@@ -510,7 +510,7 @@ AttribDataBehaviourState* AttribDataBehaviourState::init(
   result->m_startedBehaviour = false;
   result->m_ints             = MR::AttribDataIntArray::init(resource, numInts);
   result->m_floats           = MR::AttribDataFloatArray::init(resource, numFloats);
-  result->m_uint64s          = MR::AttribDataUInt64Array::init(resource, numUInt64s);
+  //result->m_uint64s          = MR::AttribDataUInt64Array::init(resource, numUInt64s);
   result->m_vector3Data      = MR::AttribDataFloatArray::init(resource, numVector3s * 4);
   // Make sure resource pointer has been moved on by the size returned by getMemoryRequirements.
   resource.align(MR_ATTRIB_DATA_ALIGNMENT);

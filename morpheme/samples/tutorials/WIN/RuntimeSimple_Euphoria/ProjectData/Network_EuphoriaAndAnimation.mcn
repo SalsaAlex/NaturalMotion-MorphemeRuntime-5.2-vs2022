@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<NaturalMotion typeString="ConnectNetwork;physics;euphoria" productVersion="5.2" dataVersion="3530" formatVersion="5">
+<NaturalMotion typeString="ConnectNetwork;physics;euphoria" productVersion="5.2" dataVersion="3506" formatVersion="5">
 	<MorphemeDB name="MorphemeDB" type="node" namespace="mcd">
 		<Networks type="nodeContainer">
 			<Network name="Network" type="node">
