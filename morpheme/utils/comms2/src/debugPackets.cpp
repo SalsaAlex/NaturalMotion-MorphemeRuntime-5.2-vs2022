@@ -70,9 +70,11 @@ void NodeOutputDataPacket::deserialize()
   case MR::ATTRIB_TYPE_UINT_ARRAY:
     MR::AttribUIntArrayOutputData::deserialiseTx(data);
     break;
-  //case MR::ATTRIB_TYPE_UINT64_ARRAY:
-  //  MR::AttribUInt64ArrayOutputData::deserialiseTx(data);
-  //  break;
+#ifndef MORPHEME_CONNECT_362
+  case MR::ATTRIB_TYPE_UINT64_ARRAY:
+    MR::AttribUInt64ArrayOutputData::deserialiseTx(data);
+    break;
+#endif
   case MR::ATTRIB_TYPE_INT_ARRAY:
     MR::AttribIntArrayOutputData::deserialiseTx(data);
     break;

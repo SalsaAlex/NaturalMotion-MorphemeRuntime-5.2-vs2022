@@ -223,13 +223,13 @@ void PhysX3DriverBuilder::initJointDriverData(
   driverData->m_slerpDriveSpring = (float)slerpDriveSpring;
 
   double articulationDamping = 0.0;
-  result = attributeBlock->getDoubleAttribute("articulationDamping", articulationDamping);
-  NMP_VERIFY_MSG(result, "could not find attribute 'articulationDamping' in exported physics data");
+  //result = attributeBlock->getDoubleAttribute("articulationDamping", articulationDamping);
+  //NMP_VERIFY_MSG(result, "could not find attribute 'articulationDamping' in exported physics data");
   driverData->m_articulationDamping = (float)articulationDamping;
 
   double articulationSpring = 0.0;
-  result = attributeBlock->getDoubleAttribute("articulationSpring", articulationSpring);
-  NMP_VERIFY_MSG(result, "could not find attribute 'articulationSpring' in exported physics data");
+  //result = attributeBlock->getDoubleAttribute("articulationSpring", articulationSpring);
+  //NMP_VERIFY_MSG(result, "could not find attribute 'articulationSpring' in exported physics data");
   driverData->m_articulationSpring = (float)articulationSpring;
 
   bool useAccelerationSprings = true;
@@ -238,8 +238,8 @@ void PhysX3DriverBuilder::initJointDriverData(
   driverData->m_useAccelerationSprings = (useAccelerationSprings ? 1 : 0);
 
   double driveStrengthScale = 1.0;
-  result = attributeBlock->getDoubleAttribute("driveStrengthScale", driveStrengthScale);
-  NMP_VERIFY_MSG(result, "could not find attribute 'driveStrengthScale' in exported physics data");
+  //result = attributeBlock->getDoubleAttribute("driveStrengthScale", driveStrengthScale);
+  //NMP_VERIFY_MSG(result, "could not find attribute 'driveStrengthScale' in exported physics data");
   driverData->m_driveStrengthScale = (float)driveStrengthScale;
 
   double driveDampingScale = 1.0;

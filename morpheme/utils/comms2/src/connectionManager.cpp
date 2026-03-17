@@ -213,6 +213,8 @@ bool ConnectionManager::handleCommandOnConnection(Connection* connection, bool& 
   uint16_t pktId = cmdPacket->hdr.m_id;
   NMP::netEndianSwap(pktId);
 
+  NMP_MSG("MorphemeComms: received packet %d.", pktId);
+
   switch (pktId)
   {
   case pk_PingCmd:

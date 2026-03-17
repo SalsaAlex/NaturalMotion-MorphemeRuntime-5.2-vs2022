@@ -126,7 +126,9 @@ public:
   {
     NMP_ASSERT(data->m_floats->m_numValues == 11);
     NMP_ASSERT(data->m_ints->m_numValues == 2);
+#ifndef MORPHEME_CONNECT_362
     NMP_ASSERT(data->m_uint64s->m_numValues == 0);
+#endif
 
 
     SupportWithArms = (data->m_ints->m_values[0] != 0);

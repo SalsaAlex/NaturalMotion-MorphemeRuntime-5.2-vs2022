@@ -39,6 +39,8 @@ bool EuphoriaCommandsHandler::doHandleCommand(CmdPacketBase* commandPacket)
   uint16_t pktId = commandPacket->hdr.m_id;
   NMP::netEndianSwap(pktId);
 
+  NMP_MSG("EuphoriaCommandsHandler: received packet %d.", pktId);
+
   switch (pktId)
   {
   case pk_EnableModuleDebugCmd:

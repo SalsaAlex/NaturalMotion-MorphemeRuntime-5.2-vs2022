@@ -482,8 +482,8 @@ MR::PhysicsJointDef* PhysicsRigDefBuilder::initSixDOFJoint(
   NMP_VERIFY_MSG(result, "could not find attribute 'swing2Limit' in exported physics data");
 
   double swingContactDistance = 0.05;
-  result = attributeBlock->getDoubleAttribute("swingContactDistance", swingContactDistance);
-  NMP_VERIFY_MSG(result, "could not find attribute 'swingContactDistance' in exported physics data");
+  //result = attributeBlock->getDoubleAttribute("swingContactDistance", swingContactDistance);
+  //NMP_VERIFY_MSG(result, "could not find attribute 'swingContactDistance' in exported physics data");
 
   jointDef->m_hardLimits.setSwingLimit(
     static_cast< float >(swing1Limit), 
@@ -499,8 +499,8 @@ MR::PhysicsJointDef* PhysicsRigDefBuilder::initSixDOFJoint(
   NMP_VERIFY_MSG(result, "could not find attribute 'twistLimitHigh' in exported physics data");
 
   double twistContactDistance = 0.05;
-  result = attributeBlock->getDoubleAttribute("twistContactDistance", twistContactDistance);
-  NMP_VERIFY_MSG(result, "could not find attribute 'twistContactDistance' in exported physics data");
+  //result = attributeBlock->getDoubleAttribute("twistContactDistance", twistContactDistance);
+  //NMP_VERIFY_MSG(result, "could not find attribute 'twistContactDistance' in exported physics data");
 
   jointDef->m_hardLimits.setTwistLimit(
     static_cast< float >(twistLimitLow), 

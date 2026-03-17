@@ -89,7 +89,9 @@ public:
 
   MR::AttribDataIntArray*   m_ints;
   MR::AttribDataFloatArray* m_floats;
-  //MR::AttribDataUInt64Array* m_uint64s;
+#ifndef MORPHEME_CONNECT_362
+  MR::AttribDataUInt64Array* m_uint64s;
+#endif
 
   // Types must match up with the manifest lua file.
   struct OutputControlParam
@@ -142,7 +144,9 @@ public:
 
   MR::AttribDataIntArray*     m_ints;
   MR::AttribDataFloatArray*   m_floats;
-  //MR::AttribDataUInt64Array*  m_uint64s;
+#ifndef MORPHEME_CONNECT_362
+  MR::AttribDataUInt64Array*  m_uint64s;
+#endif
   MR::AttribDataFloatArray*   m_vector3Data; // stored as 4 floats per vector3
   bool m_startedBehaviour;
 };

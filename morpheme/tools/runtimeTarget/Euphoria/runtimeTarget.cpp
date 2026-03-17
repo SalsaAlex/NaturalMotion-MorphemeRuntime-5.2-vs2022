@@ -117,10 +117,16 @@ static void update(
 
   if (commsServer)
   {
+    NMP_MSG("//");
+    NMP_MSG("//pre-commsserver update");
+    NMP_MSG("//");
     if (commsServer->update())
     {
       commsServer->scheduleStep(true);
     }
+    NMP_MSG("//");
+    NMP_MSG("//post-commsserver update");
+    NMP_MSG("//");
   }
 
   if (dataManager.isSimulating())
@@ -134,18 +140,34 @@ static void update(
 
     pause(fps);
 
+    NMP_MSG("//");
+    NMP_MSG("//pre-begin frame");
+    NMP_MSG("//");
+
     if (commsServer)
     {
       commsServer->beginFrame(delta);
     }
 
+    NMP_MSG("//");
+    NMP_MSG("pre-physics update");
+    NMP_MSG("//");
+
     // Update all our network instances
     physicsMgr.update(delta);
+
+    NMP_MSG("//");
+    NMP_MSG("//pre-end frame update");
+    NMP_MSG("//");
 
     if (commsServer)
     {
       commsServer->endFrame(delta);
     }
+
+    NMP_MSG("//");
+    NMP_MSG("//post-end frame update");
+    NMP_MSG("//");
   }
 }
 

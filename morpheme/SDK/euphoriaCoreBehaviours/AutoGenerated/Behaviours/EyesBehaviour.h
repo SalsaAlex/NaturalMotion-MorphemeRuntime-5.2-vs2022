@@ -94,7 +94,7 @@ public:
   {
     NMP_ASSERT(data->m_floats->m_numValues == 0);
     NMP_ASSERT(data->m_ints->m_numValues == 0);
-    NMP_ASSERT(data->m_uint64s->m_numValues == 0);
+    //NMP_ASSERT(data->m_uint64s->m_numValues == 0);
   }
 
 

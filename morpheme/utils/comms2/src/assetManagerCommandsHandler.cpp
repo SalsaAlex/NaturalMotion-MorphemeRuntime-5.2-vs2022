@@ -59,6 +59,8 @@ bool AssetManagerCommandsHandler::doHandleCommand(CmdPacketBase* cmdPacket)
   uint16_t pktId = cmdPacket->hdr.m_id;
   NMP::netEndianSwap(pktId);
 
+  NMP_MSG("AssetManagerCommandsHandler: received packet %d.", pktId);
+
   switch (pktId)
   {
   case pk_SetAnimBrowserAnimCmd:

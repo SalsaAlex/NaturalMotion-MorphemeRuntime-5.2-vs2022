@@ -143,7 +143,9 @@ public:
   {
     NMP_ASSERT(data->m_floats->m_numValues == 21);
     NMP_ASSERT(data->m_ints->m_numValues == 6);
+#ifndef MORPHEME_CONNECT_362
     NMP_ASSERT(data->m_uint64s->m_numValues == 0);
+#endif
 
 
     PositionWeightForArm[0] = data->m_floats->m_values[0];
@@ -180,7 +182,9 @@ public:
   {
     NMP_ASSERT(data->m_floats->m_numValues == 13);
     NMP_ASSERT(data->m_ints->m_numValues == 0);
+#ifndef MORPHEME_CONNECT_362
     NMP_ASSERT(data->m_uint64s->m_numValues == 0);
+#endif
     // Vector 3 are stored in a float array with 4 entries per item
     NMP_ASSERT(data->m_vector3Data->m_numValues == 16);
 

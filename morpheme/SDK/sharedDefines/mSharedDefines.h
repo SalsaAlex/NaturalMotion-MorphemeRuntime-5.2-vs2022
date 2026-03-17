@@ -377,7 +377,9 @@ enum AttribDataTypeEnum
   ATTRIB_TYPE_BOOL_ARRAY,   ///< An array of bools.
   ATTRIB_TYPE_INT_ARRAY,    ///< An array of signed integers.
   ATTRIB_TYPE_UINT_ARRAY,   ///< An array of unsigned integers.
-  //ATTRIB_TYPE_UINT64_ARRAY, ///< An array of unsigned 64 bit integers. // LordRadai/Morpheme4
+#ifndef MORPHEME_CONNECT_362
+  ATTRIB_TYPE_UINT64_ARRAY, ///< An array of unsigned 64 bit integers.
+#endif
   ATTRIB_TYPE_FLOAT_ARRAY,  ///< An array of floats.
 
   ATTRIB_TYPE_UPDATE_PLAYBACK_POS,              ///< For setting an absolute time position or updating time with a delta value.
@@ -396,9 +398,11 @@ enum AttribDataTypeEnum
   ATTRIB_TYPE_SOURCE_ANIM,                      ///< A source animation in any format.
 
   ATTRIB_TYPE_RIG_TO_ANIM_MAP,                  ///< Maps rig channels to animation channels.
+#ifdef MORPHEME_CONNECT_362
   ATTRIB_TYPE_UNKNOWN1,
   ATTRIB_TYPE_UNKNOWN2,
   ATTRIB_TYPE_UNKNOWN3,
+#endif
 
   ATTRIB_TYPE_SOURCE_EVENT_TRACKS,              ///< A set of source discrete event tracks.
 

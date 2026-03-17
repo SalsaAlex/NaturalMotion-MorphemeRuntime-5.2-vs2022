@@ -252,9 +252,11 @@ void AttribDataBehaviourParameters::locate(MR::AttribData* target)
   REFIX_PTR_RELATIVE(MR::AttribDataFloatArray, result->m_floats, result);
   MR::AttribDataFloatArray::locate(result->m_floats);
 
-  //NMP::endianSwap(result->m_uint64s);
-  //REFIX_PTR_RELATIVE(MR::AttribDataUInt64Array, result->m_uint64s, result);
-  //MR::AttribDataUInt64Array::locate(result->m_uint64s);
+#ifndef MORPHEME_CONNECT_362
+  NMP::endianSwap(result->m_uint64s);
+  REFIX_PTR_RELATIVE(MR::AttribDataUInt64Array, result->m_uint64s, result);
+  MR::AttribDataUInt64Array::locate(result->m_uint64s);
+#endif
 
   NMP::endianSwap(result->m_controlParameterInputsTypes);
   REFIX_PTR_RELATIVE(MR::AttribDataIntArray, result->m_controlParameterInputsTypes, result);
@@ -283,9 +285,11 @@ void AttribDataBehaviourParameters::dislocate(MR::AttribData* target)
   UNFIX_PTR_RELATIVE(MR::AttribDataFloatArray, result->m_floats, result);
   NMP::endianSwap(result->m_floats);
 
-  //MR::AttribDataUInt64Array::dislocate(result->m_uint64s);
-  //UNFIX_PTR_RELATIVE(MR::AttribDataUInt64Array, result->m_uint64s, result);
-  //NMP::endianSwap(result->m_uint64s);
+#ifndef MORPHEME_CONNECT_362
+  MR::AttribDataUInt64Array::dislocate(result->m_uint64s);
+  UNFIX_PTR_RELATIVE(MR::AttribDataUInt64Array, result->m_uint64s, result);
+  NMP::endianSwap(result->m_uint64s);
+#endif
 
   MR::AttribDataIntArray::dislocate(result->m_controlParameterInputsTypes);
   UNFIX_PTR_RELATIVE(MR::AttribDataIntArray, result->m_controlParameterInputsTypes, result);
@@ -510,7 +514,9 @@ AttribDataBehaviourState* AttribDataBehaviourState::init(
   result->m_startedBehaviour = false;
   result->m_ints             = MR::AttribDataIntArray::init(resource, numInts);
   result->m_floats           = MR::AttribDataFloatArray::init(resource, numFloats);
-  //result->m_uint64s          = MR::AttribDataUInt64Array::init(resource, numUInt64s);
+#ifndef MORPHEME_CONNECT_362
+  result->m_uint64s          = MR::AttribDataUInt64Array::init(resource, numUInt64s);
+#endif
   result->m_vector3Data      = MR::AttribDataFloatArray::init(resource, numVector3s * 4);
   // Make sure resource pointer has been moved on by the size returned by getMemoryRequirements.
   resource.align(MR_ATTRIB_DATA_ALIGNMENT);
