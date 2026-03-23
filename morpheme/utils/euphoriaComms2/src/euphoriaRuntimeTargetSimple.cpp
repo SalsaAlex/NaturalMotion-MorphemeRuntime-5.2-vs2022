@@ -673,24 +673,24 @@ uint32_t SimpleEuphoriaDataManager::serializeLimbTx(
 
     persistentData->m_name = MCOMMS::CommsServer::getInstance()->getTokenForString(limb.getName());
     persistentData->m_type = limb.getType();
-    if (limb.isLeftLimb())
-    {
-      persistentData->m_limbSide = ER::kEuphoriaLeftLimb; 
-    }
-    else if (limb.isRightLimb())
-    {
-      persistentData->m_limbSide = ER::kEuphoriaRightLimb; 
-    } 
-    else
-    {
-      persistentData->m_limbSide = ER::kEuphoriaCentreLimb;
-    }
+    //f (limb.isLeftLimb())
+    //
+    // persistentData->m_limbSide = ER::kEuphoriaLeftLimb; 
+    //
+    //lse if (limb.isRightLimb())
+    //
+    // persistentData->m_limbSide = ER::kEuphoriaRightLimb; 
+    // 
+    //lse
+    //
+    // persistentData->m_limbSide = ER::kEuphoriaCentreLimb;
+    //
     persistentData->m_rootIndex = limb.getRootIndex();
     persistentData->m_endIndex = limb.getEndIndex();
     persistentData->m_baseIndex = limb.getBaseIndex();
     persistentData->m_isRootLimb = limb.getIsRootLimb();
-    persistentData->m_endEffectorlocalPose = limb.getDefinition()->m_endOffset;
-    persistentData->m_rootEffectorlocalPose = limb.getDefinition()->m_rootOffset;
+    //persistentData->m_endEffectorlocalPose = limb.getDefinition()->m_endOffset;
+    //persistentData->m_rootEffectorlocalPose = limb.getDefinition()->m_rootOffset;
 
     ER::EuphoriaLimbPersistentData::endianSwap(persistentData);
   }

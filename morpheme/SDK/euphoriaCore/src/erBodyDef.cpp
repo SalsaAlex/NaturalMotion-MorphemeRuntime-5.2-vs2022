@@ -101,7 +101,7 @@ uint32_t BodyDef::getLimbIndexFromName(const char* limbName, bool matchPartial) 
     const LimbDef* limb = m_limbDefs[i];
     if (matchPartial)
     {
-      if (strstr(limbName, limb->m_name) != NULL)
+      if (strstr(limb->m_name, limbName) != NULL)
         return (int32_t)i;
     }
     else

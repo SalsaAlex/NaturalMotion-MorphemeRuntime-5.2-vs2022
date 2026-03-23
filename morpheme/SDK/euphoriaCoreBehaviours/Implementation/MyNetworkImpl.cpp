@@ -617,15 +617,6 @@ void MyNetwork::update(float timeStep)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// For collecting the closest objects
-//----------------------------------------------------------------------------------------------------------------------
-struct Shape
-{
-  physx::PxShape* physXShape;
-  float distance;
-};
-
-//----------------------------------------------------------------------------------------------------------------------
 static NM_INLINE bool isPartInContactWithPatch(const MR::PhysicsRig::Part* const part, const int64_t patchShapeID)
 {
   bool inContact = false;

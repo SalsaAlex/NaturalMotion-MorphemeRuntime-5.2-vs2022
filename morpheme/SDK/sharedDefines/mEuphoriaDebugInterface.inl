@@ -137,8 +137,8 @@ inline EuphoriaLimbPersistentData* EuphoriaLimbPersistentData::endianSwap(void *
 {
   EuphoriaLimbPersistentData* persistentData = static_cast<EuphoriaLimbPersistentData*>(buffer);
 
-  NMP::netEndianSwap(persistentData->m_endEffectorlocalPose);
-  NMP::netEndianSwap(persistentData->m_rootEffectorlocalPose);
+  //NMP::netEndianSwap(persistentData->m_endEffectorlocalPose);
+  //NMP::netEndianSwap(persistentData->m_rootEffectorlocalPose);
   NMP::netEndianSwap(persistentData->m_name);
   NMP::netEndianSwap(persistentData->m_type);
   NMP::netEndianSwap(persistentData->m_rootIndex);

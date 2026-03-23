@@ -75,12 +75,76 @@ void ReachLimit::dislocate()
   NMP::endianSwap(m_distance);
 }
 
+void printboolarray(bool* vals, int count, const char* name)
+{
+    NMP_STDOUT("%s\n", name);
+    for (int i = 0; i < count; i++)
+        NMP_STDOUT(" %s\n ", vals[i] ? "true" : "false");
+    NMP_STDOUT("\n");
+}
+void printbool(bool val, const char* name)
+{
+    NMP_STDOUT("%s : %s\n", name, val ? "true" : "false");
+}
+
+void printint(int val, const char* name)
+{
+    NMP_STDOUT("%s : %d\n", name, val);
+}
+
+void printfloat(float val, const char* name)
+{
+    NMP_STDOUT("%s : %f\n", name, val);
+}
+
+void printfloatarray(float* array, int count, const char* name)
+{
+    NMP_STDOUT("%s\n", name);
+    for (int i = 0; i < count; i++)
+        NMP_STDOUT(" %f ", array[i]);
+    NMP_STDOUT("\n");
+}
+
+void printquatarray(NMP::Quat* array, int count, const char* name)
+{
+    NMP_STDOUT("%s\n", name);
+    for (int i = 0; i < count; i++)
+        NMP_STDOUT(" %f, %f, %f, %f ", array[i].x, array[i].y, array[i].z, array[i].w );
+    NMP_STDOUT("\n");
+}
+
+void printmat3x4(NMP::Matrix34 marray, const char* name)
+{
+    NMP_STDOUT("%s\n", name);
+
+        NMP::Vector3 column1 = marray.r[0];
+        NMP::Vector3 column2 = marray.r[1];
+        NMP::Vector3 column3 = marray.r[2];
+        NMP::Vector3 column4 = marray.r[3];
+
+        NMP_STDOUT(" [ %f, %f, %f ]\n ", column1.x, column1.y, column1.z);
+        NMP_STDOUT(" [ %f, %f, %f ]\n ", column2.x, column2.y, column2.z);
+        NMP_STDOUT(" [ %f, %f, %f ]\n ", column3.x, column3.y, column3.z);
+        NMP_STDOUT(" [ %f, %f, %f ]\n ", column4.x, column4.y, column4.z);
+
+    NMP_STDOUT("\n");
+}
+
+#define PRINTFLOAT(x) printfloat(x, #x)
+#define PRINTFLOATARRAY(x, count) printfloatarray(x, count, #x)
+#define PRINTINT(x) printint(x, #x)
+#define PRINTBOOL(x) printbool(x, #x)
+#define PRINTBOOLARRAY(x, count) printboolarray(x, count, #x)
+#define PRINTMAT3X4(x) printmat3x4(x, #x)
+#define PRINTQUATARRAY(x, count) printquatarray(x, count, #x)
+
 //----------------------------------------------------------------------------------------------------------------------
 // LimbDef implementation
 //----------------------------------------------------------------------------------------------------------------------
 void LimbDef::locate()
 {
   NMP::endianSwap(m_type);
+
   NMP::endianSwap(m_rootIndex);
   NMP::endianSwap(m_endIndex);
   NMP::endianSwap(m_baseIndex);
@@ -139,10 +203,59 @@ void LimbDef::locate()
   REFIX_SWAP_PTR(NMP::Quat, m_positiveSwivelPoseQuats);
 
   NMP::endianSwapArray(m_orientationWeights, m_numPartsInChain);
+
   NMP::endianSwapArray(m_positionWeights, m_numPartsInChain);
+
   NMP::endianSwapArray(m_zeroSwivelPoseQuats, m_numJointsInChain);
   NMP::endianSwapArray(m_negativeSwivelPoseQuats, m_numJointsInChain);
   NMP::endianSwapArray(m_positiveSwivelPoseQuats, m_numJointsInChain);
+
+
+
+  NMP_STDOUT("limb name : %s\n", m_name);
+  NMP_STDOUT("limb type : %d\n", m_type);
+
+  PRINTINT(m_rootIndex);
+  PRINTINT(m_endIndex);
+  PRINTINT(m_baseIndex);
+  PRINTINT(m_midIndex);
+  PRINTINT(m_numPartsBeforeBase);
+  PRINTBOOL(m_isRootLimb);
+
+
+  PRINTMAT3X4(m_endOffset);
+  PRINTMAT3X4(m_rootOffset);
+
+  PRINTMAT3X4(m_defaultPoseEndRelativeToRoot);
+  PRINTFLOATARRAY(m_defaultPoseEndQuatRelativeToRoot.getPtr(), 4);
+  PRINTFLOAT(m_defaultPoseLimbLength);
+  PRINTMAT3X4(m_zeroPoseEndRelativeToRoot);
+
+  PRINTFLOAT(m_hamstring.m_stiffness);
+  PRINTFLOAT(m_hamstring.m_thresholdAngle);
+  PRINTBOOL(m_hamstring.m_enabled);
+  PRINTINT(m_numJointsInChain);
+
+  for (uint32_t i = 0; i < m_numJointsInChain; ++i)
+      PRINTINT(m_physicsRigJointIndices[i]);
+
+  for (uint32_t i = 0; i < m_totalNumParts; ++i)
+      PRINTINT(m_physicsRigPartIndices[i]);
+
+  PRINTINT(m_numPartsInChain);
+
+  PRINTFLOAT(m_guidePoseWeight);
+  PRINTFLOAT(m_neutralPoseWeight);
+
+  PRINTBOOLARRAY(m_activeGuidePoseJoints, m_numJointsInChain);
+
+  PRINTFLOATARRAY(m_orientationWeights, m_numPartsInChain);
+
+  PRINTFLOATARRAY(m_positionWeights, m_numPartsInChain);
+
+  PRINTQUATARRAY(m_zeroSwivelPoseQuats, m_numJointsInChain);
+  PRINTQUATARRAY(m_negativeSwivelPoseQuats, m_numJointsInChain);
+  PRINTQUATARRAY(m_positiveSwivelPoseQuats, m_numJointsInChain);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

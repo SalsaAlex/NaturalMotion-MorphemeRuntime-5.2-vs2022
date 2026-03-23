@@ -1,0 +1,74 @@
+LimbInterface : A Limb controller. provides minimal interface needed to control ( VM (virtual muscle) + IK ) limbs
+
+  /// return the name of the limb
+  virtual char* getName() const = 0;
+
+  -Access to ik solver, body, rig, parts/joints etc
+
+		LimbIK& getIK() : Returns the limb's ik solver
+
+		Body* getBody() : Returns a pointer to the body this limb is part of
+
+		MR::PhysicsRig* getPhysicsRig() : Returns a pointer to the physics rig this limb is part of
+
+		ER::LimbDef* getDefinition() : Returns a pointer to the definition of this limb
+
+		uint32_t getNumPartsInChain() : Returns the number of parts in the limb's IK chain
+
+		uint32_t getTotalNumParts() : Returns the number of parts in the limb, the sum of chain parts and parts beyond the end effector
+
+		uint32_t getNumJointsInChain() : Returns the number of joints in the IK chain
+
+		uint32_t getRootIndex() : index into the physics rig list of parts
+
+		uint32_t getEndIndex() : index into the physics rig list of parts
+		/// index into the physics rig list of parts
+		uint32_t getBaseIndex() const = 0;
+		/// returns an physics rig part index if set in the limb definition, or PART_INDEX_UNSPECIFIED otherwise
+		uint32_t getMidIndex() const = 0;
+		uint32_t getNumPartsBeforeBase() const = 0;
+		/// Returns the physics rig index given the limb index
+		int getPhysicsRigPartIndex(int limbPartIndex) const = 0;
+		/// Returns the physics rig index given the limb index
+		int getPhysicsRigJointIndex(int limbJointIndex) const = 0;
+		/// Returns a pointer to the indexed part
+		MR::PhysicsRig::Part* getPart(int limbPartIndex) = 0;
+		/// Returns a pointer to the indexed joint
+		const MR::PhysicsRig::Part* getPart(int limbPartIndex) const = 0;
+		/// Returns a pointer to the indexed joint
+		MR::PhysicsRig::Joint* getJoint(int physRigJointIndex) = 0;
+		
+		/// The spine is the root limb in that it contains the root parts of all other limbs
+		bool getIsRootLimb() const = 0;
+		ER::LimbTypeEnum::Type getType() const = 0;
+
+  // Accessors to COM state data
+  //
+  /// Access to limb COM position
+  virtual const NMP::Vector3&  getCentreOfMass()        const = 0;
+  /// Access to limb COM velocity
+  virtual const NMP::Vector3&  getCOMVelocity()         const = 0;
+  /// Access to limb COM angular velocity
+  virtual const NMP::Vector3&  getCOMAngularVelocity()  const = 0;
+  /// Access to total mass of the limb
+  virtual float               getMass()                 const = 0;
+
+  /// Copies the guide-pose joint angles from the IK into an array of twist/swing
+  /// caller must ensure that angles is large enough
+  virtual void getLatestJointAngles(NMP::Vector3* angles) const = 0;
+  virtual void setLatestJointAngles(const NMP::Vector3* angles) = 0;
+  /// Quat replacement for getLatestJointAngles()
+  virtual void getLatestJointQuats(NMP::Quat* quats) const = 0;
+  /// Quat replacement for setLatestJointAngles()
+  virtual void setLatestJointQuats(const NMP::Quat* quats) = 0;
+
+  /// Returns true if a left arm or leg
+  virtual bool isLeftLimb() const = 0;
+  /// Returns true if a right arm or leg
+  virtual bool isRightLimb() const = 0;
+
+  // Access to flags indexed by constants defined in enum above
+  virtual bool getDebugDrawFlag(DebugDrawId id) const = 0;
+  virtual void setDebugDrawFlag(DebugDrawId id, bool flag) = 0;
+  virtual bool getFeatureFlag(FeatureId id) const = 0;
+  virtual void setFeatureFlag(FeatureId id, bool flag) = 0;

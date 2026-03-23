@@ -17,6 +17,8 @@
 
 #pragma warning(disable: 4127)
 
+//salsatobias: seems like from 3.6.2 to 5.2, CoupledLimit changed to Hamstring.
+
 //----------------------------------------------------------------------------------------------------------------------
 namespace ME
 {
@@ -37,7 +39,7 @@ HamstringExportXML::HamstringExportXML(XMLElement* element) :
 
 //----------------------------------------------------------------------------------------------------------------------
 HamstringExportXML::HamstringExportXML() :
-  m_xmlElement(new XMLElement("Hamstring"))
+  m_xmlElement(new XMLElement("CoupledLimit"/*"Hamstring"*/))
 {
   m_xmlAttributeBlock = new AttributeBlockXML();
   m_xmlElement->LinkEndChild(m_xmlAttributeBlock->getXMLElement());
@@ -97,7 +99,7 @@ AttributeBlockExport* LimbDefExportXML::getAttributeBlock()
 //----------------------------------------------------------------------------------------------------------------------
 LimbDefExportXML::LimbDefExportXML(XMLElement* element) : m_xmlElement(element)
 {
-  XMLElement* hamstringElement = m_xmlElement->findChild("Hamstring");
+  XMLElement* hamstringElement = m_xmlElement->findChild("CoupledLimit"/*"Hamstring"*/);
   NMP_ASSERT(hamstringElement != 0);
   if (hamstringElement != 0)
   {

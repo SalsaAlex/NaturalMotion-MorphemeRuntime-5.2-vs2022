@@ -147,6 +147,8 @@ public:
   // Accessors
   CharacterControllerPhysX3* getCharacterController() { return static_cast<CharacterControllerPhysX3*>(m_net->getCharacterController()); }
   
+  ER::Character* GetEuphoriaCharacter() { return m_euphoriaCharacter; }
+
 protected:
 
   CharacterEuphoria() {};

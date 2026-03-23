@@ -501,7 +501,7 @@ void PhysicsRigPhysX3Articulation::PartPhysX3Articulation::createLink(
     shape->setRestOffset(shapeDesc->restOffset);
     shape->setSimulationFilterData(shapeDesc->simulationFilterData);
     shape->setQueryFilterData(shapeDesc->queryFilterData);
-    shape->setFlags(shapeDesc->flags);
+    shape->setFlags(shapeDesc->flags | physx::PxShapeFlag::eVISUALIZATION);
     shape->userData = 0; // Original value was just used to store the density
   }
 

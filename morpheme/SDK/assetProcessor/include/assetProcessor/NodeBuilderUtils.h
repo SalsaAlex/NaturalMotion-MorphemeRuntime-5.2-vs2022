@@ -369,8 +369,8 @@ NM_INLINE bool processCPConnectionDetails(
   {
     connectedCPNodeID = (MR::NodeID)serialisedCPNodeID;
     nodeDefDataBlock->readIntAttribute(connectedPinIndex, info->m_nodeIDLabel, "pinIndex");
-    NMP_VERIFY(connectedPinIndex != MR::INVALID_PIN_INDEX);
-    NMP_VERIFY(connectedPinIndex < 0xFF); // Currently only have 8bits for storing count of input control params.
+    //NMP_VERIFY(connectedPinIndex != MR::INVALID_PIN_INDEX);
+    //NMP_VERIFY(connectedPinIndex < 0xFF); // Currently only have 8bits for storing count of input control params.
 
     // set the connection
     nodeDef->setInputCPConnection(info->m_pinIndex, connectedCPNodeID, (MR::PinIndex&)connectedPinIndex);

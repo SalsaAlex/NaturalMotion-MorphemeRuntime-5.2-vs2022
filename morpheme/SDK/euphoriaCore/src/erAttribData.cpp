@@ -324,11 +324,13 @@ void AttribDataBehaviourParameters::relocate(MR::AttribData* target, void* locat
   format = MR::AttribDataFloatArray::getMemoryRequirements(result->m_floats->m_numValues);
   offset += NMP::Memory::align(format.size, MR_ATTRIB_DATA_ALIGNMENT);
 
-  //MR::AttribDataUInt64Array* uint64s = (MR::AttribDataUInt64Array*)(((size_t)result) + offset);
-  //result->m_uint64s = (MR::AttribDataUInt64Array*)(((size_t)location) + offset);
-  //MR::AttribDataUInt64Array::relocate(uint64s, result->m_uint64s);
-  //format = MR::AttribDataUInt64Array::getMemoryRequirements(result->m_uint64s->m_numValues);
-  //offset += NMP::Memory::align(format.size, MR_ATTRIB_DATA_ALIGNMENT);
+#ifndef MORPHEME_CONNECT_362
+  MR::AttribDataUInt64Array* uint64s = (MR::AttribDataUInt64Array*)(((size_t)result) + offset);
+  result->m_uint64s = (MR::AttribDataUInt64Array*)(((size_t)location) + offset);
+  MR::AttribDataUInt64Array::relocate(uint64s, result->m_uint64s);
+  format = MR::AttribDataUInt64Array::getMemoryRequirements(result->m_uint64s->m_numValues);
+  offset += NMP::Memory::align(format.size, MR_ATTRIB_DATA_ALIGNMENT);
+#endif
 
   MR::AttribDataIntArray* controlParameterInputsTypes = (MR::AttribDataIntArray*)(((size_t)result) + offset);
   result->m_controlParameterInputsTypes = (MR::AttribDataIntArray*)(((size_t)location) + offset);
@@ -393,7 +395,9 @@ NMP::Memory::Format AttribDataBehaviourParameters::getMemoryRequirements(
 
   result += MR::AttribDataIntArray::getMemoryRequirements(numInts);
   result += MR::AttribDataFloatArray::getMemoryRequirements(numFloats);
-  //result += MR::AttribDataUInt64Array::getMemoryRequirements(numUint64s);
+#ifndef MORPHEME_CONNECT_362
+  result += MR::AttribDataUInt64Array::getMemoryRequirements(numUint64s);
+#endif
 
   result += MR::AttribDataIntArray::getMemoryRequirements(numControlParameterInputs);  // types
   result += MR::AttribDataIntArray::getMemoryRequirements(numControlParameterOutputs); // types
@@ -429,7 +433,9 @@ AttribDataBehaviourParameters* AttribDataBehaviourParameters::init(
 
   result->m_ints   = MR::AttribDataIntArray::init(resource, numInts);
   result->m_floats = MR::AttribDataFloatArray::init(resource, numFloats);
-  //result->m_uint64s = MR::AttribDataUInt64Array::init(resource, numUInt64s);
+#ifndef MORPHEME_CONNECT_362
+  result->m_uint64s = MR::AttribDataUInt64Array::init(resource, numUInt64s);
+#endif
 
   result->m_numInputCPInts = numInputCPInts;
   result->m_numInputCPFloats = numInputCPFloats;
@@ -488,7 +494,9 @@ NMP::Memory::Format AttribDataBehaviourState::getMemoryRequirements(
 
   result += MR::AttribDataIntArray::getMemoryRequirements(numInts);
   result += MR::AttribDataFloatArray::getMemoryRequirements(numFloats);
-  //result += MR::AttribDataUInt64Array::getMemoryRequirements(numUInt64s);
+#ifndef MORPHEME_CONNECT_362
+  result += MR::AttribDataUInt64Array::getMemoryRequirements(numUInt64s);
+#endif
   result += MR::AttribDataFloatArray::getMemoryRequirements(numVector3s * 4);
   // Make sure size is a multiple of the alignment requirement.
   result.size = NMP::Memory::align(result.size, MR_ATTRIB_DATA_ALIGNMENT);

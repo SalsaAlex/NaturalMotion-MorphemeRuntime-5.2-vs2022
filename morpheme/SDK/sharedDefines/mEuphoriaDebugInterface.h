@@ -159,12 +159,12 @@ enum EuphoriaLimbSide
 //----------------------------------------------------------------------------------------------------------------------
 struct EuphoriaLimbPersistentData
 {
-  NMP::Matrix34 m_endEffectorlocalPose;
-  NMP::Matrix34 m_rootEffectorlocalPose;
+  //NMP::Matrix34 m_endEffectorlocalPose;
+  //NMP::Matrix34 m_rootEffectorlocalPose;
   MR::StringToken m_name;
 
   uint32_t m_type;
-  uint32_t m_limbSide;
+  //uint32_t m_limbSide;
   uint32_t m_rootIndex;
   uint32_t m_endIndex; 
   uint32_t m_baseIndex;

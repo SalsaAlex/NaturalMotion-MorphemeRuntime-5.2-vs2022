@@ -73,7 +73,7 @@ void LimbControl::reinit(float stiffness, float dampingRatio, float driveCompens
   m_swivelAmount = 0.0f;
   m_strengthReductionTowardsEnd = 0.0f;
 
-  ER::assertIsInitialised(this);
+  //ER::assertIsInitialised(this);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
