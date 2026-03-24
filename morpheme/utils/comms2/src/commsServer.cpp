@@ -683,7 +683,7 @@ void CommsServer::identify(IdentificationReplyPacket& identityPacket) const
   identityPacket.m_playbackControlSupportFlags = IdentificationReplyPacket::PLAYBACKCTRL_NO_SUPPORT;
   identityPacket.m_sceneObjectsSupportFlags = IdentificationReplyPacket::SCENEOBJECTS_NO_SUPPORT;
 
-  identityPacket.m_maxInstances = 1024;
+  identityPacket.m_maxInstances = 32; //1024 in 5.2
   identityPacket.m_maxNetworkDefs = 32;
 
   identityPacket.m_rttID[0] = 'M';

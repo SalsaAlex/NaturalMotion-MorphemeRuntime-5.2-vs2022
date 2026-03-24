@@ -18,9 +18,11 @@
 
 //morpheme 3.6.2
 #define BASEDIR_CMD "-basedir"
+#define OUTPUTDIR_CMD "-outputdir"
 
 //morpheme >3.6.2
 //#define BASEDIR_CMD "-baseDir" //morpheme >3.6.2
+//#define OUTPUTDIR_CMD "-outputDir" //morpheme >3.6.2
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -102,7 +104,7 @@ void ACOptions::init(int argc, const char* const* argv)
 
   m_proc->registerStringOption(BASEDIR_CMD);                 // Where to load assets from.
   m_proc->registerStringOption("-cacheDir");                // Where cached files and information are stored (mostly animation files).
-  m_proc->registerStringOption("-outputDir");               // Where to store the runtime binary output files.
+  m_proc->registerStringOption(OUTPUTDIR_CMD);               // Where to store the runtime binary output files.
   m_proc->registerStringOption("-outputFileName");          // Name of a bundled output file which the processed assets will be written to.
                                                             //  If not specified the name of the first input asset will be used.
   m_proc->registerStringOption("-precomputeNode");
@@ -164,7 +166,7 @@ void ACOptions::init(int argc, const char* const* argv)
   m_proc->getOptionValue("-failureCode", &m_failureCode);
 
   m_proc->getOptionValue(BASEDIR_CMD, &m_baseDir);
-  m_proc->getOptionValue("-outputDir", &m_outputDir);
+  m_proc->getOptionValue(OUTPUTDIR_CMD, &m_outputDir);
   m_proc->getOptionValue("-cacheDir", &m_cacheDir);
   m_proc->getOptionValue("-outputFileName", &m_outputFilename);
   m_proc->getOptionValue("-updateAnimInfo", &m_animInfoToUpdate);
@@ -249,7 +251,7 @@ bool ACOptions::validate() const
   {
     // These parameters are required if not just updating anim info
     NMP_VERIFY_MSG(getBaseDir(), "Missing command line argument: %s", BASEDIR_CMD);
-    NMP_VERIFY_MSG(getOutputDir(), "Missing command line argument: %s", "-outputDir");
+    NMP_VERIFY_MSG(getOutputDir(), "Missing command line argument: %s", OUTPUTDIR_CMD);
     return false;
   }
   return true;
