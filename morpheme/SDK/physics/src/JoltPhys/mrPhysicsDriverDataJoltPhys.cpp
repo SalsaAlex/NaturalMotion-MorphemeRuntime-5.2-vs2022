@@ -70,7 +70,7 @@ bool locateDriverDataJoltPhys(PhysicsRigDef* physicsRigDef)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-bool dislocateDriverDataPhysX3(PhysicsRigDef* physicsRigDef)
+bool dislocateDriverDataJoltPhys(PhysicsRigDef* physicsRigDef)
 {
   for (uint32_t i = 0; i != physicsRigDef->m_numMaterials; ++i)
   {

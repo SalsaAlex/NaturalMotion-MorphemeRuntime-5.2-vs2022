@@ -58,16 +58,16 @@ public:
   ///  when contacting objects.
   class ControllerHitReport* m_hitReport;
 
-  /// This is the PhysX character controller itself.  This object is used by the physics engine during the character
+  /// This is the Jolt character controller itself.  This object is used by the physics engine during the character
   ///  controller update step to simulate the character moving through the physics world.
-  physx::PxController*   m_pxController;
+  JPH::Character*   m_pxController;
 
-  /// An additional actor that is constrained to the kinematic one that is used for recovering from
+  /// An additional body that is constrained to the kinematic one that is used for recovering from
   /// penetration, and can also be used for pushing other objects. 
-  physx::PxRigidDynamic* m_pxRigidDynamicActor;
+  JPH::Body* m_pxRigidDynamicBody;
 
-  /// Joint used to constrain the dynamic actor to the kinematic one
-  physx::PxD6Joint*      m_pxDynamicJoint;
+  /// Joint used to constrain the dynamic body to the kinematic one
+  JPH::SixDOFConstraint*      m_pxDynamicJoint;
 
   /// The physics rig owned by this record - note that it may or may not be assigned to the network
   /// (for testing).
@@ -195,7 +195,7 @@ public:
     MR::PhysicsRig*    physicalBody);
 
   /// Get the PhysX actor associated with controller.
-  physx::PxActor* getCharacterControllerActor(MCOMMS::InstanceID instanceID);
+  JPH::Body* getCharacterControllerBody(MCOMMS::InstanceID instanceID);
 
   /// Get whether controller is on ground, given network instance ID.
   bool getOnGround(MCOMMS::InstanceID instanceID) const;
@@ -285,7 +285,7 @@ protected:
 
   class DefaultPhysicsMgr*    m_physicsManager;
   RuntimeTargetContext*       const m_context;
-  physx::PxControllerManager* m_manager;
+  //physx::PxControllerManager* m_manager;
   JPH::PhysicsMaterial*       m_controllerMaterial;
   Records                     m_ccRecords;
   

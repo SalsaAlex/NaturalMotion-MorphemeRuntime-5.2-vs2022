@@ -17,7 +17,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 #include "morpheme/mrManager.h"
 #include "morpheme/mrCoreTaskIDs.h"
-#include "mrPhysicsScenePhysX3.h"
+#include "physics/JoltPhys/mrPhysicsSceneJoltPhys.h"
 #include "euphoria/Nodes/erNodeBehaviour.h"
 #include "euphoria/Nodes/erNodeLimbInfo.h"
 #include "euphoria/Nodes/erNodeBehaviourGrouper.h"
@@ -255,7 +255,7 @@ NM_INLINE void initEuphoria(uint32_t numDispatchers, MR::Dispatcher** dispatcher
   for (uint32_t i = 0; i < numDispatchers; ++i)
     ER::registerNMBehaviourTasks(dispatchers[i]);
 
-  MR::PhysXPerShapeData::initialiseMap();
+  MR::JoltPhysPerShapeData::initialiseMap();
   ER::EuphoriaRigPartUserData::initialiseMap();
 
   // Accumulate any semantic registration requirements in the manager.
@@ -274,7 +274,7 @@ NM_INLINE void finaliseInitEuphoria()
 /// \brief Destroy static structures used by euphoria
 NM_INLINE void destroyEuphoria()
 {
-  MR::PhysXPerShapeData::destroyMap();
+  MR::JoltPhysPerShapeData::destroyMap();
   ER::EuphoriaRigPartUserData::destroyMap();
 }
 

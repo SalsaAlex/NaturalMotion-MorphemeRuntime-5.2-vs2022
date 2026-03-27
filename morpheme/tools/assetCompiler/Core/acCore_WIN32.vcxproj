@@ -107,6 +107,7 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_LE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMNumerics_tool_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_LE32_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\qhull_tool_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD_debug.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL_debug.lib";%(AdditionalDependencies)</AdditionalDependencies>
@@ -135,6 +136,7 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_LE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMNumerics_tool.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_LE32.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\qhull_tool.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD.lib";"..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL.lib";%(AdditionalDependencies)</AdditionalDependencies>

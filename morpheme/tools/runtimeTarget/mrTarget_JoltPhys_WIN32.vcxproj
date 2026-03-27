@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>mrTarget_JoltPhys</ProjectName>
+    <ProjectGuid>{59436FB4-280D-4BDD-DC89-E3D5DEA07E1E}</ProjectGuid>
+    <RootNamespace>mrTarget_JoltPhys</RootNamespace>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>mrTarget_JoltPhys_debug</TargetName>
+    <IntDir>..\..\..\obj\win32\vs$(VisualStudioVersion)\mrTarget_JoltPhys\debug\</IntDir>
+    <OutDir>..\..\..\bin\win32\vs$(VisualStudioVersion)\</OutDir>
+    <LinkIncremental>false</LinkIncremental>
+    <IgnoreImportLibrary>true</IgnoreImportLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>mrTarget_JoltPhys</TargetName>
+    <IntDir>..\..\..\obj\win32\vs$(VisualStudioVersion)\mrTarget_JoltPhys\release\</IntDir>
+    <OutDir>..\..\..\bin\win32\vs$(VisualStudioVersion)\</OutDir>
+    <LinkIncremental>false</LinkIncremental>
+    <IgnoreImportLibrary>true</IgnoreImportLibrary>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>Physics;Physics\JoltPhys;..\..\SDK\physics\include\Physics\JoltPhys;..\..\utils\physicsComms2\include;..\..\SDK\physics\include;..\..\utils\comms2\include;..\..\utils\simpleBundle\include;..\..\SDK\core\include;..\..\SDK;..\..\..\common\NMRuntimeUtils\include;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\external\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAs>Default</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <MinimalRebuild>false</MinimalRebuild>
+      <PreprocessorDefinitions>NOMINMAX;WIN32;_CONSOLE;_DEBUG;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_USE_CPU_COMPUTE;JPH_DEBUG_RENDERER;JPH_PROFILE_ENABLED;JPH_OBJECT_STREAM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsDriver_JoltPhys_debug.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelAABBDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelClothDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelDynamicsDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelParticlesDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3CharacterKinematicDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3CommonDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3CookingDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3DEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3ExtensionsDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3VehicleDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\SceneQueryDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\SimulationControllerDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\PxFoundationDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PxPvdSDKDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PxTaskDEBUG_x86.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsComms2_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsCore_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeComms2_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeSimpleBundle_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_debug.lib";"..\..\..\external\lib\Jolt\x86\debug\Jolt.lib";WS2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
+      <ManifestFile>$(IntDir)intermediate.manifest</ManifestFile>
+      <ProgramDatabaseFile>$(OutDir)mrTarget_JoltPhys_debug.pdb</ProgramDatabaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>Physics;Physics\JoltPhys;..\..\SDK\physics\include\Physics\JoltPhys;..\..\utils\physicsComms2\include;..\..\SDK\physics\include;..\..\utils\comms2\include;..\..\utils\simpleBundle\include;..\..\SDK\core\include;..\..\SDK;..\..\..\common\NMRuntimeUtils\include;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\external\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAs>Default</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <MinimalRebuild>false</MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>NDEBUG;NOMINMAX;WIN32;_CONSOLE;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_USE_CPU_COMPUTE;JPH_DEBUG_RENDERER;JPH_PROFILE_ENABLED;JPH_OBJECT_STREAM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsDriver_JoltPhys.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsComms2.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsCore.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeComms2.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeSimpleBundle.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform.lib";"..\..\..\external\lib\Jolt\x86\release\Jolt.lib";WS2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ManifestFile>$(IntDir)intermediate.manifest</ManifestFile>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ProgramDatabaseFile>$(OutDir)mrTarget_JoltPhys.pdb</ProgramDatabaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="defaultAssetMgr.cpp" />
+    <ClInclude Include="defaultAssetMgr.h" />
+    <ClCompile Include="defaultConnectionManager.cpp" />
+    <ClInclude Include="defaultConnectionManager.h" />
+    <ClCompile Include="defaultDataManager.cpp" />
+    <ClInclude Include="defaultDataManager.h" />
+    <ClCompile Include="defaultNetworkManager.cpp" />
+    <ClInclude Include="defaultNetworkManager.h" />
+    <ClCompile Include="defaultPhysicsManipMgr.cpp" />
+    <ClInclude Include="defaultPhysicsManipMgr.h" />
+    <ClCompile Include="defaultSceneObjectMgr.cpp" />
+    <ClInclude Include="defaultSceneObjectMgr.h" />
+    <ClInclude Include="iControllerMgr.h" />
+    <ClInclude Include="iPhysicsMgr.h" />
+    <ClCompile Include="networkDefRecordManager.cpp" />
+    <ClInclude Include="networkDefRecordManager.h" />
+    <ClCompile Include="networkInstanceRecordManager.cpp" />
+    <ClInclude Include="networkInstanceRecordManager.h" />
+    <ClCompile Include="Physics\defaultPhysicsDataManager.cpp" />
+    <ClInclude Include="Physics\defaultPhysicsDataManager.h" />
+    <ClCompile Include="Physics\InitCommsModules.cpp" />
+    <ClInclude Include="Physics\InitCommsModules.h" />
+    <ClCompile Include="Physics\JoltPhys\defaultControllerMgr.cpp" />
+    <ClInclude Include="Physics\JoltPhys\defaultControllerMgr.h" />
+    <ClCompile Include="Physics\JoltPhys\defaultPhysicsMgr.cpp" />
+    <ClInclude Include="Physics\JoltPhys\defaultPhysicsMgr.h" />
+    <ClCompile Include="Physics\JoltPhys\memoryStream.cpp" />
+    <ClInclude Include="Physics\JoltPhys\memoryStream.h" />
+    <ClCompile Include="runtimeTarget.cpp" />
+    <ClCompile Include="runtimeTargetContext.cpp" />
+    <ClInclude Include="runtimeTargetContext.h" />
+    <ClCompile Include="runtimeTargetLogger.cpp" />
+    <ClInclude Include="runtimeTargetLogger.h" />
+    <ClCompile Include="sceneObjectRecordManager.cpp" />
+    <ClInclude Include="sceneObjectRecordManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SDK\physics\morphemePhysicsDriver_JoltPhys_WIN32.vcxproj">
+      <Project>{31DFDD31-B92A-4256-0EA9-D69C04633280}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\utils\physicsComms2\morphemePhysicsComms2_WIN32.vcxproj">
+      <Project>{875C8569-5B84-42A7-7D89-CF5336D6A09A}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SDK\physics\morphemePhysicsCore_WIN32.vcxproj">
+      <Project>{79CD03AF-41CC-469B-B0B1-DD18BDBD1643}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\utils\comms2\morphemeComms2_WIN32.vcxproj">
+      <Project>{588D0E6B-FB5F-4D2B-8B80-973FD78928A5}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\utils\simpleBundle\morphemeSimpleBundle_WIN32.vcxproj">
+      <Project>{A16C3047-7B5D-42CE-B4AA-190E025E16DC}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SDK\core\morphemeCore_WIN32.vcxproj">
+      <Project>{AC5679CC-935C-4BCF-67A4-D937C17D2BC4}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\common\NMRuntimeUtils\NMRuntimeUtils_WIN32.vcxproj">
+      <Project>{3EBBF790-FDD8-4FCC-81A8-FEA264CAD994}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\common\NMPlatform\NMPlatform_WIN32.vcxproj">
+      <Project>{A09CF394-9273-474D-4091-19EB54BF95DA}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

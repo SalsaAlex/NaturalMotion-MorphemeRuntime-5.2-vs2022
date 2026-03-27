@@ -17,28 +17,28 @@
 namespace AP
 {
 //----------------------------------------------------------------------------------------------------------------------
-  inline JP_frictioncombinemode convertExportCombineModeToJoltPhys(const char* exportCombineMode)
+inline MR::JP_frictioncombinemode convertExportCombineModeToJoltPhys(const char* exportCombineMode)
 {
   if (strcmp(exportCombineMode, "Average") == 0)
   {
-    return JP_frictioncombinemode::eAVERAGE;
+    return MR::JP_frictioncombinemode::eAVERAGE;
   }
   else if (strcmp(exportCombineMode, "Min") == 0)
   {
-    return JP_frictioncombinemode::eMIN;
+    return MR::JP_frictioncombinemode::eMIN;
   }
   else if (strcmp(exportCombineMode, "Multiply") == 0)
   {
-    return JP_frictioncombinemode::eMULTIPLY;
+    return MR::JP_frictioncombinemode::eMULTIPLY;
   }
   else if (strcmp(exportCombineMode, "Max") == 0)
   {
-    return JP_frictioncombinemode::eMAX;
+    return MR::JP_frictioncombinemode::eMAX;
   }
   else
   {
     NMP_VERIFY_FAIL("encountered unknown combine mode when creating PhysicsRigDef: %s", exportCombineMode);
-    return 0;
+    return (MR::JP_frictioncombinemode)0;
   }
 }
 
@@ -92,8 +92,8 @@ void JoltPhysDriverBuilder::initMaterialDriverData(
   driverData->m_dynamicFriction = (float)dynamicFriction;
 
   const char* frictionCombineMode = 0;
-  result = attributeBlock->getStringAttribute("frictionCombineMode", frictionCombineMode);
-  NMP_VERIFY_MSG(result, "could not find attribute 'frictionCombineMode' in exported physics data");
+  //result = attributeBlock->getStringAttribute("frictionCombineMode", frictionCombineMode);
+  //NMP_VERIFY_MSG(result, "could not find attribute 'frictionCombineMode' in exported physics data");
   driverData->m_frictionCombineMode = convertExportCombineModeToJoltPhys(frictionCombineMode);
 
   const char* restitutionCombineMode = 0;

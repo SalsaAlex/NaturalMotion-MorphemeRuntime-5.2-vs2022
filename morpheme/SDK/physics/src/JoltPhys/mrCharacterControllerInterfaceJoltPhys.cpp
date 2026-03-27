@@ -22,7 +22,7 @@ namespace MR
 //----------------------------------------------------------------------------------------------------------------------
 CharacterControllerInterfaceJoltPhys::CharacterControllerInterfaceJoltPhys()
 {
-  m_body = 0;
+  m_character = 0;
   m_physicsScene = 0;  
 }
 
@@ -38,20 +38,11 @@ bool CharacterControllerInterfaceJoltPhys::castRayIntoCollisionWorld(
 {
   NMP_ASSERT_MSG(m_physicsScene, "CharacterControllerJoltPhys must have a physics scene to perform ray casts.\n");
 
-  // Use the physics scene's ray cast function
-  return m_physicsScene->castRay(
-    start, 
-    delta, 
-    getPhysicsRig(network), 
-    this, 
-    hitDist, 
-    hitPosition, 
-    hitNormal, 
-    hitVelocity);
+  return false;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-bool CharacterControllerInterfacePhysX3::setRequestedPropertyOverride(
+bool CharacterControllerInterfaceJoltPhys::setRequestedPropertyOverride(
   CCPropertyType     propertyType,
   AttribData*        property,
   CCOverridePriority priority,
@@ -61,7 +52,7 @@ bool CharacterControllerInterfacePhysX3::setRequestedPropertyOverride(
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-const AttribData* CharacterControllerInterfacePhysX3::getRequestedPropertyOverride(
+const AttribData* CharacterControllerInterfaceJoltPhys::getRequestedPropertyOverride(
   MR::CCPropertyType propertyType,
   FrameCount         frameIndex) const
 {

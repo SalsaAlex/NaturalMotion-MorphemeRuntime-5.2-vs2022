@@ -64,6 +64,8 @@ public:
 
 private:
   /// Associated physics engine representation.
+    JPH::Character* m_character;
+    JPH::PhysicsSystem* m_physicsScene;
 
 };
 } // namespace MR

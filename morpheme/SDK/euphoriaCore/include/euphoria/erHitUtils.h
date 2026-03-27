@@ -13,7 +13,7 @@
 
 #include "euphoria/erSharedEnums.h"
 #include "NMPlatform/NMVector3.h"
-#include "Physics/PhysX3/mrPhysX3Configure.h"
+#include "Physics/JoltPhys/mrJoltPhys.h"
 
 namespace ER
 {
@@ -155,7 +155,7 @@ struct HitSelectionInfo
   bool isBodyHit();
   void endianSwap();
 
-  PhysXActor* selectedActor;           // pointer to the actor that got hit
+  JPH::Body* selectedBody;           // pointer to the body that got hit
   int32_t limbIndex;                       // for body hits: identifies limb
   int32_t partIndex;                       //                identifies part on limb
   int32_t rigPartIndex;                    //                identifies part in rig

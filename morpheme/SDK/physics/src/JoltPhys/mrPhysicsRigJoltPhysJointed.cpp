@@ -188,8 +188,8 @@ bool PhysicsRigJoltPhysJointed::term()
   {
     for (int32_t i = (int32_t) getNumJoints(); i-- != 0; )
       ((JointJoltPhysJointed*)m_joints[i])->m_joint->Release();
-    for (int32_t i = (int32_t) getNumParts(); i-- != 0; )
-      ((PartJoltPhysJointed*)m_parts[i])->m_rigidBody->Release();
+    //for (int32_t i = (int32_t) getNumParts(); i-- != 0; )
+    //  ((PartJoltPhysJointed*)m_parts[i])->m_rigidBody->Release();
   }
   m_refCount = 0;
   return true;
@@ -297,7 +297,9 @@ void PhysicsRigJoltPhysJointed::PartJoltPhysJointed::generateCachedValues()
   m_cache.collisionOn = getCollisionEnabled();
 
   m_cache.mass = 1.0 / m_rigidBody->GetMotionProperties()->GetInverseMass();
-  m_cache.COMOffsetLocal = nmJPHMat44ToNmMatrix34(m_rigidBody->getCMassLocalPose());
+  JPH::Mat44 centerofmassoffset = JPH::Mat44::sIdentity();
+  centerofmassoffset.SetTranslation(m_rigidBody->GetShape()->GetCenterOfMass());
+  m_cache.COMOffsetLocal = nmJPHMat44ToNmMatrix34(centerofmassoffset);
   m_cache.globalPose = nmJPHMat44ToNmMatrix34(currentGlobalPose);
 
   // The transforms from PhysX can be pretty bad, so orthonormalise the result.
@@ -315,75 +317,6 @@ void PhysicsRigJoltPhysJointed::PartJoltPhysJointed::generateCachedValues()
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysJointed::PartJoltPhysJointed::applyModifiedValues()
 {
-  if (m_dirtyFlags)
-  {
-    if (m_dirtyFlags & kDirty_Collision)
-    {
-      physx::PxShape *shapes[MAX_SHAPES_IN_VOLUME];
-      NMP_ASSERT(m_rigidBody->getNbShapes() <= MAX_SHAPES_IN_VOLUME);
-      physx::PxU32 numShapes = m_rigidBody->getShapes(&shapes[0], MAX_SHAPES_IN_VOLUME);
-      NMP_ASSERT(numShapes && shapes[0]);
-
-      // Assume all have the same collision enabled/disabled status. However, note that they may have
-      // different collision and query status.
-      physx::PxShapeFlags flags = shapes[0]->getFlags(); 
-
-      bool enabledSimulation = flags & physx::PxShapeFlag::eSIMULATION_SHAPE;
-      if (enabledSimulation != m_cache.collisionOn)
-      {
-        for (physx::PxU32 i = 0 ; i < numShapes ; ++i)
-        {
-          shapes[i]->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, m_cache.collisionOn);
-        }
-      }
-
-      bool enabledQuery = flags & physx::PxShapeFlag::eSCENE_QUERY_SHAPE;
-      if (enabledQuery != m_cache.collisionOn)
-      {
-        for (physx::PxU32 i = 0 ; i < numShapes ; ++i)
-        {
-          shapes[i]->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, m_cache.collisionOn);
-        }
-      }
-      // Shouldn't need to call resetFiltering here, as the docs don't indicate that it's necessary
-      // after setting the flags since the filter function uses eSUPPRESS (i.e. the filter shader will
-      // get called again if the flags change).
-    }
-
-    if (m_dirtyFlags & kDirty_BodyFlags)
-    {
-      getRigidDynamic()->setRigidBodyFlags((physx::PxRigidBodyFlags)m_cache.bodyFlags);
-    }
-
-    if (m_dirtyFlags & kDirty_GlobalPose)
-    {
-      getRigidDynamic()->setGlobalPose(nmMatrix34ToPxTransform(m_cache.globalPose));
-    }
-
-    if (m_cache.bodyFlags & (physx::PxRigidBodyFlag::eKINEMATIC))
-    {
-      //Body is kinematic.
-      if (m_dirtyFlags & kDirty_KinematicTarget)
-      {
-        getRigidDynamic()->setKinematicTarget(nmMatrix34ToPxTransform(m_cache.kinematicTarget));
-      }
-    }
-    else
-    {
-      // Body is dynamic.
-      if (m_dirtyFlags & kDirty_LinearVel)
-      {
-        m_rigidBody->SetLinearVelocity(nmVector3ToJPHVec3(m_cache.linearVel));
-      }
-
-      if (m_dirtyFlags & kDirty_AngularVel)
-      {
-        m_rigidBody->SetAngularVelocity(nmVector3ToJPHVec3(m_cache.angularVel));
-      }
-    }
-
-    m_dirtyFlags = 0;
-  }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -427,9 +360,6 @@ NMP::Matrix34 PhysicsRigJoltPhysJointed::PartJoltPhysJointed::getTransform() con
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysJointed::PartJoltPhysJointed::updateCOMPosition()
 {
-  m_cache.COMPosition = 
-      nmJPHVec3ToVector3(
-          nmMatrix34ToJPHMat44(getTransform()).transform(nmVector3ToJPHVec3(m_cache.COMOffsetLocal.translation())));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -518,13 +448,7 @@ void PhysicsRigJoltPhysJointed::PartJoltPhysJointed::enableCollision(bool enable
 //----------------------------------------------------------------------------------------------------------------------
 bool PhysicsRigJoltPhysJointed::PartJoltPhysJointed::getCollisionEnabled() const
 {
-  static const physx::PxU32 maxShapes = 1;
-  physx::PxShape *shapes[maxShapes];
-  m_rigidBody->getShapes(&shapes[0], maxShapes);
-  NMP_ASSERT(shapes[0]);
-  physx::PxShapeFlags flags = shapes[0]->getFlags(); // assume all have the same collision enabled/disabled status
-  bool enabledOnDynamic = flags & physx::PxShapeFlag::eSIMULATION_SHAPE;//getActorFlags() & NX_AF_DISABLE_COLLISION;
-  return enabledOnDynamic;
+  return true;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -757,40 +681,6 @@ void PhysicsRigJoltPhysJointed::JointJoltPhysJointed::generateCachedValues()
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysJointed::JointJoltPhysJointed::applyModifiedValues()
 {
-  if (m_dirtyFlags)
-  {
-    if (m_dirtyFlags & kDirty_DriveOrientation)
-    {
-      m_joint->SetTargetOrientationCS(nmQuatToJPHQuat(m_cache.driveOrientation));
-    }
-
-    if (m_dirtyFlags & kDirty_Limits)
-    {
-      // Note that the current api only disable/enable the limits, modifying the motions, so those are the only
-      // values that get cached. This could be extended with the swing and twist limits, if necessary.
-      for (uint32_t i=0; i<physx::PxD6Axis::eCOUNT; ++i)
-      {
-        m_joint->setMotion((physx::PxD6Axis::Enum)i, m_cache.motions[i]);
-      }
-    }
-
-    if (m_dirtyFlags & kDirty_SwingDrive)
-    {
-      m_joint->GetMotorSettings(JPH::SixDOFConstraintSettings::EAxis::RotationY) = m_cache.swingDrive;
-    }
-
-    if (m_dirtyFlags & kDirty_TwistDrive)
-    {
-      m_joint->GetMotorSettings(JPH::SixDOFConstraintSettings::EAxis::RotationX) = m_cache.twistDrive;
-    }
-    
-    if (m_dirtyFlags & kDirty_SlerpDrive)
-    {
-      m_joint->GetMotorSettings(JPH::SixDOFConstraintSettings::EAxis::RotationZ) = m_cache.slerpDrive;
-    }
-
-    m_dirtyFlags = 0;
-  }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -829,15 +719,15 @@ uint32_t PhysicsRigJoltPhysJointed::JointJoltPhysJointed::serializeTxPersistentD
 
     persistentData->m_jointType = PhysicsJointPersistentData::JOINT_TYPE_SIX_DOF;
 
-    physx::PxJointLimitCone swingLimit = m_joint->getSwingLimit();
+    //physx::PxJointLimitCone swingLimit = m_joint->getSwingLimit();
 
-    persistentData->m_swing1Limit = swingLimit.yAngle;
-    persistentData->m_swing2Limit = swingLimit.zAngle;
+    //persistentData->m_swing1Limit = swingLimit.yAngle;
+    //persistentData->m_swing2Limit = swingLimit.zAngle;
 
-    physx::PxJointAngularLimitPair twistLimit = m_joint->getTwistLimit();
+    //physx::PxJointAngularLimitPair twistLimit = m_joint->getTwistLimit();
 
-    persistentData->m_twistLimitLow = twistLimit.lower;
-    persistentData->m_twistLimitHigh = twistLimit.upper;
+    //persistentData->m_twistLimitLow = twistLimit.lower;
+    //persistentData->m_twistLimitHigh = twistLimit.upper;
     persistentData->m_nameToken = stringToken;
 
     PhysicsSixDOFJointPersistentData::endianSwap(persistentData);
@@ -871,19 +761,19 @@ void PhysicsRigJoltPhysJointed::JointJoltPhysJointed::enableLimit(bool enable)
 {
   if (enable == m_limitsEnabled)
     return;
-#ifdef DISABLE_JOINTS
-  return;
-#else
-  m_limitsEnabled = enable;
-
-  physx::PxD6Motion::Enum motion = enable ? physx::PxD6Motion::eLIMITED : physx::PxD6Motion::eFREE;
-
-  m_cache.motions[physx::PxD6Axis::eSWING1] = motion;
-  m_cache.motions[physx::PxD6Axis::eSWING2] = motion;
-  m_cache.motions[physx::PxD6Axis::eTWIST] = motion;
-
-  m_dirtyFlags |= kDirty_Limits;
-#endif
+//#ifdef DISABLE_JOINTS
+//  return;
+//#else
+//  m_limitsEnabled = enable;
+//
+//  physx::PxD6Motion::Enum motion = enable ? physx::PxD6Motion::eLIMITED : physx::PxD6Motion::eFREE;
+//
+//  m_cache.motions[physx::PxD6Axis::eSWING1] = motion;
+//  m_cache.motions[physx::PxD6Axis::eSWING2] = motion;
+//  m_cache.motions[physx::PxD6Axis::eTWIST] = motion;
+//
+//  m_dirtyFlags |= kDirty_Limits;
+//#endif
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -896,12 +786,12 @@ void PhysicsRigJoltPhysJointed::JointJoltPhysJointed::writeLimits()
   float twistHigh = NMP::clampValue(m_modifiableLimits.getTwistLimitHigh(), -NM_PI_OVER_TWO , NM_PI);
 
   // Optimise this with MORPH-16668
-  physx::PxJointLimitCone swingLimit(swing1, swing2, m_def->m_hardLimits.getSwingLimitContactDistance());
-  physx::PxJointAngularLimitPair twistLimit(twistLow, twistHigh, m_def->m_hardLimits.getTwistLimitContactDistance());
+  //physx::PxJointLimitCone swingLimit(swing1, swing2, m_def->m_hardLimits.getSwingLimitContactDistance());
+  //physx::PxJointAngularLimitPair twistLimit(twistLow, twistHigh, m_def->m_hardLimits.getTwistLimitContactDistance());
 
-  m_joint->SetRotationLimits
-  m_joint->setSwingLimit(swingLimit);
-  m_joint->setTwistLimit(twistLimit);
+  //m_joint->SetRotationLimits
+  //m_joint->setSwingLimit(swingLimit);
+  //m_joint->setTwistLimit(twistLimit);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

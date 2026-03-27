@@ -20,9 +20,9 @@
 // no more than this many will be supported by the physics engine
 #define MAX_NUM_LINKS 64
 
-namespace physx
+namespace JPH
 {
-class PxActor;
+    class Body;
 }
 
 namespace NMP
@@ -190,10 +190,10 @@ public:
   /// Returns the total gravity
   NMP::Vector3 getTotalGravity() const;
 
-  // If the actor is associated with a part of the body returns the corresponding limb/part indices
+  // If the body is associated with a part of the body returns the corresponding limb/part indices
   // otherwise returns false, and indices == -1
-  LimbTypeEnum::Type getActorLimbPartIndex(const physx::PxActor* actor, int& limbRigIndex, int& partLimbIndex) const;
-  LimbTypeEnum::Type getKinematicActorLimbPartIndex(const physx::PxActor* actor, int& limbRigIndex, int& partLimbIndex) const;
+  LimbTypeEnum::Type getBodyLimbPartIndex(const JPH::Body* body, int& limbRigIndex, int& partLimbIndex) const;
+  LimbTypeEnum::Type getKinematicBodyLimbPartIndex(const JPH::Body* body, int& limbRigIndex, int& partLimbIndex) const;
   // Retrieve the Part from a given limb and part index
   const MR::PhysicsRig::Part* getPartFromLimbPartIndex(const int limbRigIndex, const int partLimbIndex)const ;
 

@@ -96,7 +96,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Target LE32 Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\utils\simpleBundle\include;Core;Core\include\core;..\..\SDK\assetProcessor\include;..\..\SDK\core\include;..\..\SDK;..\..\..\common\NMRuntimeUtils\include;..\..\SDK\export\include;..\..\..\common\tinyxml;..\..\..\common\NMNumerics\include;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\common\XMD\include;..\..\..\common\NMTL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\utils\simpleBundle\include;Core;Core\include\core;..\..\SDK\assetProcessor\include;..\..\SDK\core\include;..\..\SDK;..\..\..\common\NMRuntimeUtils\include;..\..\SDK\export\include;..\..\..\common\tinyxml;..\..\..\common\NMNumerics\include;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\common\XMD\include;..\..\..\common\NMTL\include;..\..\..\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>Default</CompileAs>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -107,6 +107,7 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeSimpleBundle_target_LE32_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\acCore_target_LE32_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE32_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_LE32_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE32_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMNumerics_tool_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_LE32_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL_debug.lib";shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -125,7 +126,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Target LE32 Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\utils\simpleBundle\include;Core;Core\include\core;..\..\SDK\assetProcessor\include;..\..\SDK\core\include;..\..\SDK;..\..\..\common\NMRuntimeUtils\include;..\..\SDK\export\include;..\..\..\common\tinyxml;..\..\..\common\NMNumerics\include;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\common\XMD\include;..\..\..\common\NMTL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\SDK\physics\include\physics\JoltPhys\;..\..\utils\simpleBundle\include;Core;Core\include\core;..\..\SDK\assetProcessor\include;..\..\SDK\core\include;..\..\SDK;..\..\..\common\NMRuntimeUtils\include;..\..\SDK\export\include;..\..\..\common\tinyxml;..\..\..\common\NMNumerics\include;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\common\XMD\include;..\..\..\common\NMTL\include;..\..\..\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>Default</CompileAs>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Async</ExceptionHandling>
@@ -138,6 +139,7 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeSimpleBundle_target_LE32.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\acCore_target_LE32.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE32.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_LE32.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE32.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMNumerics_tool.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_LE32.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL.lib";shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -169,6 +171,7 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeSimpleBundle_target_BE32_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\acCore_target_BE32_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_BE32_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_BE32_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_BE32_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMNumerics_tool_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_BE32_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL_debug.lib";shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -200,6 +203,7 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeSimpleBundle_target_BE32.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\acCore_target_BE32.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_BE32.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_BE32.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_BE32.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMNumerics_tool.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_BE32.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL.lib";shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>

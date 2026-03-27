@@ -6,11 +6,13 @@
     <Filter Include="src" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\JoltPhys\acPluginJoltPhys.h">
-      <Filter>include\JoltPhys</Filter>
-    </ClInclude>
     <ClCompile Include="src\acPluginJoltPhys.cpp">
       <Filter>src</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\JoltPhys\acPluginJoltPhys.h">
+      <Filter>include\JoltPhys</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

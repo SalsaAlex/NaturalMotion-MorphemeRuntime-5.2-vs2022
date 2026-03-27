@@ -64,71 +64,70 @@ static const float DYNAMIC_CONTROLLER_RADIUS_SCALE = 1.1f;
 //----------------------------------------------------------------------------------------------------------------------
 // Note that all the different shapes may have different collision and query status.
 static void enableControllerCollision(
-  physx::PxController*   controller, 
-  physx::PxRigidDynamic* dynamicActor,
-  bool                   enable)
+  JPH::Character* character, 
+  JPH::Body*      dynamicBody,
+  const JPH::BodyLockInterface& interface,
+  bool            enable)
 {
-  physx::PxRigidDynamic *controllerActor = controller->getActor();
+  JPH::Body* controllerBody = interface.TryGetBody(character->GetBodyID());
 
-  // Set flags on the controller actor shapes
-  NMP_ASSERT(controllerActor);
-  physx::PxShape *controllerShape = 0;
-  controllerActor->getShapes(&controllerShape, 1);
-
-  physx::PxShapeFlags flags = controllerShape->getFlags(); 
-  bool simEnabled = flags & physx::PxShapeFlag::eSIMULATION_SHAPE;
-  if (simEnabled != enable)
-  {
-    controllerShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, enable);
-  }
-  bool queryEnabled = flags & physx::PxShapeFlag::eSCENE_QUERY_SHAPE;
-  if (queryEnabled != enable)
-  {
-    controllerShape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, enable);
-  }
-  // CC movement uses its own filter system for collision with other CCs that is based on a bitmask
-  // between word3<<1 and the activeGroups. The filter function passed into move only applies to
-  // collision with other objects.
-  physx::PxFilterData filterData = controllerShape->getSimulationFilterData();
-  filterData.word3 = enable ? 1 : 0;
-  controllerShape->setSimulationFilterData(filterData);
-
-  if (dynamicActor)
-  {
-    // Set flags on the dynamic actor shapes (which doesn't engage in queries)
-    physx::PxShape *dynamicActorShape = 0;
-    dynamicActor->getShapes(&dynamicActorShape, 1);
-
-    flags = dynamicActorShape->getFlags(); 
-    bool dynamicActorEnabled = flags & physx::PxShapeFlag::eSIMULATION_SHAPE;
-    if (dynamicActorEnabled != enable)
-    {
-      dynamicActorShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, enable);
-    }
-  }
+  // Set flags on the controller body shapes
+  NMP_ASSERT(controllerBody);
+  //physx::PxShape *controllerShape = 0;
+  //controllerActor->getShapes(&controllerShape, 1);
+  //
+  //physx::PxShapeFlags flags = controllerShape->getFlags(); 
+  //bool simEnabled = flags & physx::PxShapeFlag::eSIMULATION_SHAPE;
+  //if (simEnabled != enable)
+  //{
+  //  controllerShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, enable);
+  //}
+  //bool queryEnabled = flags & physx::PxShapeFlag::eSCENE_QUERY_SHAPE;
+  //if (queryEnabled != enable)
+  //{
+  //  controllerShape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, enable);
+  //}
+  //// CC movement uses its own filter system for collision with other CCs that is based on a bitmask
+  //// between word3<<1 and the activeGroups. The filter function passed into move only applies to
+  //// collision with other objects.
+  //physx::PxFilterData filterData = controllerShape->getSimulationFilterData();
+  //filterData.word3 = enable ? 1 : 0;
+  //controllerShape->setSimulationFilterData(filterData);
+  //
+  //if (dynamicActor)
+  //{
+  //  // Set flags on the dynamic actor shapes (which doesn't engage in queries)
+  //  physx::PxShape *dynamicActorShape = 0;
+  //  dynamicActor->getShapes(&dynamicActorShape, 1);
+  //
+  //  flags = dynamicActorShape->getFlags(); 
+  //  bool dynamicActorEnabled = flags & physx::PxShapeFlag::eSIMULATION_SHAPE;
+  //  if (dynamicActorEnabled != enable)
+  //  {
+  //    dynamicActorShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, enable);
+  //  }
+  //}
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-static void setControllerPosition(
-  physx::PxController*   controller, 
-  physx::PxRigidDynamic* dynamicActor,
+static void setCharacterPosition(
+  JPH::Character*        character,
+  JPH::Body*             dynamicBody,
+  JPH::BodyInterface& interface,
   const NMP::Vector3&    p)
 {
-  controller->setPosition(MR::nmVector3ToPxExtendedVec3(p));
+  character->SetPosition(MR::nmVector3ToJPHVec3(p));
 
   // Note that setPosition doesn't actually set the actor position. Set it explicitly, because it's
   // going to get read and used. It is also possible that if this isn't done then it is subsequently
   // swept to the new position (should check this).
-  physx::PxRigidDynamic* controllerActor = controller->getActor();
-  physx::PxTransform t = controllerActor->getGlobalPose();
-  t.p = MR::nmVector3ToPxVec3(p);
-  controllerActor->setGlobalPose(t);
+  interface.SetPosition(character->GetBodyID(), MR::nmVector3ToJPHVec3(p), JPH::EActivation::Activate);
 
-  if (dynamicActor)
-  {
-    dynamicActor->setGlobalPose(t);
-  }
+  if (dynamicBody)
+      interface.SetPosition(dynamicBody->GetID(), MR::nmVector3ToJPHVec3(p), JPH::EActivation::Activate);
 }
+
+/*
 
 //----------------------------------------------------------------------------------------------------------------------
 // CC Behaviour callback for physX
@@ -216,10 +215,12 @@ void ControllerHitReport::onObstacleHit(const physx::PxControllerObstacleHit& NM
 {
 }
 
+*/
+
 //----------------------------------------------------------------------------------------------------------------------
 ControllerRecord::ControllerRecord() :
   m_pxController(NULL),
-  m_pxRigidDynamicActor(NULL),
+  m_pxRigidDynamicBody(NULL),
   m_pxDynamicJoint(NULL),
   m_physicsRig(NULL),
   m_requestedMovement(NMP::Vector3(NMP::Vector3::InitZero)),
@@ -233,13 +234,13 @@ ControllerRecord::ControllerRecord() :
   m_originOffset(0.0f, 0.0f, 0.0f),
   m_connectRepresentation(NULL)
 {
-  m_hitReport = new ControllerHitReport(MAX_FORCE_TIME, m_touchTimes);
+  //m_hitReport = new ControllerHitReport(MAX_FORCE_TIME, m_touchTimes);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 ControllerRecord::~ControllerRecord()
 {
-  delete m_hitReport;
+  //delete m_hitReport;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -250,14 +251,14 @@ DefaultControllerMgr::DefaultControllerMgr(DefaultPhysicsMgr* physicsManager, Ru
   m_context(context),
   m_controllerMaterial(NULL)
 {
-  m_manager = PxCreateControllerManager(*m_physicsManager->getPhysicsScene()->getPhysXScene());
+  //m_manager = PxCreateControllerManager(*m_physicsManager->getPhysicsScene()->getPhysXScene());
 
   // Create a default material
-  physx::PxPhysics& physics = PxGetPhysics();
-  m_controllerMaterial = physics.createMaterial(0.0f, 0.0f, 0.0f);
-  m_controllerMaterial->setFrictionCombineMode(physx::PxCombineMode::eMULTIPLY);
-  m_controllerMaterial->setRestitutionCombineMode(physx::PxCombineMode::eMULTIPLY);
-  NMP_ASSERT(m_controllerMaterial);
+  //physx::PxPhysics& physics = PxGetPhysics();
+  //m_controllerMaterial = physics.createMaterial(0.0f, 0.0f, 0.0f);
+  //m_controllerMaterial->setFrictionCombineMode(physx::PxCombineMode::eMULTIPLY);
+  //m_controllerMaterial->setRestitutionCombineMode(physx::PxCombineMode::eMULTIPLY);
+  //NMP_ASSERT(m_controllerMaterial);
 
   // initialize the graveyard
   m_graveSeed = 0;
@@ -266,8 +267,7 @@ DefaultControllerMgr::DefaultControllerMgr(DefaultPhysicsMgr* physicsManager, Ru
 //----------------------------------------------------------------------------------------------------------------------
 DefaultControllerMgr::~DefaultControllerMgr()
 {
-  m_manager->release();
-  m_controllerMaterial->release();
+  m_controllerMaterial->Release();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -361,6 +361,8 @@ void DefaultControllerMgr::createControllerRecord(
   const NMP::Vector3& characterStartPosition,
   const NMP::Quat&    characterStartRotation)
 {
+    
+
   void* alignedMemory = NMP::Memory::memAllocAligned(sizeof(ControllerRecord), NMP_VECTOR_ALIGNMENT);
   ControllerRecord* ccRecord = new(alignedMemory)ControllerRecord();
   m_ccRecords[instanceID] = ccRecord;
@@ -378,7 +380,6 @@ void DefaultControllerMgr::createControllerRecord(
 
   DefaultPhysicsMgr* physicsMgr = (DefaultPhysicsMgr*) m_physicsManager;
   NMP_ASSERT(physicsMgr && physicsMgr->getPhysicsScene());
-  PhysXScene* scene = physicsMgr->getPhysicsScene()->getPhysXScene();
 
   // Get the world up direction.
   NMP::Vector3 worldUpDirection = physicsMgr->getPhysicsScene()->getWorldUpDirection();
@@ -389,7 +390,7 @@ void DefaultControllerMgr::createControllerRecord(
   // Nudge the start position up very slightly so that, in the typical case with the ground plane at
   // zero height etc, we don't start borderline intersecting the ground.
   ccRecord->m_characterPosition += worldUpDirection * 1e-5f;
-  ccRecord->setPhysicsScene(physicsMgr->getPhysicsScene());
+  //ccRecord->setPhysicsScene(physicsMgr->getPhysicsScene());
   ccRecord->m_network = network;
   ccRecord->m_velocityInGravityDirectionDt = 0.0f;
   ccRecord->m_deltaTranslation = NMP::Vector3::InitZero;
@@ -414,6 +415,8 @@ void DefaultControllerMgr::createControllerRecord(
   // Recalculate the offset from the origin of the character controller.
   ccRecord->m_originOffset = calculateOriginOffset(ccRecord, worldUpDirection);
  
+  /*
+  
   // Now set up the physX character controller object from the contents of the ccmRecord.
   physx::PxCapsuleControllerDesc desc;
   //desc.interactionMode = physx::PxCCTInteractionMode::eUSE_FILTER;
@@ -421,7 +424,7 @@ void DefaultControllerMgr::createControllerRecord(
   desc.height = ccRecord->m_controllerParams.getHeight();
 
   // Apply the up direction specified in connect.
-  desc.upDirection = MR::nmVector3ToPxVec3(worldUpDirection);
+  desc.upDirection = MR::nmVector3ToJPHVec3(worldUpDirection);
   desc.material = m_controllerMaterial;
 
   float maxSlopeAngleDegrees = ccRecord->m_controllerParams.getMaxSlopeAngle();
@@ -441,7 +444,7 @@ void DefaultControllerMgr::createControllerRecord(
   desc.behaviorCallback = &s_defaultControllerBehaviorCallback;
 
   NMP::Vector3 controllerPos = ccRecord->m_characterPosition + computeWorldSpaceCCOriginOffset(ccRecord);
-  desc.position = MR::nmVector3ToPxExtendedVec3(controllerPos);
+  desc.position = MR::nmVector3ToJPHVec3(controllerPos);
   ccRecord->m_pxController = m_manager->createController(desc);
 
   NMP_ASSERT(ccRecord->m_pxController);
@@ -536,6 +539,8 @@ void DefaultControllerMgr::createControllerRecord(
   // physics manager ignores this).
   ccRecord->m_network->setCharacterPropertiesPhysicsAndCharacterControllerUpdate(
     m_physicsManager->getPhysicsAndCharacterControllerUpdate());
+
+    */
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -606,6 +611,7 @@ void DefaultControllerMgr::scaleControllerProperties(
   float              horizontalFraction,
   float              verticalFraction)
 {
+    /*
   Records::iterator it = m_ccRecords.find(instanceID);
   if (it != m_ccRecords.end())
   {
@@ -660,6 +666,7 @@ void DefaultControllerMgr::scaleControllerProperties(
       }
     }
   }
+  */
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -669,20 +676,20 @@ void DefaultControllerMgr::makeLinkBetweenPhysicsRigAndController(
 {
   if (physicsRig)
   {
-    MR::PhysicsRigPhysX3* physicsRigPhysX3 = (MR::PhysicsRigPhysX3*)physicsRig;
-    physicsRigPhysX3->setCharacterControllerActor(getCharacterControllerActor(instanceID)->is<physx::PxRigidDynamic>());
+    MR::PhysicsRigJoltPhys* physicsRigJoltPhys = (MR::PhysicsRigJoltPhys*)physicsRig;
+    //physicsRigJoltPhys->setCharacterControllerBody(getCharacterControllerBody(instanceID));
   }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-physx::PxActor* DefaultControllerMgr::getCharacterControllerActor(MCOMMS::InstanceID instanceID)
+JPH::Body* DefaultControllerMgr::getCharacterControllerBody(MCOMMS::InstanceID instanceID)
 {
   Records::const_iterator it = m_ccRecords.find(instanceID);
   if (it != m_ccRecords.end())
   {
     const ControllerRecord* ccRecord = it->second;
     if (ccRecord->m_pxController)
-      return ccRecord->m_pxController->getActor();
+      return ((MR::PhysicsSceneJoltPhys*)m_physicsManager->getPhysicsScene())->m_joltPhysScene->GetBodyLockInterface().TryGetBody(ccRecord->m_pxController->GetBodyID());
   }
   return 0;
 }
@@ -696,7 +703,10 @@ void DefaultControllerMgr::disableCollision(MCOMMS::InstanceID instanceID)
     ControllerRecord* ccRecord = it->second;
     if (ccRecord->m_pxController && ccRecord->m_controllerEnabled)
     {
-      enableControllerCollision(ccRecord->m_pxController, ccRecord->m_pxRigidDynamicActor, false);
+      enableControllerCollision(ccRecord->m_pxController, 
+          ccRecord->m_pxRigidDynamicBody,
+          ((MR::PhysicsSceneJoltPhys*)m_physicsManager->getPhysicsScene())->m_joltPhysScene->GetBodyLockInterface(),
+          false);
       ccRecord->m_controllerEnabled = false;
     }
   }
@@ -715,10 +725,16 @@ void DefaultControllerMgr::enableCollision(MCOMMS::InstanceID instanceID)
       NMP::Vector3 p;
       p = ccRecord->m_characterPosition + computeWorldSpaceCCOriginOffset(ccRecord);
 
-      setControllerPosition(ccRecord->m_pxController, ccRecord->m_pxRigidDynamicActor, p);
+      setCharacterPosition(ccRecord->m_pxController, 
+          ccRecord->m_pxRigidDynamicBody, 
+          ((MR::PhysicsSceneJoltPhys*)m_physicsManager->getPhysicsScene())->m_joltPhysScene->GetBodyInterface(),
+          p);
       ccRecord->m_controllerEnabled = true;
 
-      enableControllerCollision(ccRecord->m_pxController, ccRecord->m_pxRigidDynamicActor, true);
+      enableControllerCollision(ccRecord->m_pxController, 
+          ccRecord->m_pxRigidDynamicBody,
+          ((MR::PhysicsSceneJoltPhys*)m_physicsManager->getPhysicsScene())->m_joltPhysScene->GetBodyLockInterface(),
+          true);
     }
   }
 }
@@ -732,14 +748,15 @@ void DefaultControllerMgr::destroyControllerRecord(MCOMMS::InstanceID instanceID
     ControllerRecord* ccRecord = it->second;
     if (ccRecord->m_pxController)
     {
-      ccRecord->m_pxController->release();
+      ccRecord->m_pxController->Release();
       ccRecord->m_pxController = NULL;
     }
-    if (ccRecord->m_pxRigidDynamicActor)
+    if (ccRecord->m_pxRigidDynamicBody)
     {
-      ccRecord->m_pxDynamicJoint->release();
-      ccRecord->m_pxRigidDynamicActor->release();
-      ccRecord->m_pxRigidDynamicActor = NULL;
+      ccRecord->m_pxDynamicJoint->Release();
+      ccRecord->m_pxRigidDynamicBody;
+      ((MR::PhysicsSceneJoltPhys*)m_physicsManager->getPhysicsScene())->m_joltPhysScene->GetBodyInterface().DestroyBody(ccRecord->m_pxRigidDynamicBody->GetID());
+      ccRecord->m_pxRigidDynamicBody = NULL;
       ccRecord->m_pxDynamicJoint = NULL;
     }
 
@@ -820,7 +837,10 @@ void DefaultControllerMgr::teleport(MCOMMS::InstanceID instanceID, const NMP::Po
       ccRecord->m_characterPosition = rootTransform.m_pos;
 
       NMP::Vector3 p = ccRecord->m_characterPosition + computeWorldSpaceCCOriginOffset(ccRecord);
-      setControllerPosition(ccRecord->m_pxController, ccRecord->m_pxRigidDynamicActor, p);
+      setCharacterPosition(ccRecord->m_pxController, 
+          ccRecord->m_pxRigidDynamicBody, 
+          ((MR::PhysicsSceneJoltPhys*)m_physicsManager->getPhysicsScene())->m_joltPhysScene->GetBodyInterface(),
+          p);
     }
   }
 }
@@ -969,42 +989,46 @@ void DefaultControllerMgr::applyOverriddenProperties(
 //----------------------------------------------------------------------------------------------------------------------
 void DefaultControllerMgr::updateControllers(float dt)
 {
-  physx::PxFilterData filterData(
-    0,
-    1 << MR::GROUP_CHARACTER_CONTROLLER | 
-    1 << MR::GROUP_CHARACTER_PART | 
-    1 << MR::GROUP_NON_COLLIDABLE | 
-    1 << MR::GROUP_INTERACTION_PROXY,
-    0,
-    0);
-  MR::MorphemePhysX3QueryFilterCallback morphemePhysX3QueryFilterCallback(filterData);
-  physx::PxControllerFilters controllerFilter(0, &morphemePhysX3QueryFilterCallback, 0);
+  //physx::PxFilterData filterData(
+  //  0,
+  //  1 << MR::GROUP_CHARACTER_CONTROLLER | 
+  //  1 << MR::GROUP_CHARACTER_PART | 
+  //  1 << MR::GROUP_NON_COLLIDABLE | 
+  //  1 << MR::GROUP_INTERACTION_PROXY,
+  //  0,
+  //  0);
+  //MR::MorphemePhysX3QueryFilterCallback morphemePhysX3QueryFilterCallback(filterData);
+  //physx::PxControllerFilters controllerFilter(0, &morphemePhysX3QueryFilterCallback, 0);
 
   // go through all controller records, updating them
   for (Records::iterator it = m_ccRecords.begin(); it != m_ccRecords.end(); ++it)
   {
-    ControllerRecord* ccRecord = it->second;
-    MCOMMS::InstanceID instanceID = it->first;
-    ccRecord->m_characterPositionOld = ccRecord->m_characterPosition;
+      ControllerRecord* ccRecord = it->second;
+      MCOMMS::InstanceID instanceID = it->first;
+      ccRecord->m_characterPositionOld = ccRecord->m_characterPosition;
 
-    //-------------------  
-    // Applying any override properties that have been set this frame.
-    applyOverriddenProperties(instanceID, ccRecord);
+      //-------------------  
+      // Applying any override properties that have been set this frame.
+      applyOverriddenProperties(instanceID, ccRecord);
 
-    //-------------------
-    MR::PhysicsRig* physicsRig = getPhysicsRig(ccRecord->m_network);
-    MR::PhysicsRigPhysX3* physicsRigPhysX3 = (MR::PhysicsRigPhysX3*) physicsRig;
+      //-------------------
+      MR::PhysicsRig* physicsRig = getPhysicsRig(ccRecord->m_network);
+      MR::PhysicsRigJoltPhys* physicsRigJoltPhys = (MR::PhysicsRigJoltPhys*)physicsRig;
 
-    if (physicsRig &&
-        physicsRig->isReferenced() &&
-        ccRecord->m_network->getRootControlMethod() == MR::Network::ROOT_CONTROL_PHYSICS)
-    {
-      disableCollision(instanceID);
-    }
-    else
-    {
-      enableCollision(instanceID);
-    }
+      if (physicsRig &&
+          physicsRig->isReferenced() &&
+          ccRecord->m_network->getRootControlMethod() == MR::Network::ROOT_CONTROL_PHYSICS)
+      {
+          disableCollision(instanceID);
+      }
+      else
+      {
+          enableCollision(instanceID);
+      }
+
+  }//
+
+    /*
 
     if (ccRecord->m_controllerEnabled)
     { 
@@ -1012,7 +1036,7 @@ void DefaultControllerMgr::updateControllers(float dt)
       physx::PxTransform globalPose = capsuleController->getActor()->getGlobalPose(); // assumes the local pose is identity
 
       // ... if the controller is switched on, update it according to Px-controller semi-physics
-      if (ccRecord->m_pxRigidDynamicActor)
+      if (ccRecord->m_pxRigidDynamicBody)
       {
         // If the kinematic shape penetrates the environment then extract it (if possible)
         physx::PxScene* physXScene = ((MR::PhysicsScenePhysX3*)m_physicsManager->getPhysicsScene())->getPhysXScene();
@@ -1048,15 +1072,17 @@ void DefaultControllerMgr::updateControllers(float dt)
           &morphemePhysX3QueryFilterCallback))
         {
           // If the kinematic actor is penetrating, then move it to the dynamic actor position
-          setControllerPosition(
-            ccRecord->m_pxController, 
-            0, 
-            MR::nmPxVec3ToVector3(ccRecord->m_pxRigidDynamicActor->getGlobalPose().p));
+            setCharacterPosition(
+                ccRecord->m_pxController,
+                0,
+                ((MR::PhysicsSceneJoltPhys*)m_physicsManager->getPhysicsScene())->m_joltPhysScene->GetBodyInterface(),
+                MR::nmJPHVec3ToVector3(ccRecord->m_pxRigidDynamicBody->GetPosition()));
         }
         else
         {
           // If it's not penetrating then move the dynamic actor there (in case it got left behind somehow)
-          ccRecord->m_pxRigidDynamicActor->setGlobalPose(ccRecord->m_pxController->getActor()->getGlobalPose());
+
+          ccRecord->m_pxRigidDynamicBody->setGlobalPose(ccRecord->m_pxController->GetBodyID()->getGlobalPose());
         }
       }
 
@@ -1073,7 +1099,7 @@ void DefaultControllerMgr::updateControllers(float dt)
 
       // Move the controller according to the ground velocity by raycasting down
       NMP::Vector3 worldUpDirection = m_physicsManager->getPhysicsScene()->getWorldUpDirection();
-      NMP::Vector3 rayStart = MR::nmPxExtendedVec3ToVector3(ccRecord->m_pxController->getPosition());
+      NMP::Vector3 rayStart = MR::nmJPHVec3ToVector3(ccRecord->m_pxController->getPosition());
       // Raycast down to find the ground. Go a little bit beyond the bottom of the controller in
       // case we're on a slope, or if the ground is jittering a bit. The exact amount doesn't matter
       // too much.
@@ -1108,16 +1134,16 @@ void DefaultControllerMgr::updateControllers(float dt)
 #endif
       // execute physX's 'collide and slide' controller movement function.
       ccRecord->m_hitReport->updatePreMove(dt, ccRecord->m_controllerParams.getMaxPushForce());
-      physx::PxU32 flags = ccRecord->m_pxController->move(
-        MR::nmVector3ToPxVec3(requestedMovement),
-        0.00000001f,
-        dt,
-        controllerFilter);
+      //physx::PxU32 flags = ccRecord->m_pxController->move(
+      //  MR::nmVector3ToPxVec3(requestedMovement),
+      //  0.00000001f,
+      //  dt,
+      //  controllerFilter);
 
       // Determine whether character is on the ground or in the air, and whether it has
       // just transitioned between the two.
       ccRecord->m_onGroundOld = ccRecord->m_onGround;
-      ccRecord->m_onGround = (flags & physx::PxControllerCollisionFlag::eCOLLISION_DOWN) != 0 ;
+      //ccRecord->m_onGround = (flags & physx::PxControllerCollisionFlag::eCOLLISION_DOWN) != 0 ;
 
       if (ccRecord->m_onGround && ccRecord->m_onGroundOld)
         ccRecord->m_network->setCharacterPropertiesGroundContactTime(ccRecord->m_network->getCharacterPropertiesGroundContactTime() + dt); // on ground
@@ -1147,11 +1173,11 @@ void DefaultControllerMgr::updateControllers(float dt)
         !ccRecord->m_onGround &&
         (ccRecord->m_overrideBasics.m_currentVerticalMoveState != MR::CC_STATE_VERTICAL_MOVEMENT_ANIMATION))
     {
-      ccRecord->m_pxController->move(
-        -MR::nmVector3ToPxVec3(ccRecord->m_extraVerticalMove),
-        0.00000001f,
-        dt,
-        controllerFilter);
+      //ccRecord->m_pxController->move(
+      //  -MR::nmVector3ToPxVec3(ccRecord->m_extraVerticalMove),
+      //  0.00000001f,
+      //  dt,
+      //  controllerFilter);
     }
   }
 #endif
@@ -1167,14 +1193,14 @@ void DefaultControllerMgr::updateControllers(float dt)
     MCOMMS::InstanceID instanceID = it->first;
 
     // The updated position of the PxController
-    physx::PxExtendedVec3 newPos = ccRecord->m_pxController->getPosition();
+   JPH::Vec3 newPos = ccRecord->m_pxController->GetPosition();
 
     if (ccRecord->m_controllerEnabled)
     {
       // Take off the offset value to translate the character position down from the center of
       // the controller body to where the feet should be.
       NMP::Vector3 offset = computeWorldSpaceCCOriginOffset(ccRecord);
-      ccRecord->m_characterPosition = MR::nmPxExtendedVec3ToVector3(newPos) - offset;
+      ccRecord->m_characterPosition = MR::nmJPHVec3ToVector3(newPos) - offset;
 
       // determine whether the character achieved the requested movement
       bool achievedRequestedMovement = true;
@@ -1202,6 +1228,7 @@ void DefaultControllerMgr::updateControllers(float dt)
 
     ccRecord->m_requestedMovement.setToZero();
   }
+  */
 }
 
 //----------------------------------------------------------------------------------------------------------------------

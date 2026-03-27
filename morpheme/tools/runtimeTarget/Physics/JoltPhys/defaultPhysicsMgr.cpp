@@ -22,12 +22,11 @@
 
 #include "morpheme/mrNetwork.h"
 
-#include "mrPhysX3.h"
-#include "mrPhysX3Includes.h"
+#include "physics/JoltPhys/mrJoltPhys.h"
 #include "physics/mrPhysicsRigDef.h"
-#include "mrPhysicsRigPhysX3Articulation.h"
-#include "mrPhysicsRigPhysX3Jointed.h"
-#include "mrPhysicsScenePhysX3.h"
+#include "physics/JoltPhys/mrPhysicsRigJoltPhysRagdoll.h"
+#include "physics/JoltPhys/mrPhysicsRigJoltPhysJointed.h"
+#include "physics/JoltPhys/mrPhysicsSceneJoltPhys.h"
 #include "morpheme/mrCoreTaskIDs.h"
 #include "physics/mrPhysicsRig.h"
 #include "physics/mrPhysicsRigDef.h"
@@ -56,93 +55,54 @@
 
 #include "../../runtimeTargetLogger.h"
 
-static const float minContactOffset = 0.0001f;
-
-// Specifies which type of events a PhysX3 actor will broadcast to clients.
-static physx::PxActorClientBehaviorFlags g_clientBehaviourBits =
-                                physx::PxActorClientBehaviorFlag::eREPORT_TO_FOREIGN_CLIENTS_CONTACT_NOTIFY | 
-                                physx::PxActorClientBehaviorFlag::eREPORT_TO_FOREIGN_CLIENTS_SCENE_QUERY;
-
-/// Registered with PhysX to reduce the suddenness of penetration resolution in character self-contacts.
-static MR::MorphemePhysX3ContactModifyCallback morphemePhysX3ContactModifyCallback(1.0f, 1/30.0f);
-
 //----------------------------------------------------------------------------------------------------------------------
-class ErrorStream : public physx::PxErrorCallback
-{
-public:
-  void reportError(physx::PxErrorCode::Enum e, const char* message, const char* file, int line)
-  {
-    NMP_ASSERT_FAIL_MSG("Error reported from PhysX");
-    printf("%s (%d) :", file, line);
-    switch (e)
-    {
-    case physx::PxErrorCode::eINVALID_PARAMETER:
-      printf("invalid parameter");
-      break;
-    case physx::PxErrorCode::eINVALID_OPERATION:
-      printf("invalid operation");
-      break;
-    case physx::PxErrorCode::eOUT_OF_MEMORY:
-      printf("out of memory");
-      break;
-    case physx::PxErrorCode::eDEBUG_INFO:
-      printf("info");
-      break;
-    case physx::PxErrorCode::eDEBUG_WARNING:
-      printf("warning");
-      break;
-    default:
-      printf("unknown ` error");
-    }
 
-    printf(" : %s\n", message);
-  }
-
-  void print(const char* message)
-  {
-    printf("%s", message);
-  }
-};
-
-class PhysXAllocator : public physx::PxAllocatorCallback
+class JoltPhysAllocator
 {
 #ifdef WIN32
   // on win32 we only have 8-byte alignment guaranteed, but the CRT provides special aligned
   // allocation fns
-  void* allocate(size_t size, const char*, const char*, int)
+  static void* allocate(size_t size, const char*, const char*, int)
   {
     return _aligned_malloc(size, 16);
   }
-  void deallocate(void* ptr)
+  static void deallocate(void* ptr)
   {
     _aligned_free(ptr);
   }
 #elif defined(NM_HOST_ANDROID)
-  void* allocate(size_t size, const char*, const char*, int)
+  static void* allocate(size_t size, const char*, const char*, int)
   {
     void *ptr = memalign(16, size);
     PX_ASSERT((reinterpret_cast<size_t>(ptr) & 15)==0);
     return ptr;
   }
 
-  void deallocate(void* ptr)
+  static void deallocate(void* ptr)
   {
     free(ptr);
   }
 #else
   // on PS3, XBox and Win64 we get 16-byte alignment by default
-  void* allocate(size_t size, const char*, const char*, int)
+  static void* allocate(size_t size, const char*, const char*, int)
   {
     void *ptr = ::malloc(size);
     PX_ASSERT((reinterpret_cast<size_t>(ptr) & 15)==0);
     return ptr;
   }
-  void deallocate(void* ptr)
+  static void deallocate(void* ptr)
   {
     ::free(ptr);
   }
 #endif
 };
+
+class JoltPhysMaterial : public JPH::PhysicsMaterialSimple
+{
+public:
+    //etc etc
+};
+
 
 //----------------------------------------------------------------------------------------------------------------------
 #define ANIM_GRAVITY
@@ -156,11 +116,6 @@ class PhysicsSDK
 public:
   static bool init(float physicsToleranceScale);
   static bool term();
-  static bool connectToDebugger();
-
-  static physx::PxCooking* getPxCooking() {return sm_physXCooking;}
-
-  static void setPVDFileName(const char* fileName);
 
 protected:
 
@@ -174,25 +129,21 @@ protected:
     kMaxFilenameLength = 260
   };
 
-  static bool                       sm_created;
-  static class PhysXAllocator       sm_physXAllocator;
-  static class ErrorStream          sm_physXErrorStream;
-  static physx::PxCooking*          sm_physXCooking;
-  static char                       sm_pvdFilename[kMaxFilenameLength];
-  static physx::PxMaterial*         sm_defaultPhysXMaterial;
-  static physx::PxProfileZoneManager* sm_profileZoneManager;
+  static bool                           sm_created;
+
+public:
+
+  static JPH::TempAllocatorImpl*        sm_joltTempAllocator;
+  static JPH::JobSystemThreadPool*      sm_joltJobSystem;
+  static JPH::PhysicsMaterialSimple*    sm_defaultJoltPhysMaterial;
 };
 
 //----------------------------------------------------------------------------------------------------------------------
 // Statics
-bool               PhysicsSDK::sm_created = false;
-physx::PxCooking*  PhysicsSDK::sm_physXCooking = 0;
-PhysXAllocator     PhysicsSDK::sm_physXAllocator;
-ErrorStream        PhysicsSDK::sm_physXErrorStream;
-char               PhysicsSDK::sm_pvdFilename[PhysicsSDK::kMaxFilenameLength] = { '\0' };
-physx::PxMaterial* PhysicsSDK::sm_defaultPhysXMaterial = 0;
-physx::PxProfileZoneManager* PhysicsSDK::sm_profileZoneManager;
-
+bool                        PhysicsSDK::sm_created = false;
+JPH::TempAllocatorImpl*     PhysicsSDK::sm_joltTempAllocator = nullptr;
+JPH::JobSystemThreadPool*   PhysicsSDK::sm_joltJobSystem = nullptr;
+JPH::PhysicsMaterialSimple* PhysicsSDK::sm_defaultJoltPhysMaterial;
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \class PhysicsUserData
@@ -205,7 +156,7 @@ public:
   PhysicsUserData(MCOMMS::SceneObjectID objID)
   {
     objectID = objID;
-    dummyActor = 0;
+    dummyBody = 0;
     constraint = 0;
     magicString[0] = 'N';
     magicString[1] = 'M';
@@ -221,8 +172,8 @@ public:
   }
 
   MCOMMS::SceneObjectID objectID;
-  physx::PxActor* dummyActor;
-  physx::PxJoint* constraint;
+  JPH::Body* dummyBody;
+  JPH::Constraint* constraint;
 };
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -232,44 +183,28 @@ bool PhysicsSDK::init(float physicsToleranceScale)
 {
   term();
 
-  physx::PxTolerancesScale scale;
-  scale.length *= physicsToleranceScale;
-  scale.mass   *= physicsToleranceScale * physicsToleranceScale * physicsToleranceScale;
-  scale.speed  *= physicsToleranceScale;
+  // Register allocation hook. In this example we'll just let Jolt use malloc / free but you can override these if you want (see Memory.h).
+  // This needs to be done before any other Jolt function is called.
+  JPH::RegisterDefaultAllocator();
 
-  physx::PxFoundation* foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, sm_physXAllocator, sm_physXErrorStream);
-  NMP_ASSERT(foundation);
+  sm_joltTempAllocator = new JPH::TempAllocatorImpl(10 * 1024 * 1024);
+  sm_joltJobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers,
+      JPH::thread::hardware_concurrency() - 1);
 
-  physx::PxPhysics* physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, scale, true);
-  if (!physics)
-  {
-    printf(
-      "Unable to create the NVIDIA PhysX SDK. "
-      "The NVIDIA PhysX System software is required to run this app.");
-    NMP_ASSERT_FAIL();
-  }
+  // Create a factory, this class is responsible for creating instances of classes based on their name or hash and is mainly used for deserialization of saved data.
+  // It is not directly used in this example but still required.
+  JPH::Factory::sInstance = new JPH::Factory();
 
-  physx::PxCookingParams cookingParams(scale);
-  cookingParams.skinWidth = 0.01f; // copied from earlier, should we use physX default here?
-  cookingParams.buildTriangleAdjacencies = true;
-#if PX_PHYSICS_VERSION  > ((3<<24) + (2<<16) + (3<<8) + 0)
-  cookingParams.scale.length = physicsToleranceScale;
-#endif
-
-  sm_physXCooking = PxCreateCooking(PX_PHYSICS_VERSION, *foundation, cookingParams);
-
-  if (!sm_physXCooking)
-  {
-    NMP_ASSERT_FAIL();
-  }
-
-  PxInitExtensions(*physics, nullptr);
+  // Register all physics types with the factory and install their collision handlers with the CollisionDispatch class.
+  // If you have your own custom shape types you probably need to register their handlers with the CollisionDispatch before calling this function.
+  // If you implement your own default material (PhysicsMaterial::sDefault) make sure to initialize it before this function or else this function will create one for you.
+  JPH::RegisterTypes();
 
   // Create a default material
-  sm_defaultPhysXMaterial = physics->createMaterial(1.0f, 1.0f, 0.0f);
-  sm_defaultPhysXMaterial->setFrictionCombineMode(physx::PxCombineMode::eMULTIPLY);
-  sm_defaultPhysXMaterial->setRestitutionCombineMode(physx::PxCombineMode::eMULTIPLY);
-  NMP_ASSERT(sm_defaultPhysXMaterial);
+  sm_defaultJoltPhysMaterial = new JPH::PhysicsMaterialSimple();
+  //sm_defaultJoltPhysMaterial->setFrictionCombineMode(physx::PxCombineMode::eMULTIPLY);
+  //sm_defaultJoltPhysMaterial->setRestitutionCombineMode(physx::PxCombineMode::eMULTIPLY);
+  NMP_ASSERT(sm_defaultJoltPhysMaterial);
 
   sm_created = true;
   return true;
@@ -283,79 +218,24 @@ bool PhysicsSDK::term()
     return false;
   }
 
-  if (sm_defaultPhysXMaterial)
+  if (sm_defaultJoltPhysMaterial)
   {
-    sm_defaultPhysXMaterial->release();
-    sm_defaultPhysXMaterial = 0;
+    sm_defaultJoltPhysMaterial->Release();
+    sm_defaultJoltPhysMaterial = 0;
   }
 
-  PxCloseExtensions();
+  // Unregisters all types with the factory and cleans up the default material
+  JPH::UnregisterTypes();
 
-  // Release the physX cooking
-  if (sm_physXCooking)
-  {
-    sm_physXCooking->release();
-    sm_physXCooking = 0;
-  }
+  delete sm_joltTempAllocator;
+  delete sm_joltJobSystem;
 
-  PxGetPhysics().release();
-  PxGetFoundation().release();
+  // Destroy the factory
+  delete JPH::Factory::sInstance;
+  JPH::Factory::sInstance = nullptr;
 
   sm_created = false;
   return true;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-bool PhysicsSDK::connectToDebugger()
-{
-  // These calls will return 0 on platforms that don't support the debugger
-  //if (PxGetPhysics().getPvdConnectionManager() != 0)
-  //{
-  //  if (sm_pvdFilename[0] == '\0')
-  //  {
-  //    PxGetPhysics().getPvdConnectionManager()->disconnect();
-  //    //The normal way to connect to pvd.  PVD needs to be running at the time this function is called.
-  //    //We don't worry about the return value because we are already registered as a listener for connections
-  //    //and thus our onPvdConnected call will take care of setting up our basic connection state.
-  //    physx::PxVisualDebuggerExt::createConnection(
-  //      PxGetPhysics().getPvdConnectionManager(), 
-  //      "127.0.0.1", 5425, 100, 
-  //      physx::PxVisualDebuggerConnectionFlags(
-  //      physx::PxVisualDebuggerConnectionFlag::Debug |
-  //      physx::PxVisualDebuggerConnectionFlag::Memory |
-  //      physx::PxVisualDebuggerConnectionFlag::Profile
-  //    ));
-  //  }   
-  //  else
-  //  {
-  //    //Create a pvd connection that writes data straight to the filesystem.  This is
-  //    //the fastest connection on windows for various reasons.  First, the transport is quite fast as
-  //    //pvd writes data in blocks and filesystems work well with that abstraction.
-  //    //Second, you don't have the PVD application parsing data and using CPU and memory bandwidth
-  //    //while your application is running.
-  //    physx::debugger::comm::PvdConnectionManager* mgr = PxGetPhysics().getPvdConnectionManager();
-  //    mgr->connect(sm_physXAllocator, sm_pvdFilename);
-  //  }
-  //
-  //  if (PxGetPhysics().getVisualDebugger())
-  //    PxGetPhysics().getVisualDebugger()->setVisualDebuggerFlag(physx::PxVisualDebuggerFlags::eTRANSMIT_CONTACTS, true);
-  //
-  //}
-
-  return true;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-void PhysicsSDK::setPVDFileName(const char* filename)
-{
-  if (filename)
-  {
-    NMP_STRNCPY_S(sm_pvdFilename, kMaxFilenameLength, filename);
-  }
-  else
-  {
-    sm_pvdFilename[0] = '\0';
-  }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -385,20 +265,15 @@ DefaultPhysicsMgr::DefaultPhysicsMgr(
   IPhysicsMgr(),
   m_assetMgr(assetMgr),
   m_context(context),
-  m_physicsRigType(MR::PhysicsRigPhysX3::TYPE_ARTICULATED),
+  m_physicsRigType(MR::PhysicsRigJoltPhys::TYPE_ARTICULATED),
   m_frameIndex(0),
   m_physicsScene(NULL),
-  m_cpuDispatcher(NULL),
   m_characterControllerManager(NULL),
   m_nextPhysicsObjectID(0),
   m_toleranceScalingValue(1.0f),
   m_physicsAndCharacterControllerUpdate(MR::PHYSICS_AND_CC_UPDATE_SEPARATE)
 {
   m_assetMgr->setPhysicsManager(this);
-
-  const char* pvdFilename = NULL;
-  commandLineArguments.getOptionValue("-pvdFilename", &pvdFilename);
-  PhysicsSDK::setPVDFileName(pvdFilename);
 
   const char* physicsRigType = NULL;
   commandLineArguments.getOptionValue("-physicsRigType", &physicsRigType);
@@ -407,12 +282,12 @@ DefaultPhysicsMgr::DefaultPhysicsMgr(
   {
     if (strcmp(physicsRigType, "TYPE_ARTICULATED") == 0)
     {
-      m_physicsRigType = MR::PhysicsRigPhysX3::TYPE_ARTICULATED;
+      m_physicsRigType = MR::PhysicsRigJoltPhys::TYPE_ARTICULATED;
       NMP_MSG("Using physics rig type TYPE_ARTICULATED\n");
     }
     else if (strcmp(physicsRigType, "TYPE_JOINTED") == 0)
     {
-      m_physicsRigType = MR::PhysicsRigPhysX3::TYPE_JOINTED;
+      m_physicsRigType = MR::PhysicsRigJoltPhys::TYPE_JOINTED;
       NMP_MSG("Using physics rig type TYPE_JOINTED\n");
     }
   }
@@ -436,7 +311,8 @@ DefaultPhysicsMgr::~DefaultPhysicsMgr()
 //----------------------------------------------------------------------------------------------------------------------
 void DefaultPhysicsMgr::getPhysicsEngineID(char* buffer, uint32_t bufferLength) const
 {
-  NMP_STRNCPY_S(buffer, bufferLength, "PhysX3");
+  //NMP_STRNCPY_S(buffer, bufferLength, "JoltPhys");
+  NMP_STRNCPY_S(buffer, bufferLength, "PhysX3"); // we are gonna larp this information out of safety
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -498,11 +374,8 @@ void DefaultPhysicsMgr::simulate(float deltaTime)
     deltaTime = m_maxTimeStep;
 
   float maxSeparationSpeed = 0.5f*m_toleranceScalingValue;
-  morphemePhysX3ContactModifyCallback.setTimeStep(deltaTime);
-  morphemePhysX3ContactModifyCallback.setMaxSeparationSpeed(maxSeparationSpeed);
 
-  m_physicsScene->getPhysXScene()->simulate(deltaTime);
-  m_physicsScene->getPhysXScene()->fetchResults(true); 
+  m_physicsScene->m_joltPhysScene->Update(deltaTime, 1, PhysicsSDK::sm_joltTempAllocator, PhysicsSDK::sm_joltJobSystem);
 
   m_physicsScene->setLastPhysicsTimeStep(deltaTime);
 }
@@ -510,15 +383,14 @@ void DefaultPhysicsMgr::simulate(float deltaTime)
 //----------------------------------------------------------------------------------------------------------------------
 // Create a PhysX actor of specified geometry type (box, capsule, sphere)
 //----------------------------------------------------------------------------------------------------------------------
-physx::PxRigidActor* DefaultPhysicsMgr::createActor(
-  physx::PxGeometryType::Enum geomType,
-  physx::PxGeometry* geometry,
+JPH::Body* DefaultPhysicsMgr::createBody(
+  JPH::Shape* shape,
   bool dynamic,
   const NMP::Vector3& pos,
   const NMP::Quat& rot,
   float density,
   bool hasCollision,
-  physx::PxMaterial* material,
+  JPH::PhysicsMaterial* material,
   float staticFriction,
   float dynamicFriction,
   float skinWidth,
@@ -529,99 +401,90 @@ physx::PxRigidActor* DefaultPhysicsMgr::createActor(
   float angularDamping,
   NMP::Matrix34* NMP_UNUSED(localPose))
 {
-  physx::PxPhysics& physics = PxGetPhysics();
-  const physx::PxTolerancesScale& tolerancesScale = physics.getTolerancesScale();
-
-  physx::PxTransform globalPose(MR::nmVector3ToPxVec3(pos), MR::nmQuatToPxQuat(rot));
-  physx::PxClientID physicsClientID = physx::PX_DEFAULT_CLIENT;
+  JPH::Mat44 globalPose = JPH::Mat44::sIdentity();
+  globalPose = globalPose.sRotation(MR::nmQuatToJPHQuat(rot));
+  globalPose.SetTranslation(MR::nmVector3ToJPHVec3(pos));
 
   //-----------------------
-  // create the actor
-  physx::PxRigidActor *actor = 0;
+  // create the body
+  JPH::BodyCreationSettings bodysettings(shape,
+      globalPose.GetTranslation(), globalPose.GetQuaternion(),
+      dynamic ? JPH::EMotionType::Dynamic : JPH::EMotionType::Static,
+      dynamic ? MR::NMPhysLayers::COLLIDABLE_PUSHABLE : MR::NMPhysLayers::COLLIDABLE_NON_PUSHABLE);
   if (dynamic)
   {
-    physx::PxRigidDynamic* dynamicActor = physics.createRigidDynamic(globalPose);
-
-    dynamicActor->setClientBehaviorFlags(g_clientBehaviourBits);
-    dynamicActor->setOwnerClient(physicsClientID);
-
-    dynamicActor->setLinearDamping(linearDamping);
-    dynamicActor->setAngularDamping(angularDamping);
-    dynamicActor->setMaxAngularVelocity(maxAngularVelocity);
-    dynamicActor->setSleepThreshold(sleepThreshold * tolerancesScale.speed * tolerancesScale.speed);
-
-    actor = dynamicActor;
+    bodysettings.mLinearDamping = linearDamping;
+    bodysettings.mAngularDamping = angularDamping;
+    bodysettings.mMaxAngularVelocity = maxAngularVelocity;
+    bodysettings.mAllowSleeping = true;
+    //set sleep threshold how ? hm
   }
-  else
-  {
-    physx::PxRigidStatic* staticActor = physics.createRigidStatic(globalPose);
 
-    staticActor->setClientBehaviorFlags(g_clientBehaviourBits);
-    staticActor->setOwnerClient(physicsClientID);
+  JPH::BodyInterface& bodyinterface = m_physicsScene->m_joltPhysScene->GetBodyInterface();
 
-    actor = staticActor;
-  }
-  NMP_ASSERT(actor);
+  JPH::Body* body = bodyinterface.CreateBody(bodysettings);
+
+  NMP_ASSERT(body);
 
   //-----------------------
   // adjust local pose for capsules so they are oriented correctly
-  physx::PxTransform shapeLocalPose = physx::PxTransform(physx::PxIdentity);
-  if (geomType == physx::PxGeometryType::eCAPSULE)
-  {
-    shapeLocalPose.q = physx::PxQuat(NM_PI_OVER_TWO, physx::PxVec3(0.0f, 1.0f, 0.0f));
-  }
+  // :is this needed for jolt physics ? we`ll see..
+  //physx::PxTransform shapeLocalPose = physx::PxTransform(physx::PxIdentity);
+  //if (geomType == physx::PxGeometryType::eCAPSULE)
+  //{
+  //  shapeLocalPose.q = physx::PxQuat(NM_PI_OVER_TWO, physx::PxVec3(0.0f, 1.0f, 0.0f));
+  //}
 
   //-----------------------
   // create a material
-  if(!material)
-  {
-    material = physics.createMaterial(staticFriction, dynamicFriction, restitution);
-    material->setFrictionCombineMode(physx::PxCombineMode::eMULTIPLY);
-    material->setRestitutionCombineMode(physx::PxCombineMode::eMULTIPLY);
-    NMP_ASSERT(material);
-    m_materials.push_back(material);
-  }
+  //if(!material)
+  //{
+  //  material = new JoltPhysMaterial(staticFriction, dynamicFriction, restitution);
+  //  material->setFrictionCombineMode(physx::PxCombineMode::eMULTIPLY);
+  //  material->setRestitutionCombineMode(physx::PxCombineMode::eMULTIPLY);
+  //  NMP_ASSERT(material);
+  //  m_materials.push_back(material);
+  //}
 
   //-----------------------
-  // create the actor's shape
-  physx::PxShape* shape = actor->createShape(*geometry, *material);
-  shape->setLocalPose(shapeLocalPose);
+  //shape->setLocalPose(shapeLocalPose); figure this out in jolt physics, if necessary
 
   //-----------------------
   // For simplicity, make the contact offset of statics effectively zero, and the offset of dynamics > 0
-  shape->setContactOffset(dynamic ? skinWidth : minContactOffset);
-  shape->setRestOffset(0.0f);
+  //shape->setContactOffset(dynamic ? skinWidth : minContactOffset);
+  //shape->setRestOffset(0.0f);
 
-  physx::PxU32 filterWord0 = (dynamic ? 1 << MR::GROUP_COLLIDABLE_PUSHABLE : 1 << MR::GROUP_COLLIDABLE_NON_PUSHABLE);
+  //physx::PxU32 filterWord0 = (dynamic ? 1 << MR::GROUP_COLLIDABLE_PUSHABLE : 1 << MR::GROUP_COLLIDABLE_NON_PUSHABLE);
 
   //-----------------------
   // set up filter data
-  shape->setQueryFilterData(physx::PxFilterData(filterWord0, 0, 0, 0));
-  if (!hasCollision)
-  {
-    shape->setSimulationFilterData(physx::PxFilterData(0, 0xffffffff, 0, 0));
-  }
-  else
-  {
-    shape->setSimulationFilterData(physx::PxFilterData(filterWord0, 0, 0, 0));
-  }
+  //shape->setQueryFilterData(physx::PxFilterData(filterWord0, 0, 0, 0));
+  //if (!hasCollision)
+  //{
+  //  shape->setSimulationFilterData(physx::PxFilterData(0, 0xffffffff, 0, 0));
+  //}
+  //else
+  //{
+  //  shape->setSimulationFilterData(physx::PxFilterData(filterWord0, 0, 0, 0));
+  //}
 
-  if (dynamic)
-  {
-    NMP_ASSERT(density >= 0.0f);
-    physx::PxRigidBodyExt::updateMassAndInertia(*static_cast<physx::PxRigidDynamic*>(actor), density);
-  }
+  //if (dynamic)
+  //{
+  //  NMP_ASSERT(density >= 0.0f);
+  //  physx::PxRigidBodyExt::updateMassAndInertia(*static_cast<physx::PxRigidDynamic*>(actor), density);
+  //}
 
   // Add per shape data - needed for the object to be recognised by Euphoria whether it's static or
   // dynamic.
-  physx::PxShape *tempShapes[1];
-  int numShapes = actor->getShapes(&tempShapes[0], 1);
-  for (int i = 0; i<numShapes; i++)
-  {
-    MR::PhysXPerShapeData::create(tempShapes[i]);
-  }
+  //physx::PxShape *tempShapes[1];
+  //int numShapes = actor->getShapes(&tempShapes[0], 1);
+  //for (int i = 0; i<numShapes; i++)
+  //{
+  //  MR::PhysXPerShapeData::create(tempShapes[i]);
+  //}
+  MR::JoltPhysPerShapeData::create(shape);
 
-  return actor;
+  return body;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -658,34 +521,27 @@ MR::PhysicsObjectID DefaultPhysicsMgr::createNewPhysicsBody(
   float                 linearDamping,
   float                 angularDamping)
 {
-  physx::PxActor* actor = 0;
-  physx::PxGeometry* geometry = NULL;
-  physx::PxGeometryType::Enum geometryType = physx::PxGeometryType::eINVALID;
-  physx::PxTriangleMeshGeometry *triangleMeshGeometry = NULL;
-  physx::PxConvexMeshGeometry *convexMeshGeometry = NULL;
+  JPH::Shape* shape = nullptr;
 
   switch (shapeType)
   {
   case MCOMMS::Attribute::PHYSICS_SHAPE_BOX:
 
   {
-    geometryType = physx::PxGeometryType::eBOX;
-    physx::PxVec3 halfDimensions(depth * 0.5f, height * 0.5f, length * 0.5f);
-    geometry = new physx::PxBoxGeometry(halfDimensions);
+    JPH::BoxShapeSettings boxsettings(JPH::Vec3(depth * 0.5f, height * 0.5f, length * 0.5f));
+    shape = boxsettings.Create().Get().GetPtr();
     break;
   }
 
-  case MCOMMS::Attribute::PHYSICS_SHAPE_CYLINDER: // TODO... proper cylinder
+  case MCOMMS::Attribute::PHYSICS_SHAPE_CYLINDER: // TODO... proper cylinder (would do but connect itself has no cylinder support so whatever)
   case MCOMMS::Attribute::PHYSICS_SHAPE_CAPSULE:
 
-    geometryType = physx::PxGeometryType::eCAPSULE;
-    geometry = new physx::PxCapsuleGeometry(radius, height * 0.5f);
+    shape = JPH::CapsuleShapeSettings(height * 0.5f, radius).Create().Get().GetPtr();
     break;
 
   case MCOMMS::Attribute::PHYSICS_SHAPE_SPHERE:
 
-    geometryType = physx::PxGeometryType::eSPHERE;
-    geometry = new physx::PxSphereGeometry(radius);
+    shape = JPH::SphereShapeSettings(radius).Create().Get().GetPtr();
     break;
 
   case MCOMMS::Attribute::PHYSICS_SHAPE_MESH:
@@ -694,51 +550,44 @@ MR::PhysicsObjectID DefaultPhysicsMgr::createNewPhysicsBody(
     {
       if (hasIndices && hasVertices)
       {
-        geometryType = physx::PxGeometryType::eCONVEXMESH;
-        physx::PxConvexMeshDesc convexMeshDesc;
-        convexMeshGeometry = new physx::PxConvexMeshGeometry();
+          JPH::Array<JPH::Vec3> joltpoints(numPoints);
+          for (int i = 0; i < numPoints; i++)
+              joltpoints[i] = MR::nmVector3ToJPHVec3(points[i]);
 
-        convexMeshDesc.points.count = (physx::PxU32)numPoints;
-        convexMeshDesc.points.stride = sizeof(NMP::Vector3);
-        convexMeshDesc.points.data = points;
-        convexMeshDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
-
-        phx::MemoryWriteBuffer buf;
-        bool status = PhysicsSDK::getPxCooking()->cookConvexMesh(convexMeshDesc, buf);
-        (void)status;
-        NMP_ASSERT(status);
-        phx::MemoryReadBuffer readBuffer(buf.data);
-        physx::PxConvexMesh* mesh = PxGetPhysics().createConvexMesh(readBuffer);
-        NMP_ASSERT(mesh);
-        convexMeshGeometry->convexMesh = mesh;
-        geometry = convexMeshGeometry;
+          JPH::ConvexHullShapeSettings convexmesh(joltpoints);
+          JPH::ShapeSettings::ShapeResult convexresult = convexmesh.Create();
+          if (convexresult.HasError())
+          {
+              JPH::String error = convexresult.GetError();
+              NMP_ASSERT(0);
+          }
+          shape = convexresult.Get().GetPtr();
       }
     }
     else
     {
       if (hasIndices && hasVertices)
       {
-        geometryType = physx::PxGeometryType::eTRIANGLEMESH;
-        physx::PxTriangleMeshDesc triangleMeshDesc;
-        triangleMeshGeometry = new physx::PxTriangleMeshGeometry();
+        JPH::TriangleList list;
+        for (int i = 0; i < numIndices;)
+        {
+            JPH::Vec3 vert1 = MR::nmVector3ToJPHVec3(points[indices[i]]);
+            JPH::Vec3 vert2 = MR::nmVector3ToJPHVec3(points[indices[i + 1]]);
+            JPH::Vec3 vert3 = MR::nmVector3ToJPHVec3(points[indices[i + 2]]);
+            JPH::Triangle newtri(vert1, vert2, vert3);
+            list.push_back(newtri);
+            i += 3;
+        }
 
-        triangleMeshDesc.points.count = (physx::PxU32)numPoints;
-        triangleMeshDesc.triangles.count = (physx::PxU32)(numIndices / 3);
-        triangleMeshDesc.points.stride = sizeof(NMP::Vector3);
-        triangleMeshDesc.triangles.stride = 3 * sizeof(int);
-        triangleMeshDesc.points.data = points;
-        triangleMeshDesc.triangles.data = indices;
-        triangleMeshDesc.flags = (physx::PxMeshFlags) 0;
+        JPH::MeshShapeSettings trianglemesh(list);
+
+        JPH::ShapeSettings::ShapeResult trianglemeshresult = trianglemesh.Create();
 
         // TODO if the winding type is undefined, should we create the mesh anyway?
-        if (windingType == MCOMMS::Attribute::VERTICES_WINDING_COUNTERCLOCKWISE)
-          triangleMeshDesc.flags = physx::PxMeshFlag::eFLIPNORMALS;
+        //if (windingType == MCOMMS::Attribute::VERTICES_WINDING_COUNTERCLOCKWISE)
+        //  triangleMeshDesc.flags = physx::PxMeshFlag::eFLIPNORMALS;
 
-        physx::PxTriangleMesh* meshData = createTriangleMeshData(triangleMeshDesc);
-        NMP_ASSERT(meshData);
-
-        triangleMeshGeometry->triangleMesh = meshData;
-        geometry = triangleMeshGeometry;
+        shape = trianglemeshresult.Get().GetPtr();
       }
     }
     break;
@@ -749,11 +598,12 @@ MR::PhysicsObjectID DefaultPhysicsMgr::createNewPhysicsBody(
     return MR_INVALID_PHYSICS_OBJECT_ID;
   }
 
-  if( geometryType != physx::PxGeometryType::eINVALID)
+  JPH::Body* body = nullptr;
+
+  if( shape )
   {
-    actor = createActor(
-      geometryType,
-      geometry,
+    body = createBody(
+      shape,
       isDynamic,
       transform.translation(),
       transform.toQuat(),
@@ -770,114 +620,110 @@ MR::PhysicsObjectID DefaultPhysicsMgr::createNewPhysicsBody(
       angularDamping);
   }
 
-  if (actor)
+  if (!body)
+      return MR_INVALID_PHYSICS_OBJECT_ID;
+
+  JPH::BodyInterface& bodyinterface = m_physicsScene->m_joltPhysScene->GetBodyInterface();
+
+  PhysicsUserData* userData = new PhysicsUserData(objectID);
+  body->SetUserData((JPH::uint64)userData);
+
+  bodyinterface.AddBody(body->GetID(), JPH::EActivation::Activate);
+
+  MR::PhysicsObjectID actorID = assignPhysicsIDToBody(body);
+
+  // Register the actor in the physics manager.
+  getSceneBodies().push_back(body);
+
+  // Create a constraint between the actor and the static world.
+  if (isConstrained && isDynamic)
   {
-    if (actor->is<physx::PxRigidDynamic>())
-      actor->is<physx::PxRigidDynamic>()->setSolverIterationCounts(positionSolverIterationCount, velocitySolverIterationCount);
-    PhysicsUserData* userData = new PhysicsUserData(objectID);
-    actor->userData = (void*)userData;
-    m_physicsScene->getPhysXScene()->addActor(*actor);
+    //physx::PxRigidDynamic* rigidDynamic = actor->is<physx::PxRigidDynamic>();
+    //NMP_ASSERT(rigidDynamic);
+    //
+    //physx::PxTransform parentFrame = MR::nmMatrix34ToPxTransform(constraintGlobalTransform);
+    //
+    //NMP::Matrix34 constraintLocalTransformInv = constraintLocalTransform;
+    //constraintLocalTransformInv.invert();
+    //physx::PxTransform childFrame = MR::nmMatrix34ToPxTransform(constraintLocalTransformInv);
+    //
+    //physx::PxD6Joint *joint = PxD6JointCreate(
+    //    PxGetPhysics(), 
+    //    0,
+    //    parentFrame,
+    //    rigidDynamic, 
+    //    childFrame);
+    //
+    //joint->setMotion(physx::PxD6Axis::eSWING1, physx::PxD6Motion::eFREE);
+    //joint->setMotion(physx::PxD6Axis::eSWING2, physx::PxD6Motion::eFREE);
+    //joint->setMotion(physx::PxD6Axis::eTWIST, physx::PxD6Motion::eFREE);
+    //joint->setMotion(physx::PxD6Axis::eX, physx::PxD6Motion::eLOCKED);
+    //joint->setMotion(physx::PxD6Axis::eY, physx::PxD6Motion::eLOCKED);
+    //joint->setMotion(physx::PxD6Axis::eZ, physx::PxD6Motion::eLOCKED);
+    //
+    //physx::PxD6JointDrive jointDrive(constraintStiffness, constraintDamping, PX_MAX_F32, true);
+    //joint->setDrive(physx::PxD6Drive::eSLERP, jointDrive);
 
-    MR::PhysicsObjectID actorID = assignPhysicsIDToActor(actor);
-
-    // Register the actor in the physics manager.
-    getSceneActors().push_back(actor);
-
-    // Create a constraint between the actor and the static world.
-    if (isConstrained && isDynamic)
-    {
-      physx::PxRigidDynamic* rigidDynamic = actor->is<physx::PxRigidDynamic>();
-      NMP_ASSERT(rigidDynamic);
-
-      physx::PxTransform parentFrame = MR::nmMatrix34ToPxTransform(constraintGlobalTransform);
-
-      NMP::Matrix34 constraintLocalTransformInv = constraintLocalTransform;
-      constraintLocalTransformInv.invert();
-      physx::PxTransform childFrame = MR::nmMatrix34ToPxTransform(constraintLocalTransformInv);
-
-      physx::PxD6Joint *joint = PxD6JointCreate(
-          PxGetPhysics(), 
-          0,
-          parentFrame,
-          rigidDynamic, 
-          childFrame);
-
-      joint->setMotion(physx::PxD6Axis::eSWING1, physx::PxD6Motion::eFREE);
-      joint->setMotion(physx::PxD6Axis::eSWING2, physx::PxD6Motion::eFREE);
-      joint->setMotion(physx::PxD6Axis::eTWIST, physx::PxD6Motion::eFREE);
-      joint->setMotion(physx::PxD6Axis::eX, physx::PxD6Motion::eLOCKED);
-      joint->setMotion(physx::PxD6Axis::eY, physx::PxD6Motion::eLOCKED);
-      joint->setMotion(physx::PxD6Axis::eZ, physx::PxD6Motion::eLOCKED);
-
-      physx::PxD6JointDrive jointDrive(constraintStiffness, constraintDamping, PX_MAX_F32, true);
-      joint->setDrive(physx::PxD6Drive::eSLERP, jointDrive);
-
-      // Store a reference to the constraint, for deletion.
-      userData->constraint = joint;
-    }
-
-    return actorID;
+    // Store a reference to the constraint, for deletion.
+    //userData->constraint = joint;
   }
-  return MR_INVALID_PHYSICS_OBJECT_ID;
+
+  return actorID;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void DefaultPhysicsMgr::destroyPhysicsBody(MCOMMS::SceneObjectID objectID)
 {
   // destroy the physics part if there is one
-  physx::PxActor* foundActor = 0;
-  size_t foundActorIndex = 0;
-  for (size_t i = 0; i < m_sceneActors.size(); ++i)
+  JPH::Body* foundBody = 0;
+  size_t foundBodyIndex = 0;
+  for (size_t i = 0; i < m_sceneBodies.size(); ++i)
   {
-    if (!m_sceneActors[i])
+    if (!m_sceneBodies[i])
       continue;
 
-    PhysicsUserData* userData = (PhysicsUserData*)m_sceneActors[i]->userData;
+    PhysicsUserData* userData = (PhysicsUserData*)m_sceneBodies[i]->GetUserData();
     if (userData && userData->isValid())
     {
       MCOMMS::SceneObjectID foundObjectID = userData->objectID;
       if (foundObjectID == objectID)
       {
-        foundActor = m_sceneActors[i];
-        foundActorIndex = i;
+        foundBody = m_sceneBodies[i];
+        foundBodyIndex = i;
         break;
       }
     }
   }
 
-  if (foundActor)
+  if (foundBody)
   {
-    unassignPhysicsID(foundActor);
+    unassignPhysicsID(foundBody);
 
     // Destroy per-shape user data
-    if (foundActor->is<physx::PxRigidActor>())
+    if (foundBody->GetShape())
     {
-      physx::PxShape *shapes[32];
-      physx::PxU32 numShapes = foundActor->is<physx::PxRigidActor>()->getShapes(&shapes[0], 32);
-      for (physx::PxU32 iShape=0; iShape<numShapes; ++iShape)
-      {
-        physx::PxShape* shape = shapes[iShape];
-        MR::PhysXPerShapeData *data = MR::PhysXPerShapeData::getFromShape(shape);
-        MR::PhysXPerShapeData::destroy(data, shape);
-      }
+      JPH::Shape* shape = const_cast<JPH::Shape*>(foundBody->GetShape());
+      MR::JoltPhysPerShapeData* data = MR::JoltPhysPerShapeData::getFromShape(shape);
+      MR::JoltPhysPerShapeData::destroy(data, shape);
     }
 
     // if the object is constrained, release the physical joint
-    PhysicsUserData* userData = (PhysicsUserData*)foundActor->userData;
+    PhysicsUserData* userData = (PhysicsUserData*)foundBody->GetUserData();
     if (userData->constraint)
     {
-      userData->constraint->release();
+      userData->constraint->Release();
       userData->constraint = 0;
     }
 
     delete userData;
-    foundActor->userData = 0;
+    foundBody->SetUserData(0);
 
-    // finally release the actor
-    foundActor->release();
+    //finally delete the body
+    JPH::BodyInterface& bodyinterface = m_physicsScene->m_joltPhysScene->GetBodyInterface();
+    bodyinterface.DestroyBody(foundBody->GetID());
 
-    m_sceneActors[foundActorIndex] = m_sceneActors.back();
-    m_sceneActors.pop_back();
+    m_sceneBodies[foundBodyIndex] = m_sceneBodies.back();
+    m_sceneBodies.pop_back();
   }
 
 }
@@ -890,6 +736,7 @@ bool DefaultPhysicsMgr::createConstraint(
   bool                lockOrientation,
   bool                constrainAtCOM)
 {
+    /*
   NMP_ASSERT_MSG(!getConstraint(constraintGUID), "createConstraint called for a GUID that already exists!");
 
   physx::PxActor *actorToConstrain = getActorByPhysicsID(physicsObjectID);
@@ -979,6 +826,8 @@ bool DefaultPhysicsMgr::createConstraint(
 
   m_constraintMap.insert(constraintGUID, newConstraint);
 
+  */
+
   return true;
 }
 
@@ -994,7 +843,7 @@ bool DefaultPhysicsMgr::destroyConstraint(uint64_t constraintGUID)
   }
 
   // Destroy the joint itself
-  constraint->m_jointConstraint->release();
+  constraint->m_jointConstraint->Release();
 
   // Remove the constraint from the map
   m_constraintMap.erase(constraintGUID);
@@ -1017,22 +866,21 @@ bool DefaultPhysicsMgr::moveConstraint(uint64_t constraintGUID, const NMP::Vecto
   }
 
   // Wake up the body that's connected to the constraint.
-  physx::PxRigidBody *rigidBody = constraint->m_constrainedActor->is<physx::PxRigidBody>();
-  rigidBody->addForce(physx::PxVec3(0,0,0));
+  //physx::PxRigidBody *rigidBody = constraint->m_constrainedActor->is<physx::PxRigidBody>();
+  //rigidBody->addForce(physx::PxVec3(0,0,0));
 
   // Move the constraint to the new point in space as requested.
   // TODO: Make use of the com offset if we are a com grab!
-  constraint->m_jointConstraint->setLocalPose(physx::PxJointActorIndex::eACTOR0, physx::PxTransform(MR::nmVector3ToPxVec3(newGrabPosition), physx::PxQuat(physx::PxIdentity)));
+  //constraint->m_jointConstraint->setLocalPose(physx::PxJointActorIndex::eACTOR0, physx::PxTransform(MR::nmVector3ToPxVec3(newGrabPosition), physx::PxQuat(physx::PxIdentity)));
 
   return true;
 }
 
 
 //----------------------------------------------------------------------------------------------------------------------
-NMP::Vector3 DefaultPhysicsMgr::getActorCOMPos(physx::PxActor* actor) const
+NMP::Vector3 DefaultPhysicsMgr::getBodyCOMPos(JPH::Body* body) const
 {
-  physx::PxRigidBody* rigidBody = actor->is<physx::PxRigidBody>();
-  return MR::nmPxVec3ToVector3(rigidBody->getGlobalPose().transform(rigidBody->getCMassLocalPose().p));
+  return MR::nmJPHVec3ToVector3(body->GetCenterOfMassPosition());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1044,34 +892,30 @@ bool DefaultPhysicsMgr::applyForce(
   const NMP::Vector3& NMP_UNUSED(localSpacePosition),
   const NMP::Vector3& worldSpacePosition)
 {
-  physx::PxActor * actor = getActorByPhysicsID(physicsEngineObjectID);
+  JPH::Body *body = getBodyByPhysicsID(physicsEngineObjectID);
   
-  NMP_ASSERT_MSG(actor, "Could not find physics object of ID %i!", physicsEngineObjectID);
-  if (!actor)
-  {
-    return false; // actor not found
-  }
+  NMP_ASSERT_MSG(body, "Could not find physics object of ID %i!", physicsEngineObjectID);
+  if (!body)
+    return false; // body not found
 
-  // PhysX3 can't apply forces to static bodies
-  physx::PxActorType::Enum actorType = actor->getType();
-  if (actorType == physx::PxActorType::eRIGID_STATIC)
+  if (body->IsStatic())
   {
     return false;
   }
 
-  NMP::Vector3 forcePosition = applyAtCOM ? getActorCOMPos(actor) : worldSpacePosition;
+  NMP::Vector3 forcePosition = applyAtCOM ? getBodyCOMPos(body) : worldSpacePosition;
   switch(mode)
   {
     case IPhysicsMgr::kFORCE:
-      MR::addForceToActor(*actor, force, forcePosition);
+      MR::addForceToBody(body, force, forcePosition);
       break; 
 
     case IPhysicsMgr::kIMPULSE:
-      MR::addImpulseToActor(*actor, force, forcePosition);
+      MR::addImpulseToBody(body, force, forcePosition);
       break; 
 
     case IPhysicsMgr::kVELOCITY_CHANGE:
-      MR::addVelocityChangeToActor(*actor, force, forcePosition);
+      MR::addVelocityChangeToBody(body, force, forcePosition);
       break; 
 
     default:
@@ -1085,20 +929,10 @@ bool DefaultPhysicsMgr::setPhysicsObjectAttribute(
   uint32_t physicsEngineObjectID,
   const MCOMMS::Attribute* physicsObjAttribute)
 {
-  physx::PxActor * actor = getActorByPhysicsID(physicsEngineObjectID);
-  NMP_ASSERT_MSG(actor, "Could not find physics object of ID %i!", physicsEngineObjectID);
-  if(!actor)
-  {
+  JPH::Body *body = getBodyByPhysicsID(physicsEngineObjectID);
+  NMP_ASSERT_MSG(body, "Could not find physics object of ID %i!", physicsEngineObjectID);
+  if(!body)
     return false;
-  }
-
-  // PhysX3 advises against modifying transforms on static bodies during normal simulation.
-  // (hence, disallowed in this case).
-  physx::PxActorType::Enum actorType = actor->getType();
-  if (actorType == physx::PxActorType::eRIGID_STATIC)
-  {
-    return false;
-  }
 
   switch(physicsObjAttribute->getSemantic())
   {
@@ -1106,9 +940,9 @@ bool DefaultPhysicsMgr::setPhysicsObjectAttribute(
     case MCOMMS::Attribute::SEMANTIC_TRANSFORM:
     {
       const NMP::Matrix34* newWorldSpaceTransform = (const NMP::Matrix34*)(physicsObjAttribute->getData());
-      MR::setActorGlobalPoseTM(*actor, *newWorldSpaceTransform);
-      MR::setActorLinVelW(*actor, NMP::Vector3(NMP::Vector3::InitZero));
-      MR::setActorAngVelW(*actor, NMP::Vector3(NMP::Vector3::InitZero));
+      MR::setBodyGlobalPoseTM(body, *newWorldSpaceTransform);
+      MR::setBodyLinVelW(body, NMP::Vector3(NMP::Vector3::InitZero));
+      MR::setBodyAngVelW(body, NMP::Vector3(NMP::Vector3::InitZero));
       return true;
     }
 
@@ -1177,47 +1011,6 @@ bool DefaultPhysicsMgr::validatePluginList(const NMP::OrderedStringTable& plugin
 
   return false;
 }
-
-//----------------------------------------------------------------------------------------------------------------------
-physx::PxTriangleMesh* DefaultPhysicsMgr::createTriangleMeshData(const physx::PxTriangleMeshDesc& meshDesc)
-{
-  phx::MemoryWriteBuffer buf;
-
-  bool status = PhysicsSDK::getPxCooking()->cookTriangleMesh(meshDesc, buf);
-  if (!status) 
-  {
-    NMP_ASSERT_FAIL();
-  }
-  phx::MemoryReadBuffer readBuffer(buf.data);
-  physx::PxTriangleMesh* mesh = PxGetPhysics().createTriangleMesh(readBuffer);
-  return mesh;
-}
-
-
-//----------------------------------------------------------------------------------------------------------------------
-PhysXConvexMesh* DefaultPhysicsMgr::createConvexMeshData(const PhysXConvexMeshDesc& NMP_UNUSED(meshDesc))
-{
-  PhysXConvexMesh* mesh = NULL;
-
-  return mesh;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-bool DefaultPhysicsMgr::initializeTriangleMeshShapeDesc(
-  const PhysXTriangleMeshDesc& NMP_UNUSED(meshDesc),
-  PhysXTriangleMeshShapeDesc&  NMP_UNUSED(shapeDesc))
-{
-  return true;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-bool DefaultPhysicsMgr::initializeConvexShapeDesc(
-  const PhysXConvexMeshDesc& NMP_UNUSED(meshDesc),
-  PhysXConvexShapeDesc&      NMP_UNUSED(shapeDesc))
-{
-  return true;
-}
-
 //----------------------------------------------------------------------------------------------------------------------
 void DefaultPhysicsMgr::resetScene()
 {
@@ -1230,43 +1023,38 @@ void DefaultPhysicsMgr::initializeScene()
   // everything out here.
   clearScene();
 
-  // Simulate a couple of times to flush the visual debugger - it lets us see the state of things
-  // after we've (hopefully) tidied everything up. Also it's needed to flush the material releases
-  // from physx, otherwise the debugger code crashes when we try to connect. Possibly remove this -
-  // see MORPH-15537
-  m_physicsScene->getPhysXScene()->simulate(0.00001f);
-  m_physicsScene->getPhysXScene()->fetchResults(true); 
- 
-  m_physicsScene->getPhysXScene()->simulate(0.00001f);
-  m_physicsScene->getPhysXScene()->fetchResults(true); 
-
 #ifdef NM_PROFILING
   g_totalTiming = 0.0f;
   g_maxTime = 0.0f;
   g_totalSamples = 0;
 #endif
-  PhysicsSDK::connectToDebugger();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void DefaultPhysicsMgr::clearScene()
 {
-  for (size_t i = 0; i < m_sceneActors.size(); ++i)
+  if (!m_physicsScene)
+      return;
+  JPH::BodyInterface& bodyinterface = m_physicsScene->m_joltPhysScene->GetBodyInterface();
+
+  for (size_t i = 0; i < m_sceneBodies.size(); ++i)
   {
-    if (m_sceneActors[i])
-      m_sceneActors[i]->release();
+    if (m_sceneBodies[i])
+    {
+        bodyinterface.DestroyBody(m_sceneBodies[i]->GetID());
+    }
   }
-  m_sceneActors.clear();
+  m_sceneBodies.clear();
 
   while (!m_materials.empty())
   {
-    m_materials.back()->release();
+    m_materials.back()->Release();
     m_materials.pop_back();
   }
 
   for (size_t i = 0; i < m_joints.size(); ++i)
   {
-    m_joints[i]->release();
+    m_joints[i]->Release();
   }
   m_joints.clear();
 }
@@ -1282,20 +1070,17 @@ void DefaultPhysicsMgr::createPhysicsRig(MR::Network *network, NMP::Vector3* ini
 
   if (physicsRigDef != NULL)
   {
-    if (m_physicsRigType == MR::PhysicsRigPhysX3::TYPE_ARTICULATED)
+    if (m_physicsRigType == MR::PhysicsRigJoltPhys::TYPE_ARTICULATED)
     {
       
       NMP::Memory::Resource resource = NMPMemoryAllocateFromFormat(
-        MR::PhysicsRigPhysX3Articulation::getMemoryRequirements(physicsRigDef));
+        MR::PhysicsRigJoltPhysRagdoll::getMemoryRequirements(physicsRigDef));
         
-      //NMP::Memory::Resource resource = NMPMemoryAllocateFromFormat(MR::PhysicsRigPhysX3Articulation::getMemoryRequirements(physicsRigDef));
       NMP_ASSERT(resource.ptr);
-      MR::PhysicsRigPhysX3Articulation* physicsRig = MR::PhysicsRigPhysX3Articulation::init(
+      MR::PhysicsRigJoltPhysRagdoll* physicsRig = MR::PhysicsRigJoltPhysRagdoll::init(
         resource,
         physicsRigDef,
         getPhysicsScene(),
-        physx::PX_DEFAULT_CLIENT,
-        15, // all client behaviour bits
         animRigDef,
         getAnimToPhysicsMap(network->getNetworkDef(), network->getActiveAnimSetIndex()),
         1 << MR::GROUP_CHARACTER_PART,
@@ -1306,22 +1091,20 @@ void DefaultPhysicsMgr::createPhysicsRig(MR::Network *network, NMP::Vector3* ini
       uint32_t numParts = physicsRig->getNumParts();
       for (uint32_t i = 0; i != numParts; ++i)
       {
-        MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation* part = physicsRig->getPartPhysX3Articulation(i);
-        physx::PxActor* actor = part->getArticulationLink();
-        assignPhysicsIDToActor(actor);
+        MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll* part = physicsRig->getPartJoltPhysRagdoll(i);
+        JPH::Body* body = part->getBody();
+        assignPhysicsIDToBody(body);
       }
     }
     else
     {
       NMP::Memory::Resource resource = NMPMemoryAllocateFromFormat(
-        MR::PhysicsRigPhysX3Jointed::getMemoryRequirements(physicsRigDef)); 
+        MR::PhysicsRigJoltPhysJointed::getMemoryRequirements(physicsRigDef)); 
       NMP_ASSERT(resource.ptr);
-      MR::PhysicsRigPhysX3Jointed* physicsRig = MR::PhysicsRigPhysX3Jointed::init(
+      MR::PhysicsRigJoltPhysJointed* physicsRig = MR::PhysicsRigJoltPhysJointed::init(
         resource,
         physicsRigDef,
         getPhysicsScene(),
-        physx::PX_DEFAULT_CLIENT,
-        15, // all client behaviour bits
         animRigDef,
         getAnimToPhysicsMap(network->getNetworkDef(), network->getActiveAnimSetIndex()),
         1 << MR::GROUP_CHARACTER_PART,
@@ -1332,9 +1115,9 @@ void DefaultPhysicsMgr::createPhysicsRig(MR::Network *network, NMP::Vector3* ini
       uint32_t numParts = physicsRig->getNumParts();
       for (uint32_t i = 0; i != numParts; ++i)
       {
-        MR::PhysicsRigPhysX3Jointed::PartPhysX3Jointed* part = physicsRig->getPartPhysXJointed(i);
-        physx::PxActor* actor = part->getRigidDynamic();
-        assignPhysicsIDToActor(actor);
+        MR::PhysicsRigJoltPhysJointed::PartJoltPhysJointed* part = physicsRig->getPartJoltPhysJointed(i);
+        JPH::Body* body = part->getBody();
+        assignPhysicsIDToBody(body);
       }
     }
   }
@@ -1357,19 +1140,19 @@ void DefaultPhysicsMgr::destroyPhysicsRig(MR::Network *network)
     MR::PhysicsRigDef* physicsRigDef = getActivePhysicsRigDef(network);
     if (physicsRigDef)
     {
-      MR::PhysicsRigPhysX3* physicsRigPhysX3 = (MR::PhysicsRigPhysX3*) getPhysicsRig(network);
+      MR::PhysicsRigJoltPhys* physicsRigJoltPhys = (MR::PhysicsRigJoltPhys*) getPhysicsRig(network);
 
-      if (physicsRigPhysX3)
+      if (physicsRigJoltPhys)
       {
-        uint32_t numParts = physicsRigPhysX3->getNumParts();
+        uint32_t numParts = physicsRigJoltPhys->getNumParts();
         for (uint32_t i = 0; i != numParts; ++i)
         {
-          physx::PxActor* actor = ((MR::PhysicsRigPhysX3::PartPhysX3*) physicsRigPhysX3->getPart(i))->getRigidBody();
-          unassignPhysicsID(actor);
+          JPH::Body* body = ((MR::PhysicsRigJoltPhys::PartJoltPhys*) physicsRigJoltPhys->getPart(i))->getRigidBody();
+          unassignPhysicsID(body);
         }
 
-        physicsRigPhysX3->term();
-        NMP::Memory::memFree(physicsRigPhysX3);
+        physicsRigJoltPhys->term();
+        NMP::Memory::memFree(physicsRigJoltPhys);
       }
 
       setPhysicsRig(network, NULL);
@@ -1635,19 +1418,19 @@ void DefaultPhysicsMgr::updatePhysicalSceneObjects()
 
   if (sceneObjectManager)
   {
-    std::vector<physx::PxActor*>& sceneActors = getSceneActors();
-    size_t nActors = sceneActors.size();
+    std::vector<JPH::Body*>& sceneBodies = getSceneBodies();
+    size_t nBodies = sceneBodies.size();
 
-    for (size_t i = 0 ; i < nActors ; ++i)
+    for (size_t i = 0 ; i < nBodies ; ++i)
     {
-      physx::PxActor* actor = sceneActors[i];
-      if (!actor)
+      JPH::Body* body = sceneBodies[i];
+      if (!body)
         continue;
 
-      if (!actor->userData)
+      if (!body->GetUserData())
         continue;
 
-      PhysicsUserData* userData = (PhysicsUserData*)actor->userData;
+      PhysicsUserData* userData = (PhysicsUserData*)body->GetUserData();
       if (!userData->isValid())
         continue;
 
@@ -1660,7 +1443,7 @@ void DefaultPhysicsMgr::updatePhysicalSceneObjects()
         MCOMMS::Attribute* const transformAttribute = sceneObect->getAttribute(MCOMMS::Attribute::SEMANTIC_TRANSFORM);
         if (transformAttribute)
         {
-          const NMP::Matrix34 transform = MR::nmPxTransformToNmMatrix34(actor->is<physx::PxRigidActor>()->getGlobalPose());
+          const NMP::Matrix34 transform = MR::nmJPHMat44ToNmMatrix34(body->GetWorldTransform());
           *(NMP::Matrix34*)transformAttribute->getData() = transform;
         }
       }
@@ -1918,7 +1701,7 @@ void deleteOrphanedPhysicsAsset(MR::NetworkDef* networkDef)
 void DefaultPhysicsMgr::initializePhysicsCore(uint32_t numDispatchers, MR::Dispatcher** dispatchers)
 {
   // Engine specific assets
-  MR::Manager::getInstance().registerAsset(MR::Manager::kAsset_PhysicsRigDef, MR::locatePhysicsRigDefPhysX3);
+  MR::Manager::getInstance().registerAsset(MR::Manager::kAsset_PhysicsRigDef, MR::locatePhysicsRigDefJoltPhys);
 
   MR::initMorphemePhysics(numDispatchers, dispatchers);
 }
@@ -1930,38 +1713,38 @@ void DefaultPhysicsMgr::finaliseInitPhysicsCore()
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-physx::PxActor* DefaultPhysicsMgr::getActorByPhysicsID(MR::PhysicsObjectID id) const
+JPH::Body* DefaultPhysicsMgr::getBodyByPhysicsID(MR::PhysicsObjectID id) const
 {
-  PhysXActor* actor = 0;
-  m_physicsIDActorMap.find(id, &actor);
-  return actor;
+  JPH::Body* body = 0;
+  m_physicsIDBodyMap.find(id, &body);
+  return body;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void* DefaultPhysicsMgr::getPhysicsObjectPointerFromPhysicsID(MR::PhysicsObjectID id) const
 {
-  return getActorByPhysicsID(id);
+  return getBodyByPhysicsID(id);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 MR::PhysicsObjectID DefaultPhysicsMgr::getPhysicsObjectIDFromPhysicsObjectPointer(void* physicsObject) const
 {
-  return getPhysicsIDForActor((const physx::PxActor*) physicsObject);
+  return getPhysicsIDForBody((const JPH::Body*) physicsObject);
 }
 
 
 //----------------------------------------------------------------------------------------------------------------------
 MR::PhysicsObjectID DefaultPhysicsMgr::getPhysicsIDForPart(const MR::PhysicsRig::Part* part) const
 {
-  physx::PxActor* actor = ((MR::PhysicsRigPhysX3::PartPhysX3*) part)->getRigidBody();
-  return getPhysicsIDForActor(actor);
+  JPH::Body* body = ((MR::PhysicsRigJoltPhys::PartJoltPhys*) part)->getRigidBody();
+  return getPhysicsIDForBody(body);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-MR::PhysicsObjectID DefaultPhysicsMgr::getPhysicsIDForActor(const physx::PxActor* actor) const
+MR::PhysicsObjectID DefaultPhysicsMgr::getPhysicsIDForBody(const JPH::Body* actor) const
 {
   MR::PhysicsObjectID id = MR_INVALID_PHYSICS_OBJECT_ID;
-  m_actorPhysicsIDMap.find(const_cast<PhysXActor*>(actor), &id);
+  m_bodyPhysicsIDMap.find(const_cast<JPH::Body*>(actor), &id);
   return id;
 }
 
@@ -1989,94 +1772,35 @@ void DefaultPhysicsMgr::resetSDKS()
 
   m_maxTimeStep = 1.0f / 15.0f;
 
-  physx::PxVec3 gravity(0, -9.81f, 0);
+  JPH::Vec3 gravity(0, -9.81f, 0);
 
-  // create the scene
-  physx::PxSceneDesc sceneDesc(PxGetPhysics().getTolerancesScale());
+  JPH::PhysicsSystem* phys_system = new JPH::PhysicsSystem();
 
-  // task dispatchers - pass in the number of worker threads
-  m_cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(0);
-  sceneDesc.cpuDispatcher = m_cpuDispatcher; 
-
-#ifdef NM_HOST_CELL_PPU
-  physx::PxPS3Ext& ps3ext = physx::PxGetPS3Extension();
-
-  CellSpurs2* spurs = ps3ext.createSpurs(5, false);
-
-  uint8_t simPrio[8] = {2,2,2,2, 2,2,2,2};
-  CellSpursTaskset2* simulationTaskset = ps3ext.createTaskset(*spurs,5,simPrio);
-
-  uint8_t queryPrio[8] = {1,1,1,1, 1,1,1,1};
-  CellSpursTaskset2* queryTaskset = ps3ext.createTaskset(*spurs,5,queryPrio);
-
-  bool physXInitResult = physx::PxPS3Control::initializePhysXWithTaskset(simulationTaskset, queryTaskset,5,5);
-
-  physx::pxtask::SpuDispatcher* spuDispatcher = PxDefaultSpuDispatcherCreate(simulationTaskset, queryTaskset);
-
-  sceneDesc.spuDispatcher = spuDispatcher; 
-
-  // We initialise the NMP SPU manager here with the SPURS object which PhysX creates, so it doesn't init SPURS again.
-  if(!NMP::SPUManager::initialised())
-  {
-    NMP::SPUManager::init(NMP::SPUManager::MAX_SPUS, NULL, spurs, true);
-  }
-#endif
-
-  // It is required to register either the morpheme filter shader, or one that is very similar
-  // (perhaps one that has additional functionality).
-  sceneDesc.filterShader = MR::morphemePhysX3FilterShader;
-  // This is optional, in order to improve character self-collision. It has a slight performance
-  // cost.
-  sceneDesc.contactModifyCallback = &morphemePhysX3ContactModifyCallback; 
-  sceneDesc.gravity      = gravity;
-  physx::PxScene* scene = PxGetPhysics().createScene(sceneDesc);
-  NMP_ASSERT(scene);
-  void* alignedMemory = NMP::Memory::memAllocAligned(sizeof(MR::PhysicsScenePhysX3), NMP_VECTOR_ALIGNMENT);
-  m_physicsScene = new(alignedMemory) MR::PhysicsScenePhysX3(scene);
-  scene->setClientBehaviorFlags(0, (physx::PxClientBehaviorFlags)15); // Setting all the basic bits for now, see MORPH-11272
+  NMP_ASSERT(phys_system);
+  void* alignedMemory = NMP::Memory::memAllocAligned(sizeof(MR::PhysicsSceneJoltPhys), NMP_VECTOR_ALIGNMENT);
+  m_physicsScene = new(alignedMemory) MR::PhysicsSceneJoltPhys(PhysicsSDK::sm_joltTempAllocator, PhysicsSDK::sm_joltJobSystem, phys_system);
 
   // create CCM and SOM
   m_characterControllerManager = new DefaultControllerMgr(this, m_context);
 
   resetScene();
-
-#ifdef NM_HOST_CELL_PPU
-  // Disable SPU use to work around physx crashes. See MORPH-8393.
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_NARROWPHASE, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_ISLAND_GEN, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_DYNAMICS, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_CLOTH, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_HEIGHT_FIELD, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_RAYCAST, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_FLUID_PACKETS, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_FLUID_DYNAMICS, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_FLUID_COLLISION, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_FLUID_PARTICLES_UPDATE, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_FLUID_SPH, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_FLUID_HASH, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_NARROWPHASE1, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_NARROWPHASE2, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_NARROWPHASE3, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_NARROWPHASE4, 0);
-  physx::PxPS3Config::setSceneParamInt(*scene, physx::PxPS3ConfigParam::eSPU_BROADPHASE, 0);
-#endif
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void DefaultPhysicsMgr::onAssetScaleChanged(float assetScale)
 {
-  if (NMP::nmfabs(assetScale - m_toleranceScalingValue) > 0.000001f && m_sceneActors.empty() && m_joints.empty())
+  if (NMP::nmfabs(assetScale - m_toleranceScalingValue) > 0.000001f && m_sceneBodies.empty() && m_joints.empty())
   {
     resetSDKS();
   }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-MR::PhysicsObjectID DefaultPhysicsMgr::assignPhysicsIDToActor(physx::PxActor* actor)
+MR::PhysicsObjectID DefaultPhysicsMgr::assignPhysicsIDToBody(JPH::Body* body)
 {
-  NMP_ASSERT(actor != 0);
+  NMP_ASSERT(body != 0);
 
-  bool found = m_actorPhysicsIDMap.find(actor);
+  bool found = m_bodyPhysicsIDMap.find(body);
   if (found)
   {
     // already added to map
@@ -2084,9 +1808,9 @@ MR::PhysicsObjectID DefaultPhysicsMgr::assignPhysicsIDToActor(physx::PxActor* ac
   }
 
   // get a free id for this object
-  MR::PhysicsObjectID actorID = m_nextPhysicsObjectID++;
+  MR::PhysicsObjectID bodyID = m_nextPhysicsObjectID++;
 
-  bool result = m_physicsIDActorMap.insert(actorID, actor);
+  bool result = m_physicsIDBodyMap.insert(bodyID, body);
 
   if (!result)
   {
@@ -2094,41 +1818,41 @@ MR::PhysicsObjectID DefaultPhysicsMgr::assignPhysicsIDToActor(physx::PxActor* ac
     return MR_INVALID_PHYSICS_OBJECT_ID;
   }
 
-  result = m_actorPhysicsIDMap.insert(actor, actorID);
+  result = m_bodyPhysicsIDMap.insert(body, bodyID);
 
   if (!result)
   {
-    // insertion failed, remove the entry from m_physicsIdActorMap so it still contains the same
-    // objects as m_actorPhysicsIdMap.
-    m_physicsIDActorMap.erase(actorID);
+    // insertion failed, remove the entry from m_physicsIdBodyMap so it still contains the same
+    // objects as m_bodyPhysicsIdMap.
+    m_physicsIDBodyMap.erase(bodyID);
     return MR_INVALID_PHYSICS_OBJECT_ID;
   }
 
-  return actorID;
+  return bodyID;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-bool DefaultPhysicsMgr::unassignPhysicsID(physx::PxActor* actor)
+bool DefaultPhysicsMgr::unassignPhysicsID(JPH::Body* body)
 {
-  NMP_ASSERT(actor != 0);
+  NMP_ASSERT(body != 0);
 
-  MR::PhysicsObjectID actorId = MR_INVALID_PHYSICS_OBJECT_ID;
+  MR::PhysicsObjectID bodyId = MR_INVALID_PHYSICS_OBJECT_ID;
 
-  bool found = m_actorPhysicsIDMap.find(actor, &actorId);
+  bool found = m_bodyPhysicsIDMap.find(body, &bodyId);
   if (!found)
   {
     // object was never given a physics object id.
     return false;
   }
 
-  bool result = m_physicsIDActorMap.erase(actorId);
+  bool result = m_physicsIDBodyMap.erase(bodyId);
   if (!result)
   {
     // the maps got out of sync somehow
     return false;
   }
 
-  m_actorPhysicsIDMap.erase(actor);
+  m_bodyPhysicsIDMap.erase(body);
 
   return true;
 }
@@ -2137,8 +1861,8 @@ bool DefaultPhysicsMgr::unassignPhysicsID(physx::PxActor* actor)
 void DefaultPhysicsMgr::clearAllPhysicsIDs()
 {
   m_nextPhysicsObjectID = 0;
-  m_physicsIDActorMap.clear();
-  m_actorPhysicsIDMap.clear();
+  m_physicsIDBodyMap.clear();
+  m_bodyPhysicsIDMap.clear();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2155,11 +1879,7 @@ void DefaultPhysicsMgr::deleteScene()
   clearScene();
   if (m_physicsScene)
   {
-    m_cpuDispatcher->release();
-    m_cpuDispatcher = 0;
-
-    m_physicsScene->getPhysXScene()->release();
-    NMP::Memory::memFree(m_physicsScene);
+    delete m_physicsScene->m_joltPhysScene;
     m_physicsScene = 0;
   }
 

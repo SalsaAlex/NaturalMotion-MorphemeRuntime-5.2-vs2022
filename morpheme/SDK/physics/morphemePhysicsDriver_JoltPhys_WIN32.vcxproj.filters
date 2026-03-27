@@ -26,6 +26,12 @@
     <ClInclude Include="include\physics\JoltPhys\mrPhysicsSceneJoltPhys.h">
       <Filter>include\physics\JoltPhys</Filter>
     </ClInclude>
+    <ClInclude Include="include\physics\JoltPhys\mrPhysicsRigJoltPhysRagdoll.h">
+      <Filter>include\physics\JoltPhys</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\JoltPhys\mrPhysicsRigJoltPhysJointed.h">
+      <Filter>include\physics\JoltPhys</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\JoltPhys\mrCharacterControllerInterfaceJoltPhys.cpp">
@@ -38,6 +44,12 @@
       <Filter>src\JoltPhys</Filter>
     </ClCompile>
     <ClCompile Include="src\JoltPhys\mrPhysicsSceneJoltPhys.cpp">
+      <Filter>src\JoltPhys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JoltPhys\mrPhysicsRigJoltPhysRagdoll.cpp">
+      <Filter>src\JoltPhys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JoltPhys\mrPhysicsRigJoltPhysJointed.cpp">
       <Filter>src\JoltPhys</Filter>
     </ClCompile>
   </ItemGroup>

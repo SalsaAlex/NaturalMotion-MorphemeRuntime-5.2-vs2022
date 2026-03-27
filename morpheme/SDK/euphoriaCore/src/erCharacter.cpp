@@ -313,19 +313,10 @@ void Character::prePhysicsStep(float timeDelta)
         NMP::Vector3 force = -(m_body->m_physicsScene->getGravity() * mass);
         // Two methods of putting him in treacle - either setting velocities to zero (which works
         // well, but weakens external constraints), or applying explicit damping.
-#if 1
+
         part->setVel(NMP::Vector3(0.0f, 0.0f, 0.0f));
         part->setAngVel(NMP::Vector3(0.0f, 0.0f, 0.0f));
-#else
-        physx::PxVec3 v = link->getLinearVelocity();
-        force += -mass * v / timeDelta;
 
-        physx::PxVec3 av = link->getAngularVelocity();
-        static float torqueScale = 0.001f;
-        physx::PxVec3 torque = -torqueScale * mass * av / timeDelta;
-
-        link->addTorque(torque);
-#endif
         part->addForce(force);
       }
     }

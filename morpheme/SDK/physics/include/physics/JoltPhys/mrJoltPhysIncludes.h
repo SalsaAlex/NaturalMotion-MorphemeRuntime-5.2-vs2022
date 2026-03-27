@@ -43,6 +43,7 @@
 #include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
 #include <Jolt/Physics/Collision/Shape/MeshShape.h>
 #include <Jolt/Physics/Collision/Shape/CompoundShape.h>
+#include <Jolt/Physics/Collision/Shape/StaticCompoundShape.h>
 #include <Jolt/Physics/Collision/RayCast.h>
 #include <Jolt/Physics/Collision/AABoxCast.h>
 #include <Jolt/Physics/Collision/CastResult.h>
@@ -52,6 +53,7 @@
 #include <Jolt/Physics/Constraints/Constraint.h>
 #include <Jolt/Physics/Constraints/SixDOFConstraint.h>
 #include <Jolt/Physics/Character/Character.h>
+#include <Jolt/Physics/Character/CharacterVirtual.h>
 #include <Jolt/Physics/Ragdoll/Ragdoll.h>
 
 // These includes are not in PxPhysicsAPI

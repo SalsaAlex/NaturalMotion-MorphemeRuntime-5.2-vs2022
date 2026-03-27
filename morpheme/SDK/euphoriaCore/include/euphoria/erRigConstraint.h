@@ -12,12 +12,11 @@
 #define NM_RIGCONSTRAINT_H
 
 #include "erDebugDraw.h"
-#include "mrPhysX3.h"
-#include "mrPhysicsRigPhysX3Articulation.h"
-#include "mrPhysX3Includes.h"
+#include "mrJoltPhys.h"
+#include "mrPhysicsRigJoltPhysRagdoll.h"
 #include "erLimbTransforms.h"
 #include "erEuphoriaUserData.h"
-#include "mrPhysicsScenePhysX3.h"
+#include "mrPhysicsSceneJoltPhys.h"
 #include "NMPlatform/NMVectorContainer.h"
 
 namespace ER
@@ -40,7 +39,7 @@ public:
     const NMP::Matrix34& partJointFrameA,
     const uint32_t partIndexB,
     const NMP::Matrix34& partJointFrameB,
-    MR::PhysicsRigPhysX3Articulation* const physicsRig);
+    MR::PhysicsRigJoltPhysRagdoll* const physicsRig);
 
   ~RigConstraint();
 
@@ -49,8 +48,8 @@ public:
   void setLocalPoseForPartA(const NMP::Matrix34& pose);
   void setLocalPoseForPartB(const NMP::Matrix34& pose);
   void setDrive(const float spring, const float damping, const float forceLimit, const bool isAcceleration);
-  void setDrive(const physx::PxD6JointDrive& drive);
-  void setDrive(const physx::PxD6Drive::Enum axis, const physx::PxD6JointDrive& drive);
+  void setDrive(const JPH::MotorSettings& drive);
+  void setDrive(const JPH::SixDOFConstraintSettings::EAxis axis, const JPH::MotorSettings& drive);
 
   /// Returns true if the constraint involves the rig part with the supplied index.
   bool referencesPart(const uint32_t partIndex) const;
@@ -60,16 +59,16 @@ public:
 
 private:
   // Private member functions
-  physx::PxD6Joint* createJoint(
-    physx::PxRigidActor* actor1,
-    physx::PxRigidActor* actor2,
+  JPH::SixDOFConstraint* createJoint(
+    JPH::Body* body1,
+    JPH::Body* body2,
     const NMP::Matrix34& pose1,
     const NMP::Matrix34& pose2,
     uint16_t lockedLinearDofs,
     uint16_t lockedAngularDofs);
 
   // Private member data
-  physx::PxD6Joint* m_constraint; // The actual underlying PhysX constraint.
+  JPH::SixDOFConstraint* m_constraint; // The actual underlying Jolt Phys constraint.
 
   uint32_t m_partIndexA;
   uint32_t m_partIndexB;
@@ -93,7 +92,7 @@ public:
     const NMP::Matrix34& partJointFrameA,
     const uint32_t partIndexB,
     const NMP::Matrix34& partJointFrameB,
-    MR::PhysicsRigPhysX3Articulation* const physicsRig);
+    MR::PhysicsRigJoltPhysRagdoll* const physicsRig);
 
   void destroy(const uint32_t partIndexA, const uint32_t partIndexB);
 

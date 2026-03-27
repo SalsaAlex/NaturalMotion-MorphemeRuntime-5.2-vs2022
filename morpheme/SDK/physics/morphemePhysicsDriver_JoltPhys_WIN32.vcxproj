@@ -135,16 +135,17 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
       <MinimalRebuild>false</MinimalRebuild>
-      <PreprocessorDefinitions>NM_PHYSX3;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;WIN32;_DEBUG;_LIB;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_USE_CPU_COMPUTE;JPH_DEBUG_RENDERER;JPH_PROFILE_ENABLED;JPH_OBJECT_STREAM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ProgramDatabaseFileName>$(OutDir)morphemePhysicsDriver_JoltPhys_debug.pdb</ProgramDatabaseFileName>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>Disabled</Optimization>
       <FloatingPointModel>Fast</FloatingPointModel>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -163,13 +164,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <MinimalRebuild>false</MinimalRebuild>
       <Optimization>MaxSpeed</Optimization>
-      <PreprocessorDefinitions>NDEBUG;NM_PHYSX3;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;NOMINMAX;WIN32;_LIB;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_USE_CPU_COMPUTE;JPH_DEBUG_RENDERER;JPH_PROFILE_ENABLED;JPH_OBJECT_STREAM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ProgramDatabaseFileName>$(OutDir)morphemePhysicsDriver_JoltPhys.pdb</ProgramDatabaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -188,13 +190,14 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
       <MinimalRebuild>false</MinimalRebuild>
-      <PreprocessorDefinitions>NM_PHYSX3;NM_TARGET_BIGENDIAN=0;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NM_TARGET_BIGENDIAN=0;NOMINMAX;WIN32;_DEBUG;_LIB;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_USE_CPU_COMPUTE;JPH_DEBUG_RENDERER;JPH_PROFILE_ENABLED;JPH_OBJECT_STREAM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ProgramDatabaseFileName>$(OutDir)morphemePhysicsDriver_JoltPhys_target_LE32_debug.pdb</ProgramDatabaseFileName>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -213,13 +216,14 @@
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <MinimalRebuild>false</MinimalRebuild>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>NDEBUG;NM_ENABLE_EXCEPTIONS=1;NM_PHYSX3;NM_TARGET_BIGENDIAN=0;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;NM_ENABLE_EXCEPTIONS=1;NM_TARGET_BIGENDIAN=0;NOMINMAX;WIN32;_LIB;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_USE_CPU_COMPUTE;JPH_DEBUG_RENDERER;JPH_PROFILE_ENABLED;JPH_OBJECT_STREAM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ProgramDatabaseFileName>$(OutDir)morphemePhysicsDriver_JoltPhys_target_LE32.pdb</ProgramDatabaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -285,12 +289,16 @@
     <ClInclude Include="include\physics\JoltPhys\mrCharacterControllerInterfaceJoltPhys.h" />
     <ClInclude Include="include\physics\JoltPhys\mrPhysicsDriverDataJoltPhys.h" />
     <ClInclude Include="include\physics\JoltPhys\mrPhysicsRigJoltPhys.h" />
+    <ClInclude Include="include\physics\JoltPhys\mrPhysicsRigJoltPhysRagdoll.h" />
+    <ClInclude Include="include\physics\JoltPhys\mrPhysicsRigJoltPhysJointed.h" />
     <ClInclude Include="include\physics\JoltPhys\mrPhysicsSceneJoltPhys.h" />
     <ClInclude Include="include\physics\JoltPhys\mrJoltPhys.h" />
     <ClInclude Include="include\physics\JoltPhys\mrJoltPhysIncludes.h" />
     <ClCompile Include="src\JoltPhys\mrCharacterControllerInterfaceJoltPhys.cpp" />
     <ClCompile Include="src\JoltPhys\mrPhysicsDriverDataJoltPhys.cpp" />
     <ClCompile Include="src\JoltPhys\mrPhysicsRigJoltPhys.cpp" />
+    <ClCompile Include="src\JoltPhys\mrPhysicsRigJoltPhysRagdoll.cpp" />
+    <ClCompile Include="src\JoltPhys\mrPhysicsRigJoltPhysJointed.cpp" />
     <ClCompile Include="src\JoltPhys\mrPhysicsSceneJoltPhys.cpp" />
   </ItemGroup>
   <ItemGroup>

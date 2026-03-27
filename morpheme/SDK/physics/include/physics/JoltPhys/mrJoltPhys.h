@@ -72,6 +72,18 @@ static inline const JPH::Mat44 nmMatrix34ToJPHMat44(const NMP::Matrix34& m)
   return jm;
 }
 
+static inline const JPH::Vec3 getBodyMassSpaceInertiaTensor(const JPH::Body* body)
+{
+	return body->GetMotionProperties()->GetLocalSpaceInverseInertia().GetDiagonal3().Reciprocal();
+}
+
+static inline const JPH::Mat44 getBodyCenterMassLocalPose(const JPH::Body* body)
+{
+	JPH::Mat44 trans = JPH::Mat44::sIdentity();
+	trans.SetTranslation(body->GetShape()->GetCenterOfMass());
+	return trans;
+}
+
 }
 
 //----------------------------------------------------------------------------------------------------------------------

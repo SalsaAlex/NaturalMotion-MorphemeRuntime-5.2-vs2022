@@ -182,8 +182,8 @@ ER::BodyPartTypeEnum::Type HitReaction::determineHSIPartType(
     case ER::LimbTypeEnum::L_spine:
     {
       NMP::Vector3 xWorld;
-      const physx::PxActor* selectedActor = (const physx::PxActor*)hsi.selectedActor;
-      MR::actorToWorldPoint((physx::PxActor*)selectedActor, hsi.pointLocal, xWorld);
+      const JPH::Body* selectedBody = hsi.selectedBody;
+      MR::bodyToWorldPoint(selectedBody, hsi.pointLocal, xWorld);
       NMP::Vector3 hitPosSpine = getLimbLocalPosition(
         xWorld,
         &body,
@@ -686,9 +686,9 @@ void HitReaction::updateReaching( bool newReach, const ER::DimensionalScaling& s
               //
             case ER::BodyPartTypeEnum::ChestFront:
               {
-                const physx::PxActor* selectedActor = (const physx::PxActor*)hsiHighestPriority.selectedActor;
+                const JPH::Body* selectedBody = hsiHighestPriority.selectedBody;
                 NMP::Vector3 xWorld;
-                MR::actorToWorldPoint((physx::PxActor*)selectedActor, hsiHighestPriority.pointLocal, xWorld);
+                MR::bodyToWorldPoint(selectedBody, hsiHighestPriority.pointLocal, xWorld);
                 NMP::Vector3 posLimb =
                   getLimbLocalPosition(xWorld, &m_character->getBody(), hsiHighestPriority.limbIndex, 0);
                 reachArmIndex = posLimb.z > 0.0f ? m_leftArmIndex : m_rightArmIndex;
@@ -712,9 +712,9 @@ void HitReaction::updateReaching( bool newReach, const ER::DimensionalScaling& s
             case ER::BodyPartTypeEnum::Head:
             case ER::BodyPartTypeEnum::Neck:
               {
-                const physx::PxActor* selectedActor = (const physx::PxActor*)hsiHighestPriority.selectedActor;
+                const JPH::Body* selectedBody = hsiHighestPriority.selectedBody;
                 NMP::Vector3 xWorld;
-                MR::actorToWorldPoint((physx::PxActor*)selectedActor, hsiHighestPriority.pointLocal, xWorld);
+                MR::bodyToWorldPoint(selectedBody, hsiHighestPriority.pointLocal, xWorld);
                 NMP::Vector3 posLimb = getLimbLocalPosition(xWorld, &m_character->getBody(), hsiHighestPriority.limbIndex, 0);
                 reachArmIndex = posLimb.z > 0.0f ? m_rightArmIndex : m_leftArmIndex;
               }
@@ -789,7 +789,7 @@ void HitReaction::updateBalance(ER::BalanceInfo& balanceInfo)
     NMP::Vector3 targetStepDirection(hsi->hitDirWorld);
     if (!attribs->m_impulseDirWorldOrLocal)
     {
-      MR::actorToWorldNormal((const physx::PxActor*)hsi->selectedActor, hsi->hitDirLocal, targetStepDirection);
+      MR::bodyToWorldNormal(hsi->selectedBody, hsi->hitDirLocal, targetStepDirection);
     }
     if (m_dying)
     {
@@ -897,7 +897,7 @@ void HitReaction::updateLook(ER::LookInfo& lookInfo, const ER::DimensionalScalin
       NMP::Vector3 lookTarget;
       if (m_lookAtWoundOrHitSource && canLookAtWound)
       {
-        MR::actorToWorldPoint((const physx::PxActor*)hsi2.selectedActor, hsi2.pointLocal, lookTarget);
+        MR::bodyToWorldPoint(hsi2.selectedBody, hsi2.pointLocal, lookTarget);
       }
       else
       {
@@ -1068,8 +1068,8 @@ void HitReaction::updateForcedFall(
       m_forceFallDirection = m_latestHSI.hitDirWorld;
       if (m_latestHSIAttribs.m_impulseDirWorldOrLocal)
       {
-        MR::actorToWorldNormal(
-          (const physx::PxActor*)m_latestHSI.selectedActor,
+        MR::bodyToWorldNormal(
+          m_latestHSI.selectedBody,
           m_latestHSI.hitDirLocal,
           m_forceFallDirection);
       }

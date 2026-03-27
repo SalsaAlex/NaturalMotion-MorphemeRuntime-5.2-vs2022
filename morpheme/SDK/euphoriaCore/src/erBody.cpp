@@ -53,7 +53,7 @@ RigConstraint* Body::createRigConstraint(
   const NMP::Matrix34& partJointFrameB)
 {
   return m_rigConstraintManager->create(partIndexA, partJointFrameA, partIndexB, partJointFrameB, 
-    (MR::PhysicsRigPhysX3Articulation*)m_physicsRig);
+    (MR::PhysicsRigJoltPhysRagdoll*)m_physicsRig);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ Body* Body::createInstance(
   physicsRig->setUserData(body);
   body->create(bodyDef, physicsRig->getPhysicsScene());
   body->initialise(physicsRig, animSetIndex, addPartsToEuphoria);
-  ContactFeedback::initialise(physicsRig->getPhysicsScene(), ((MR::PhysicsRigPhysX3*)physicsRig)->getClientID());
+  ContactFeedback::initialise(physicsRig->getPhysicsScene(), ((MR::PhysicsRigJoltPhys*)physicsRig)->getClientID());
   return body;
 }
 
@@ -284,15 +284,15 @@ void Body::initialise(
     for (uint32_t iPart = 0; iPart < m_physicsRig->getNumParts(); ++iPart)
     {
       MR::PhysicsRig::Part* part = m_physicsRig->getPart(iPart);
-      MR::PhysicsRigPhysX3::PartPhysX3* partPhysX3 = (MR::PhysicsRigPhysX3::PartPhysX3*) part;
-      physx::PxRigidBody* rigidBody = partPhysX3->getRigidBody();
-      physx::PxU32 numShapes = rigidBody->getNbShapes();
-      for (physx::PxU32 iShape = 0; iShape != numShapes; ++iShape)
+      MR::PhysicsRigJoltPhys::PartJoltPhys* partJoltPhys = (MR::PhysicsRigJoltPhys::PartJoltPhys*) part;
+      JPH::Body *rigidBody = partJoltPhys->getRigidBody();
+      uint32_t numShapes = rigidBody->getNbShapes();
+      for (uint32_t iShape = 0; iShape != numShapes; ++iShape)
       {
         physx::PxShape* shape = 0;
         rigidBody->getShapes(&shape, 1, iShape);
-        NMP_ASSERT(MR::PhysXPerShapeData::getFromShape(shape) == 0);
-        MR::PhysXPerShapeData::create(shape);
+        NMP_ASSERT(MR::JoltPhysPerShapeData::getFromShape(shape) == 0);
+        MR::JoltPhysPerShapeData::create(shape);
       }
     }
   }
@@ -320,15 +320,15 @@ void Body::destroy()
     ER::EuphoriaRigPartUserData::destroy(data, part);
 
     // Destroy the per shape data
-    MR::PhysicsRigPhysX3::PartPhysX3* partPhysX3 = (MR::PhysicsRigPhysX3::PartPhysX3*) part;
-    physx::PxRigidBody* rigidBody = partPhysX3->getRigidBody();
-    physx::PxU32 numShapes = rigidBody->getNbShapes();
-    for (physx::PxU32 iShape = 0; iShape != numShapes; ++iShape)
+    MR::PhysicsRigJoltPhys::PartJoltPhys* partJoltPhys = (MR::PhysicsRigJoltPhys::PartJoltPhys*) part;
+    JPH::Body* rigidBody = partJoltPhys->getRigidBody();
+    uint32_t numShapes = rigidBody->getNbShapes();
+    for (uint32_t iShape = 0; iShape != numShapes; ++iShape)
     {
       physx::PxShape* shape = 0;
       rigidBody->getShapes(&shape, 1, iShape);
-      MR::PhysXPerShapeData* shapeData = MR::PhysXPerShapeData::getFromShape(shape);
-      MR::PhysXPerShapeData::destroy(shapeData, shape);
+      MR::JoltPhysPerShapeData* shapeData = MR::JoltPhysPerShapeData::getFromShape(shape);
+      MR::JoltPhysPerShapeData::destroy(shapeData, shape);
     }
   }
 
@@ -509,8 +509,8 @@ NMP::Vector3 Body::getTotalGravity() const
 // parts of each limb are also parts of the spine limb, these parts are always identified as parts
 // of the spine
 //----------------------------------------------------------------------------------------------------------------------
-ER::LimbTypeEnum::Type Body::getActorLimbPartIndex(
-  const physx::PxActor* actor, int& limbRigIndex, int& partLimbIndex) const
+ER::LimbTypeEnum::Type Body::getBodyLimbPartIndex(
+  const JPH::Body* body, int& limbRigIndex, int& partLimbIndex) const
 {
   limbRigIndex = partLimbIndex = -1;
 
@@ -519,7 +519,7 @@ ER::LimbTypeEnum::Type Body::getActorLimbPartIndex(
   NMP_ASSERT(actor);
 
   // if actor pointer is null release code should just return without searching
-  if (!actor)
+  if (!body)
   {
     return ER::LimbTypeEnum::L_unknown;
   }
@@ -536,11 +536,11 @@ ER::LimbTypeEnum::Type Body::getActorLimbPartIndex(
     int32_t jBegin = (i == getRootLimbIndex() ? 0 : 1);
     for (int32_t j = jBegin; (partLimbIndex == -1) && (j < numParts); ++j)
     {
-      const MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation* part = 
-        (const MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation*)limb.getPart(j);
+      const MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll* part =
+        (const MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll*)limb.getPart(j);
 
       // if match found
-      if (part->getArticulationLink() == actor)
+      if (part->getBody() == body)
       {
         // populate results
         //
@@ -554,8 +554,8 @@ ER::LimbTypeEnum::Type Body::getActorLimbPartIndex(
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-ER::LimbTypeEnum::Type Body::getKinematicActorLimbPartIndex(
-  const physx::PxActor* actor, int& limbRigIndex, int& partLimbIndex) const
+ER::LimbTypeEnum::Type Body::getKinematicBodyLimbPartIndex(
+  const JPH::Body* body, int& limbRigIndex, int& partLimbIndex) const
 {
   limbRigIndex = partLimbIndex = -1;
 
@@ -572,11 +572,11 @@ ER::LimbTypeEnum::Type Body::getKinematicActorLimbPartIndex(
     int32_t jBegin = (i == getRootLimbIndex() ? 0 : 1);
     for (int32_t j = jBegin; (partLimbIndex == -1) && (j < numParts); ++j)
     {
-      const MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation* part = 
-        (const MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation*)limb.getPart(j);
+      const MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll* part =
+        (const MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll*)limb.getPart(j);
 
       // if match found
-      if (part->getKinematicActor() == actor)
+      if (part->getKinematicBody() == body)
       {
         // populate results
         //
@@ -676,8 +676,8 @@ void Body::prePhysicsStep(float timeDelta, MR::InstanceDebugInterface* pDebugDra
         }
         if (getDebugDrawFlag(kDrawLimits) && limb.getDebugDrawFlag(Limb::kDrawLimits))
         {
-          const MR::PhysicsRigPhysX3::JointPhysX3* const joint =
-            static_cast< const MR::PhysicsRigPhysX3::JointPhysX3* >(m_physicsRig->getJoint(rigJointId));
+          const MR::PhysicsRigJoltPhys::JointJoltPhys* const joint =
+            static_cast< const MR::PhysicsRigJoltPhys::JointJoltPhys* >(m_physicsRig->getJoint(rigJointId));
 
           drawLimit(
             pDebugDrawInst,
@@ -739,7 +739,7 @@ void Body::prePhysicsStep(float timeDelta, MR::InstanceDebugInterface* pDebugDra
       collisionGroupIndicesToActivate[numCollisionGroupIndices++] = collisionGroupIndexToActivate;
     }
   }
-  ((MR::PhysicsRigPhysX3Articulation*)m_physicsRig)->setCollisionGroupsToActivate(&collisionGroupIndicesToActivate[0], numCollisionGroupIndices);
+  ((MR::PhysicsRigJoltPhysRagdoll*)m_physicsRig)->setCollisionGroupsToActivate(&collisionGroupIndicesToActivate[0], numCollisionGroupIndices);
   RESET_TIMER_AND_PRINT("erBody prePhys collisionGroups");
 
   // Reset contact report data

@@ -16,8 +16,8 @@
 #define NM_DEFAULTPHYSICSMGR_H
 //----------------------------------------------------------------------------------------------------------------------
 #include "defaultControllerMgr.h"
-#include "mrPhysicsScenePhysX3.h"
-#include "mrPhysicsRigPhysX3.h"
+#include "Physics/JoltPhys/mrPhysicsSceneJoltPhys.h"
+#include "Physics/JoltPhys/mrPhysicsRigJoltPhys.h"
 #include "Physics/mrPhysicsRig.h"
 #include "../../iPhysicsMgr.h"
 
@@ -127,22 +127,6 @@ public:
 
   void onAnimSetChangedPhysicsCB(MR::Network* net, MR::AnimSetIndex animationSetIndex);
 
-  /// \brief Create triangle mesh data (PhysX 3).
-  physx::PxTriangleMesh* createTriangleMeshData(const physx::PxTriangleMeshDesc& meshDesc);
-
-  /// \brief Initialise triangle mesh shape description (physX).
-  bool initializeTriangleMeshShapeDesc(
-    const PhysXTriangleMeshDesc& meshDesc,
-    PhysXTriangleMeshShapeDesc&  shapeDesc);
-
-  /// \brief Create triangle mesh data describing a convex mesh(physX).
-  PhysXConvexMesh* createConvexMeshData(const PhysXConvexMeshDesc& meshDesc);
-
-  /// \brief Initialise a convex triangle mesh shape description (physX).
-  bool initializeConvexShapeDesc(
-    const PhysXConvexMeshDesc& meshDesc,
-    PhysXConvexShapeDesc&      shapeDesc);
-
   /// \brief Create a new physics body.
   MR::PhysicsObjectID createNewPhysicsBody(
     float                  dynamicFriction,
@@ -178,15 +162,14 @@ public:
     float                  angularDamping);
 
   /// Create a physx actor of specified shape, with default material and collision filter data
-  physx::PxRigidActor *createActor(
-    physx::PxGeometryType::Enum type,
-    physx::PxGeometry* geometry,
+  JPH::Body *createBody(
+    JPH::Shape* shape,
     bool dynamic, 
     const NMP::Vector3& position, 
     const NMP::Quat& orientation, 
     float density,
     bool hasCollision, 
-    physx::PxMaterial* material, 
+    JPH::PhysicsMaterial* material, 
     float staticFriction,
     float dynamicFriction,
     float skinWidth,
@@ -263,24 +246,24 @@ public:
   /// \brief Update all scene objects.
   void updateSceneObjects(float deltaTime);
 
-  /// \brief Get a vector* of all physX actors in the scene.
-  std::vector<physx::PxActor*>& getSceneActors() { return m_sceneActors; }
+  /// \brief Get a vector* of all Jolt Phys bodies in the scene.
+  std::vector<JPH::Body*>& getSceneBodies() { return m_sceneBodies; }
 
-  /// \brief Get a vector* of all physX materials in the scene.
-  std::vector<physx::PxMaterial*>& getMaterials() { return m_materials; }
+  /// \brief Get a vector* of all physics materials in the scene.
+  std::vector<JPH::PhysicsMaterial*>& getMaterials() { return m_materials; }
 
-  /// \brief Get a vector* of all physX joints in the scene.
-  std::vector<physx::PxJoint*>& getJoints() { return m_joints; }
+  /// \brief Get a vector* of all Jolt joints in the scene.
+  std::vector<JPH::Constraint*>& getJoints() { return m_joints; }
 
   /// \brief Get the physics scene.
-  MR::PhysicsScenePhysX3* getPhysicsScene() { return m_physicsScene; }
+  MR::PhysicsSceneJoltPhys* getPhysicsScene() { return m_physicsScene; }
 
-  /// \brief Gets a physics actor by its PhysicsObjectID, actors returned by this can be either
+  /// \brief Gets a physics body by its PhysicsObjectID, bodies returned by this can be either
   /// scene objects or parts of the physics rig.
-  physx::PxActor*            getActorByPhysicsID(MR::PhysicsObjectID id) const;
-  /// \brief Gets a PhysicsObjectID for a given physics actor, actors can be either scene objects or
+  JPH::Body*            getBodyByPhysicsID(MR::PhysicsObjectID id) const;
+  /// \brief Gets a PhysicsObjectID for a given physics body, bodies can be either scene objects or
   /// parts of the physics rig.
-  MR::PhysicsObjectID getPhysicsIDForActor(const physx::PxActor* actor) const;
+  MR::PhysicsObjectID getPhysicsIDForBody(const JPH::Body* body) const;
   /// \brief Gets a PhysicsObjectID for a given physics physics rig part.
   MR::PhysicsObjectID getPhysicsIDForPart(const MR::PhysicsRig::Part* part) const;
 
@@ -309,27 +292,26 @@ protected:
   DefaultAssetMgr*            const m_assetMgr;
   RuntimeTargetContext*       const m_context;
 
-  MR::PhysicsRigPhysX3::Type  m_physicsRigType; ///< the type of physics rig to create when createPhysicsRig is
+  MR::PhysicsRigJoltPhys::Type  m_physicsRigType; ///< the type of physics rig to create when createPhysicsRig is
                                                 ///  called, articulated or jointed.
 
-  std::vector<physx::PxJoint*>      m_joints;
-  std::vector<physx::PxMaterial*>   m_materials;
-  std::vector<physx::PxActor*>      m_sceneActors;
+  std::vector<JPH::Constraint*>      m_joints;
+  std::vector<JPH::PhysicsMaterial*>   m_materials;
+  std::vector<JPH::Body*>      m_sceneBodies;
 
   float                       m_maxTimeStep;                  ///< max duration of each internal step.
   uint32_t                    m_frameIndex;                   ///< number of frames.
-  MR::PhysicsScenePhysX3*     m_physicsScene;                 ///< PhysicsScene object associated with the Mgr.
-  physx::PxDefaultCpuDispatcher*     m_cpuDispatcher;
+  MR::PhysicsSceneJoltPhys*     m_physicsScene;                 ///< PhysicsScene object associated with the Mgr.
   DefaultControllerMgr*       m_characterControllerManager;   ///< CCM associated with the Mgr.
 
-  typedef NMP::hash_map<MR::PhysicsObjectID, physx::PxActor*> PhysicsIDToActorMap;
-  typedef NMP::hash_map<physx::PxActor*, MR::PhysicsObjectID> ActorToPhysicsIDMap;
+  typedef NMP::hash_map<MR::PhysicsObjectID, JPH::Body*> PhysicsIDToBodyMap;
+  typedef NMP::hash_map<JPH::Body*, MR::PhysicsObjectID> BodyToPhysicsIDMap;
 
   typedef struct
   {
     NMP::Vector3 m_grabOffsetFromCOM; // The vector from COM to the grab point on the body.
-    physx::PxActor *m_constrainedActor;
-    physx::PxD6Joint *m_jointConstraint;
+    JPH::Body *m_constrainedBody;
+    JPH::SixDOFConstraint *m_jointConstraint;
     bool m_isCOMConstraint;
   }
   Constraint;
@@ -337,11 +319,11 @@ protected:
   typedef NMP::hash_map<uint64_t, Constraint*> GUIDToConstraintMap;
 
   MR::PhysicsObjectID         m_nextPhysicsObjectID;          ///< physics object id to use for next physics object created.
-  PhysicsIDToActorMap         m_physicsIDActorMap;            ///< map of physics object ids to PhysXActors to allow 
+  PhysicsIDToBodyMap         m_physicsIDBodyMap;            ///< map of physics object ids to bodies to allow 
                                                               ///  commands from morpheme:connect to interact with
-                                                              ///  physics actors.
-  ActorToPhysicsIDMap         m_actorPhysicsIDMap;            ///< reverse of the map above for quick lookup when removing
-                                                              ///< physics actors.
+                                                              ///  physics bodies.
+  BodyToPhysicsIDMap         m_bodyPhysicsIDMap;            ///< reverse of the map above for quick lookup when removing
+                                                              ///< physics bodies.
   GUIDToConstraintMap         m_constraintMap;                ///< A map of GUIDs (from connect) to constraints that we
                                                               ///< have created.
 
@@ -350,16 +332,16 @@ protected:
 
   MR::PhysicsAndCharacterControllerUpdate m_physicsAndCharacterControllerUpdate;
 
-  /// \brief Assigns an id to an actor so they can be addressed by commands from morpheme:connect.
-  MR::PhysicsObjectID assignPhysicsIDToActor(physx::PxActor* actor);
-  /// \brief Frees up an id when an actor is destroyed.
-  bool                unassignPhysicsID(physx::PxActor* actor);
+  /// \brief Assigns an id to a body so they can be addressed by commands from morpheme:connect.
+  MR::PhysicsObjectID assignPhysicsIDToBody(JPH::Body* body);
+  /// \brief Frees up an id when a body is destroyed.
+  bool                unassignPhysicsID(JPH::Body* body);
   /// \brief Clears any currently assigned physics ids.
   void                clearAllPhysicsIDs();
 
   Constraint* getConstraint(uint64_t guid) const;
 
-  NMP::Vector3 getActorCOMPos(physx::PxActor* actor) const;
+  NMP::Vector3 getBodyCOMPos(JPH::Body* body) const;
 
   void deleteScene();
 

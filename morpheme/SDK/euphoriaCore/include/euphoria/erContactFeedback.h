@@ -10,7 +10,7 @@
 
 #ifndef NM_CONTACTFEEDBACK_H
 #define NM_CONTACTFEEDBACK_H
-#include "mrPhysX3Includes.h"
+#include "mrJoltPhys.h"
 #include "physics/mrPhysicsScene.h"
 
 namespace ER
@@ -27,18 +27,14 @@ public:
 
   /// This will be called when there is an active contact.
   virtual void onContact(
-    const physx::PxContactPairHeader& pairHeader,
-    const physx::PxContactPair*       pairs,
-    physx::PxU32                      nbPairs) = 0;
+	const JPH::Body& inBody1, const JPH::Body& inBody2r) = 0;
 };
 
 // This class allows euphoria to access contact forces resulting from character collisions
-class ContactFeedback : public physx::PxSimulationEventCallback
+class ContactFeedback : public JPH::ContactListener
 {
 public:
-  /// Need to pass in the clientID used for euphoria
-  /// See PhysX documentation for information on the ownerClientID and clientBehaviourBits
-  static void initialise(MR::PhysicsScene* physicsScene, physx::PxClientID ownerClientID);
+  static void initialise(MR::PhysicsScene* physicsScene);
   static void deinitialise(MR::PhysicsScene* physicsScene);
 
   static void setUserContactHandler(UserContactHandler* handler);
@@ -51,21 +47,22 @@ public:
 
 protected:
   UserContactHandler* m_userContactHandler;
-  static physx::PxClientID m_ownerClientID;
 
 protected:
-  void onContact(
-    const physx::PxContactPairHeader& pairHeader, 
-    const physx::PxContactPair* pairs, 
-    physx::PxU32 nbPairs) NM_OVERRIDE;
+	// See: ContactListener
+	JPH::ValidateResult	OnContactValidate(const JPH::Body& inBody1, const JPH::Body& inBody2,
+		JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult& inCollisionResult)
+		NM_OVERRIDE;
 
-  void onConstraintBreak(physx::PxConstraintInfo* NMP_UNUSED(constraints), physx::PxU32 NMP_UNUSED(count)) NM_OVERRIDE {}
-  void onWake(physx::PxActor** NMP_UNUSED(actors), physx::PxU32 NMP_UNUSED(count)) NM_OVERRIDE {}
-  void onSleep(physx::PxActor** NMP_UNUSED(actors), physx::PxU32 NMP_UNUSED(count)) NM_OVERRIDE {}
-  void onTrigger(physx::PxTriggerPair* NMP_UNUSED(pairs), physx::PxU32 NMP_UNUSED(count)) NM_OVERRIDE {}
+	void OnContactAdded(const JPH::Body& inBody1,
+			const JPH::Body& inBody2, const JPH::ContactManifold& inManifold,
+			JPH::ContactSettings& ioSettings) NM_OVERRIDE;
 
-  void onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count) NM_OVERRIDE {}
-};
+	void OnContactPersisted(const JPH::Body& inBody1,
+		const JPH::Body& inBody2, const JPH::ContactManifold& inManifold,
+		JPH::ContactSettings& ioSettings) NM_OVERRIDE;
+
+	void OnContactRemoved(const JPH::SubShapeIDPair& inSubShapePair) NM_OVERRIDE;
 }
 
 #endif // NM_CONTACTFEEDBACK_H

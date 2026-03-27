@@ -35,6 +35,39 @@ class CharacterControllerInterface;
 struct PhysicsSerialisationBuffer;
 class PhysicsRigJoltPhys;
 
+// Layer that objects can be in, determines which other objects it can collide with
+// Typically you at least want to have 1 layer for moving bodies and 1 layer for static bodies, but you can have more
+// layers if you want. E.g. you could have a layer for high detail collision (which is not used by the physics simulation
+// but only if you do collision testing).
+namespace NMPhysLayers
+{
+    static constexpr JPH::ObjectLayer NON_COLLIDABLE(0);            ///< 1 Object does not interact
+    static constexpr JPH::ObjectLayer COLLIDABLE_NON_PUSHABLE(1);   ///< 2 Object is (effectively) static/kinematic and can be interacted with
+    static constexpr JPH::ObjectLayer COLLIDABLE_PUSHABLE(2);       ///< 4 Object is dynamic and can be interacted with
+    static constexpr JPH::ObjectLayer CHARACTER_CONTROLLER(3);      ///< 8 Object is used as a character controller
+    static constexpr JPH::ObjectLayer CHARACTER_PART(4);            ///< 16 Object is part of a morpheme physics rig
+    static constexpr JPH::ObjectLayer INTERACTION_PROXY(5);         ///< 32 Interaction proxy object for character probes.
+    static constexpr JPH::ObjectLayer CHARACTER_PART_WITH_PROXY(6); ///< 64 Object is part of a physics rig that has an interaction proxy
+    static constexpr uint32_t NUM_LAYERS(7);
+};
+
+// Each broadphase layer results in a separate bounding volume tree in the broad phase. You at least want to have
+// a layer for non-moving and moving objects to avoid having to update a tree full of static objects every frame.
+// You can have a 1-on-1 mapping between object layers and broadphase layers (like in this case) but if you have
+// many object layers you'll be creating many broad phase trees, which is not efficient. If you want to fine tune
+// your broadphase layers define JPH_TRACK_BROADPHASE_STATS and look at the stats reported on the TTY.
+namespace NMBroadphaseLayers
+{
+    static constexpr JPH::BroadPhaseLayer NON_COLLIDABLE(0);            ///< 1 Object does not interact
+    static constexpr JPH::BroadPhaseLayer COLLIDABLE_NON_PUSHABLE(1);   ///< 2 Object is (effectively) static/kinematic and can be interacted with
+    static constexpr JPH::BroadPhaseLayer COLLIDABLE_PUSHABLE(2);       ///< 4 Object is dynamic and can be interacted with
+    static constexpr JPH::BroadPhaseLayer CHARACTER_CONTROLLER(3);      ///< 8 Object is used as a character controller
+    static constexpr JPH::BroadPhaseLayer CHARACTER_PART(4);            ///< 16 Object is part of a morpheme physics rig
+    static constexpr JPH::BroadPhaseLayer INTERACTION_PROXY(5);         ///< 32 Interaction proxy object for character probes.
+    static constexpr JPH::BroadPhaseLayer CHARACTER_PART_WITH_PROXY(6); ///< 64 Object is part of a physics rig that has an interaction proxy
+    static constexpr uint32_t NUM_LAYERS(7);
+};
+
 //----------------------------------------------------------------------------------------------------------------------
 /// \class PhysicsSceneJoltPhys
 ///
@@ -46,7 +79,7 @@ public:
   //----------------------------------------------------------------------
   // Functions that the application should call at the appropriate times
   //----------------------------------------------------------------------
-  PhysicsSceneJoltPhys(JPH::PhysicsSystem* joltPhysScene = 0);
+  PhysicsSceneJoltPhys(JPH::TempAllocator* joltAllocator, JPH::JobSystem* joltJobSystem, JPH::PhysicsSystem* joltPhysScene = 0);
 
   virtual ~PhysicsSceneJoltPhys();
 
@@ -85,6 +118,8 @@ public:
 
 public:
     JPH::PhysicsSystem* m_joltPhysScene;
+    JPH::JobSystem* m_joltJobSystem;
+    JPH::TempAllocator* m_joltAllocator;
 };
 
 
@@ -348,11 +383,16 @@ NM_INLINE NMP::Vector3 PhysicsSceneJoltPhys::getGravity()
 }
 
 //----------------------------------------------------------------------------------------------------------------------
+NM_INLINE void PhysicsSceneJoltPhys::setGravity(const NMP::Vector3& gravity)
+{
+    m_joltPhysScene->SetGravity(nmVector3ToJPHVec3(gravity));
+}
+
+//----------------------------------------------------------------------------------------------------------------------
 NM_INLINE float getBodyMass(const JPH::Body* body)
 {
     return 1.0 / body->GetMotionProperties()->GetInverseMass();
 }
-
 
 } // namespace
 
