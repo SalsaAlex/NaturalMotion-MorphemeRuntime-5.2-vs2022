@@ -209,7 +209,7 @@ public:
 
   public:
 
-    JointJoltPhysRagdoll(const PhysicsSixDOFJointDef* const def);
+    JointJoltPhysRagdoll(JPH::TwoBodyConstraint* constraint, const PhysicsSixDOFJointDef* def);
 
     // Joint overrides.
 #if defined(MR_OUTPUT_DEBUGGING)
@@ -282,7 +282,7 @@ public:
     float        m_damping;
     float        m_driveStrengthScale;
 
-    JPH::SixDOFConstraint* m_jointInternal;
+    JPH::TwoBodyConstraint* m_jointInternal;
   public:
     bool          m_rotationDirty;
 

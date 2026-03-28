@@ -228,6 +228,11 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
       ragdollsettings.mParts.push_back(bodysettings);
   }
 
+  result->m_ragdoll = ragdollsettings.CreateRagdoll(0, 0, joltphys_scene->m_joltPhysScene);
+  for (int i = 0; i < physicsRigDef->getNumJoints(); i++)
+  {
+      new(result->m_joints[i]) MR::PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll(result->m_ragdoll->GetConstraint(i), (PhysicsSixDOFJointDef*)physicsRigDef->m_joints[i]);
+  }
 
   // Note that the parent joint index of a bone is guaranteed (in morpheme export) to always the
   // bone index - 1, since every part has a parent joint and parent part, except for the root part.
@@ -1020,8 +1025,8 @@ uint32_t PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll::serializeTxFrameData(vo
 //----------------------------------------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------------------------------------------
-PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::JointJoltPhysRagdoll(const PhysicsSixDOFJointDef* const def)
-: JointJoltPhys(def)
+PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::JointJoltPhysRagdoll(JPH::TwoBodyConstraint* constraint, const PhysicsSixDOFJointDef* const def)
+: m_jointInternal(constraint), JointJoltPhys(def)
 {}
 
 #if defined(MR_OUTPUT_DEBUGGING)
@@ -1197,7 +1202,12 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setInternalCompliance(floa
 NMP::Quat PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::getTargetOrientation()
 {
   NMP_ASSERT(m_jointInternal);
-  return nmJPHQuatToQuat(m_jointInternal->GetTargetOrientationCS());
+  JPH::Quat returnval = JPH::Quat::sIdentity();
+  JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
+  if (d6joint)
+      returnval = d6joint->GetTargetOrientationCS();
+
+  return nmJPHQuatToQuat(returnval);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1208,7 +1218,9 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setTargetOrientation(const
   // Since setTargetOrientation wakes up the character.
   if (orientation != m_lastTargetOrientation)
   {
-    m_jointInternal->SetTargetOrientationCS(nmQuatToJPHQuat(orientation));
+      JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
+      if (d6joint)
+          d6joint->SetTargetOrientationCS(nmQuatToJPHQuat(orientation));
   }
   m_lastTargetOrientation = orientation;
 }
@@ -1217,7 +1229,9 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setTargetOrientation(const
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setVelocity(const NMP::Vector3 &velocity)
 {
   NMP_ASSERT(velocity.isValid());
-  m_jointInternal->SetTargetVelocityCS(nmVector3ToJPHVec3(velocity));
+  JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
+  if (d6joint)
+      d6joint->SetTargetVelocityCS(nmVector3ToJPHVec3(velocity));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1956,7 +1970,7 @@ void PhysicsRigJoltPhysRagdoll::applySoftKeyframing(
 void PhysicsRigJoltPhysRagdoll::applyActiveAnimation(uint32_t jointIndex, const NMP::Quat &targetQuat, bool makeChildDynamic) 
 { 
   NMP_ASSERT(jointIndex < getNumJoints());  
-  JPH::SixDOFConstraint *joint = ((JointJoltPhysRagdoll*)m_joints[jointIndex])->m_jointInternal;  
+  JPH::TwoBodyConstraint *joint = ((JointJoltPhysRagdoll*)m_joints[jointIndex])->m_jointInternal;  
   const PhysicsJointDef* jointDef = m_physicsRigDef->m_joints[jointIndex];
   if (makeChildDynamic)  
   {   
@@ -1966,7 +1980,9 @@ void PhysicsRigJoltPhysRagdoll::applyActiveAnimation(uint32_t jointIndex, const 
   }   
   // Don't force either of the parts to have collision - no way we could know which one _should_ have collision if it's
   // disabled elsewhere.
-  joint->SetTargetOrientationCS(nmQuatToJPHQuat(targetQuat));
+  JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(joint);
+  if(d6joint)
+    d6joint->SetTargetOrientationCS(nmQuatToJPHQuat(targetQuat));
   return; 
 }
 

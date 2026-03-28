@@ -94,12 +94,12 @@ void JoltPhysDriverBuilder::initMaterialDriverData(
   const char* frictionCombineMode = 0;
   //result = attributeBlock->getStringAttribute("frictionCombineMode", frictionCombineMode);
   //NMP_VERIFY_MSG(result, "could not find attribute 'frictionCombineMode' in exported physics data");
-  driverData->m_frictionCombineMode = convertExportCombineModeToJoltPhys(frictionCombineMode);
+  driverData->m_frictionCombineMode = (MR::JP_frictioncombinemode)0;
 
   const char* restitutionCombineMode = 0;
   result = attributeBlock->getStringAttribute("restitutionCombineMode", restitutionCombineMode);
   NMP_VERIFY_MSG(result, "could not find attribute 'restitutionCombineMode' in exported physics data");
-  driverData->m_restitutionCombineMode = convertExportCombineModeToJoltPhys(restitutionCombineMode);
+  driverData->m_restitutionCombineMode = (MR::JP_frictioncombinemode)0;
 
   bool disableStrongFriction = false;
   result = attributeBlock->getBoolAttribute("disableStrongFriction", disableStrongFriction);

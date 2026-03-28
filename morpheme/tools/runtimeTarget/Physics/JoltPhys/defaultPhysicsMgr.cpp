@@ -999,8 +999,8 @@ bool DefaultPhysicsMgr::validatePluginList(const NMP::OrderedStringTable& plugin
     return true;
   }
 
-  const char* physicsPlugin = "acPluginPhysX3_target_" NM_PLATFORM_FORMAT_STRING;
-  const char* debugPhysicsPlugin = "acPluginPhysX3_target_" NM_PLATFORM_FORMAT_STRING "_debug";
+  const char* physicsPlugin = "acPluginJoltPhys_target_" NM_PLATFORM_FORMAT_STRING;
+  const char* debugPhysicsPlugin = "acPluginJoltPhys_target_" NM_PLATFORM_FORMAT_STRING "_debug";
 
   // Physics is registered first so we expect it to be the first compiled plug-in
   const char* pluginEntry0 = pluginList.getEntryString(0);
