@@ -63,7 +63,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <PreprocessorDefinitions>NOMINMAX;WIN32;_CONSOLE;_DEBUG;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_USE_CPU_COMPUTE;JPH_DEBUG_RENDERER;JPH_PROFILE_ENABLED;JPH_OBJECT_STREAM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>

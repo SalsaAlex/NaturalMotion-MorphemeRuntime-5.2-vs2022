@@ -312,6 +312,7 @@ protected:
     NMP::Vector3 m_grabOffsetFromCOM; // The vector from COM to the grab point on the body.
     JPH::Body *m_constrainedBody;
     JPH::SixDOFConstraint *m_jointConstraint;
+    JPH::Body* m_constraintShadow;
     bool m_isCOMConstraint;
   }
   Constraint;

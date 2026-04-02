@@ -56,7 +56,7 @@ namespace NMPhysLayers
 // You can have a 1-on-1 mapping between object layers and broadphase layers (like in this case) but if you have
 // many object layers you'll be creating many broad phase trees, which is not efficient. If you want to fine tune
 // your broadphase layers define JPH_TRACK_BROADPHASE_STATS and look at the stats reported on the TTY.
-namespace NMBroadphaseLayers
+namespace NMBroadPhaseLayers
 {
     static constexpr JPH::BroadPhaseLayer NON_COLLIDABLE(0);            ///< 1 Object does not interact
     static constexpr JPH::BroadPhaseLayer COLLIDABLE_NON_PUSHABLE(1);   ///< 2 Object is (effectively) static/kinematic and can be interacted with
@@ -66,6 +66,105 @@ namespace NMBroadphaseLayers
     static constexpr JPH::BroadPhaseLayer INTERACTION_PROXY(5);         ///< 32 Interaction proxy object for character probes.
     static constexpr JPH::BroadPhaseLayer CHARACTER_PART_WITH_PROXY(6); ///< 64 Object is part of a physics rig that has an interaction proxy
     static constexpr uint32_t NUM_LAYERS(7);
+};
+
+
+/// Class that determines if two object layers can collide
+class NM_ObjectLayerPairFilterImpl : public JPH::ObjectLayerPairFilter
+{
+public:
+    virtual bool					ShouldCollide(JPH::ObjectLayer inObject1,
+        JPH::ObjectLayer inObject2) const override
+    {
+        switch (inObject1)
+        {
+        case NMPhysLayers::NON_COLLIDABLE:
+            return false;
+        case NMPhysLayers::COLLIDABLE_NON_PUSHABLE:
+        case NMPhysLayers::COLLIDABLE_PUSHABLE:
+        case NMPhysLayers::CHARACTER_CONTROLLER:
+        case NMPhysLayers::CHARACTER_PART:
+        case NMPhysLayers::INTERACTION_PROXY:
+        case NMPhysLayers::CHARACTER_PART_WITH_PROXY:
+            return inObject2 != NMPhysLayers::NON_COLLIDABLE;
+        default:
+            JPH_ASSERT(false);
+            return false;
+        }
+    }
+};
+
+// BroadPhaseLayerInterface implementation
+// This defines a mapping between object and broadphase layers.
+class NM_BPLayerInterfaceImpl final : public JPH::BroadPhaseLayerInterface
+{
+public:
+    NM_BPLayerInterfaceImpl()
+    {
+        // Create a mapping table from object to broad phase layer
+        mObjectToBroadPhase[NMPhysLayers::NON_COLLIDABLE] = NMBroadPhaseLayers::NON_COLLIDABLE;
+        mObjectToBroadPhase[NMPhysLayers::COLLIDABLE_NON_PUSHABLE] = NMBroadPhaseLayers::COLLIDABLE_NON_PUSHABLE;
+        mObjectToBroadPhase[NMPhysLayers::COLLIDABLE_PUSHABLE] = NMBroadPhaseLayers::COLLIDABLE_PUSHABLE;
+        mObjectToBroadPhase[NMPhysLayers::CHARACTER_CONTROLLER] = NMBroadPhaseLayers::CHARACTER_CONTROLLER;
+        mObjectToBroadPhase[NMPhysLayers::CHARACTER_PART] = NMBroadPhaseLayers::CHARACTER_PART;
+        mObjectToBroadPhase[NMPhysLayers::INTERACTION_PROXY] = NMBroadPhaseLayers::INTERACTION_PROXY;
+        mObjectToBroadPhase[NMPhysLayers::CHARACTER_PART_WITH_PROXY] = NMBroadPhaseLayers::CHARACTER_PART_WITH_PROXY;
+    }
+
+    virtual uint32_t					GetNumBroadPhaseLayers() const override
+    {
+        return NMBroadPhaseLayers::NUM_LAYERS;
+    }
+
+    virtual JPH::BroadPhaseLayer			GetBroadPhaseLayer(JPH::ObjectLayer inLayer) const override
+    {
+        JPH_ASSERT(inLayer < NMPhysLayers::NUM_LAYERS);
+        return mObjectToBroadPhase[inLayer];
+    }
+
+#if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
+    virtual const char* GetBroadPhaseLayerName(JPH::BroadPhaseLayer inLayer) const override
+    {
+        switch ((JPH::BroadPhaseLayer::Type)inLayer)
+        {
+        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::NON_COLLIDABLE:            return "NON_COLLIDABLE";
+        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::COLLIDABLE_NON_PUSHABLE:   return "COLLIDABLE_NON_PUSHABLE";
+        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::COLLIDABLE_PUSHABLE:       return "COLLIDABLE_PUSHABLE";
+        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::CHARACTER_CONTROLLER:      return "CHARACTER_CONTROLLER";
+        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::CHARACTER_PART:            return "CHARACTER_PART";
+        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::INTERACTION_PROXY:         return "INTERACTION_PROXY";
+        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::CHARACTER_PART_WITH_PROXY: return "CHARACTER_PART_WITH_PROXY";
+        default:													JPH_ASSERT(false);  return "INVALID";
+        }
+    }
+#endif // JPH_EXTERNAL_PROFILE || JPH_PROFILE_ENABLED
+
+private:
+    JPH::BroadPhaseLayer					mObjectToBroadPhase[NMPhysLayers::NUM_LAYERS];
+};
+
+/// Class that determines if an object layer can collide with a broadphase layer
+class NM_ObjectVsBroadPhaseLayerFilterImpl : public JPH::ObjectVsBroadPhaseLayerFilter
+{
+public:
+    virtual bool				ShouldCollide(JPH::ObjectLayer inLayer1, JPH::BroadPhaseLayer inLayer2) const override
+    {
+        switch (inLayer1)
+        {
+        case NMPhysLayers::NON_COLLIDABLE:
+            return false;
+        case NMPhysLayers::COLLIDABLE_NON_PUSHABLE:
+        case NMPhysLayers::COLLIDABLE_PUSHABLE:
+        case NMPhysLayers::CHARACTER_CONTROLLER:
+        case NMPhysLayers::CHARACTER_PART:
+        case NMPhysLayers::INTERACTION_PROXY:
+        case NMPhysLayers::CHARACTER_PART_WITH_PROXY:
+            return inLayer2 != NMBroadPhaseLayers::NON_COLLIDABLE;
+        default:
+            JPH_ASSERT(false);
+            return false;
+        }
+    }
 };
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -284,12 +383,14 @@ void setBodyAngVelW(JPH::Body* body, const NMP::Vector3& accel);
 //----------------------------------------------------------------------------------------------------------------------
 NM_INLINE void setBodyLinVelW(JPH::Body* body, const NMP::Vector3& v)
 {
-    body->SetLinearVelocity(MR::nmVector3ToJPHVec3(v));
+    if(!body->IsStatic())
+        body->SetLinearVelocity(MR::nmVector3ToJPHVec3(v));
 }
 //----------------------------------------------------------------------------------------------------------------------
 NM_INLINE void setBodyAngVelW(JPH::Body* body, const NMP::Vector3& v)
 {
-    body->SetAngularVelocity(MR::nmVector3ToJPHVec3(v));
+    if (!body->IsStatic())
+        body->SetAngularVelocity(MR::nmVector3ToJPHVec3(v));
 }
 
 //----------------------------------------------------------------------------------------------------------------------

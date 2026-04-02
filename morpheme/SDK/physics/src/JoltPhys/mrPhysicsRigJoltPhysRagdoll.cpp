@@ -128,7 +128,7 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
   result->m_numCollisionGroupIndices = 0;
 
   //1 compound shape for every part
-  JPH::Shape** partshapes = (JPH::Shape**)NMPMemoryAlloc(sizeof(JPH::Shape*) * numParts);
+  JPH::Ref<JPH::Shape>* partshapes = new JPH::Ref<JPH::Shape>[numParts];
   JPH::Body** partbodies = (JPH::Body**)NMPMemoryAlloc(sizeof(JPH::Body*) * numParts);
 
   //make shapes first
@@ -148,7 +148,7 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
         JPH::SphereShapeSettings spheresettings(spheredef.radius);
         spheresettings.SetDensity(spheredef.density);
 
-        JPH::SphereShape* joltsphere = (JPH::SphereShape*)spheresettings.Create().Get().GetPtr();
+        JPH::Ref<JPH::Shape> joltsphere = spheresettings.Create().Get();
 
         shapesettings.AddShape(localpose.GetTranslation(), localpose.GetQuaternion(), joltsphere);
     }
@@ -160,7 +160,7 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
         JPH::BoxShapeSettings boxsettings(nmVector3ToJPHVec3(boxdef.dimensions));
         boxsettings.SetDensity(boxdef.density);
 
-        JPH::BoxShape* joltbox = (JPH::BoxShape*)boxsettings.Create().Get().GetPtr();
+        JPH::Ref<JPH::Shape> joltbox = boxsettings.Create().Get();
 
         shapesettings.AddShape(localpose.GetTranslation(), localpose.GetQuaternion(), joltbox);
     }
@@ -172,43 +172,57 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
         JPH::CapsuleShapeSettings capsulesettings(capsuledef.height / 2.f, capsuledef.radius);
         capsulesettings.SetDensity(capsuledef.density);
 
-        JPH::CapsuleShape* joltcapsule = (JPH::CapsuleShape*)capsulesettings.Create().Get().GetPtr();
+        JPH::Ref<JPH::Shape> joltcapsule = capsulesettings.Create().Get();
 
         shapesettings.AddShape(localpose.GetTranslation(), localpose.GetQuaternion(), joltcapsule);
     }
 
-
-    partshapes[iPart] = shapesettings.Create().Get().GetPtr();
+    JPH::ShapeSettings::ShapeResult result = shapesettings.Create();
+    if (result.HasError())
+    {
+        JPH::String stringerror = result.GetError();
+        NMP_ASSERT(0);
+    }
+    partshapes[iPart] = result.Get();
 
     totalNumShapes += (volume.numSpheres + volume.numBoxes + volume.numCapsules);
   }
 
   JPH::BodyInterface& interface = joltphys_scene->m_joltPhysScene->GetBodyInterface();
-  JPH::RagdollSettings ragdollsettings;
+  const JPH::BodyLockInterfaceLocking& lockinterface = joltphys_scene->m_joltPhysScene->GetBodyLockInterface();
+  JPH::Ref<JPH::RagdollSettings> ragdollsettings = new JPH::RagdollSettings;
 
   //setup skeleton
-  ragdollsettings.mSkeleton = new JPH::Skeleton;
+  ragdollsettings->mSkeleton = new JPH::Skeleton;
   std::vector<int> jointindexes(physicsRigDef->getNumJoints());
   std::unordered_map<int, int> jointpart_index; //jointpart_index[partindex] == joint index
+  ragdollsettings->mSkeleton->AddJoint("root", -1);
   for (int i = 0; i < physicsRigDef->getNumJoints(); i++)
-      jointindexes[i] = ragdollsettings.mSkeleton->AddJoint(physicsRigDef->m_joints[i]->m_name, -1);
+      jointindexes[i] = ragdollsettings->mSkeleton->AddJoint(physicsRigDef->m_joints[i]->m_name, -1/*i*/);
 
   //parent the joints
-  for (int i = 0; i < physicsRigDef->getNumJoints(); i++)
-  {
-      JPH::Skeleton::Joint& joltjoint1 = ragdollsettings.mSkeleton->GetJoint(jointindexes[i]);
-      PhysicsJointDef* jointdef1 = physicsRigDef->m_joints[i];
-      for (int j = 0; j < physicsRigDef->getNumJoints(); j++)
-      {
-          PhysicsJointDef* jointdef2 = physicsRigDef->m_joints[j];
-          if (jointdef1->m_childPartIndex == jointdef2->m_parentPartIndex)
-          {
-              joltjoint1.mParentJointIndex = jointindexes[j];
-              jointpart_index[jointdef1->m_childPartIndex] = i;
-              break;
-          }
-      }
-  }
+  //for (int i = 0; i < physicsRigDef->getNumJoints(); i++)
+  //{
+  //    JPH::Skeleton::Joint& joltjoint1 = ragdollsettings.mSkeleton->GetJoint(jointindexes[i]);
+  //    joltjoint1.mParentJointIndex = -1;
+  //    PhysicsJointDef* jointdef1 = physicsRigDef->m_joints[i];
+  //    for (int j = 0; j < physicsRigDef->getNumJoints(); j++)
+  //    {
+  //        if (i == j)
+  //            continue;
+  //
+  //        PhysicsJointDef* jointdef2 = physicsRigDef->m_joints[j];
+  //        if (jointdef1->m_childPartIndex == jointdef2->m_parentPartIndex)
+  //        {
+  //            joltjoint1.mParentJointIndex = jointindexes[j];
+  //            jointpart_index[jointdef1->m_childPartIndex] = i;
+  //            break;
+  //        }
+  //    }
+  //}
+  jointpart_index[0] = 0;
+
+  ragdollsettings->mParts.resize(numParts);
 
   for (uint32_t iPart = 0; iPart < numParts; ++iPart)
   {
@@ -224,14 +238,60 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
       bodysettings.mMotionType = JPH::EMotionType::Dynamic;
       bodysettings.mObjectLayer = NMPhysLayers::CHARACTER_PART;
       bodysettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateMassAndInertia;
+      bodysettings.mToParent = nullptr;
 
-      ragdollsettings.mParts.push_back(bodysettings);
+      if (iPart != 0)
+      {
+            //auto* constraint = new JPH::SwingTwistConstraintSettings();
+            //constraint->mPosition1 = JPH::Vec3(0, 0.5f, 0);
+            //constraint->mPosition2 = JPH::Vec3(0, -0.5f, 0);
+
+            //constraint->mTwistAxis1 = JPH::Vec3::sAxisY();
+            //constraint->mTwistAxis2 = JPH::Vec3::sAxisY();
+
+            //constraint->mSwingAxis1 = JPH::Vec3::sAxisX();
+            //constraint->mSwingAxis2 = JPH::Vec3::sAxisX();
+
+            //constraint->mNormalHalfConeAngle = JPH::DegreesToRadians(30.0f);
+
+            //bodysettings.mToParent = constraint;
+      }
+
+      ragdollsettings->mParts[iPart] = bodysettings;
   }
 
-  result->m_ragdoll = ragdollsettings.CreateRagdoll(0, 0, joltphys_scene->m_joltPhysScene);
+  ragdollsettings->Stabilize();
+
+  result->m_ragdoll = ragdollsettings->CreateRagdoll(0, 0, joltphys_scene->m_joltPhysScene);
   for (int i = 0; i < physicsRigDef->getNumJoints(); i++)
   {
-      new(result->m_joints[i]) MR::PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll(result->m_ragdoll->GetConstraint(i), (PhysicsSixDOFJointDef*)physicsRigDef->m_joints[i]);
+      new(result->m_joints[i]) MR::PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll(nullptr/*result->m_ragdoll->GetConstraint(i)*/, (PhysicsSixDOFJointDef*)physicsRigDef->m_joints[i]);
+
+      PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll* jointJolt = (PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll*)result->m_joints[i];
+      const PhysicsSixDOFJointDef* jointDef = (const PhysicsSixDOFJointDef*)physicsRigDef->m_joints[i];
+      const PhysicsJointDriverDataJoltPhys* driverData = (const PhysicsJointDriverDataJoltPhys*)jointDef->m_driverData;
+
+      jointJolt->m_strength = 0.0f;
+      jointJolt->m_damping = driverData->m_articulationDamping;
+
+      jointJolt->m_maxStrength = driverData->m_articulationSpring;
+      jointJolt->m_maxDamping = driverData->m_articulationDamping;
+
+      jointJolt->m_driveStrengthScale = driverData->m_driveStrengthScale;
+      jointJolt->m_driveDampingScale = driverData->m_driveDampingScale;
+      jointJolt->m_driveCompensationScale = driverData->m_driveCompensationScale;
+      jointJolt->m_driveMinDampingScale = driverData->m_driveMinDampingScale;
+
+      jointJolt->m_lastTargetOrientation.setXYZW(0, 0, 0, 0); // So will always update the physX internal target orientation on the first frame.
+
+      jointJolt->m_rotationDirty = true;
+  }
+  for (int i = 0; i < result->m_ragdoll->GetBodyCount(); i++)
+  {
+      new (result->m_parts[i]) PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll(0, 0);
+      PartJoltPhysRagdoll* part = (PartJoltPhysRagdoll*)result->m_parts[i];
+      part->m_physicsRig = result;
+      part->m_rigidBody = part->m_kinematicBody = lockinterface.TryGetBody(result->m_ragdoll->GetBodyID(i));
   }
 
   // Note that the parent joint index of a bone is guaranteed (in morpheme export) to always the
@@ -376,7 +436,7 @@ bool PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll::generateCachedValues(float 
   {
     JPH::Vec3 angVel = m_rigidBody->GetAngularVelocity();
     JPH::Vec3 linVel = m_rigidBody->GetLinearVelocity();
-    if (angVel.IsNaN() || !linVel.IsNaN())
+    if (angVel.IsNaN() || linVel.IsNaN())
     {
       return false;
     }
@@ -434,7 +494,7 @@ void PhysicsRigJoltPhysRagdoll::generateCachedValues(float timeStep)
   }
   if (!OK)
   {
-    NMP_MSG("PhysX has exploded - reinitialising at the last known position\n");
+    NMP_MSG("JoltPhys has exploded - reinitialising at the last known position\n");
 
     PartJoltPhysRagdoll* rootPartJoltPhysRagdoll = (PartJoltPhysRagdoll*)m_parts[0];
     NMP::Matrix34 worldRoot = rootPartJoltPhysRagdoll->getTransform();
@@ -655,7 +715,7 @@ void PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll::setMassSpaceInertia(const N
   JPH::Vec3 inv_inertia = nmVector3ToJPHVec3(inertia).Reciprocal();
   JPH::Mat44 inv_inertia_tensor = JPH::Mat44::sScale(inv_inertia);
 
-  m_rigidBody->GetMotionProperties()->SetInverseInertia(inv_inertia_tensor.GetTranslation(), inv_inertia_tensor.GetQuaternion());
+  //m_rigidBody->GetMotionProperties()->SetInverseInertia(inv_inertia_tensor.GetTranslation(), inv_inertia_tensor.GetQuaternion());
   m_modifiedFlags |= MODIFIED_INERTIA;
 }
 
@@ -847,11 +907,148 @@ uint32_t PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll::serializeTxPersistentDa
   uint32_t numCapsules = 0;
   uint32_t numSpheres = 0;
 
-  uint32_t numShapes = dynamic_cast<const JPH::StaticCompoundShape*>(m_kinematicBody->GetShape())->GetNumSubShapes();
+  uint32_t numShapes = 1;
+  const JPH::Shape* partshape = m_kinematicBody->GetShape();
+  if (partshape->GetType() == JPH::EShapeType::Compound)
+  {
+      numShapes = ((const JPH::StaticCompoundShape*)partshape)->GetNumSubShapes();
+  }
+  else
+  {
+      NMP_ASSERT(partshape->GetType() == JPH::EShapeType::Decorated);
+      NMP_ASSERT(partshape->GetSubType() == JPH::EShapeSubType::RotatedTranslated);
+      const JPH::Shape* innershape = ((const JPH::RotatedTranslatedShape*)partshape)->GetInnerShape();
+      switch (innershape->GetSubType())
+      {
+      case JPH::EShapeSubType::Sphere:
+          ++numSpheres;
+          break;
+      case JPH::EShapeSubType::Box:
+          ++numBoxes;
+          break;
+      case JPH::EShapeSubType::Capsule:
+          ++numCapsules;
+          break;
+      default:
+          break;
+      }
+      dataSize += numBoxes * sizeof(PhysicsBoxPersistentData);
+      dataSize += numCapsules * sizeof(PhysicsCapsulePersistentData);
+      dataSize += numSpheres * sizeof(PhysicsSpherePersistentData);
+      if (outputBuffer != 0)
+      {
+          NMP_ASSERT(outputBufferSize >= dataSize);
+          PhysicsPartPersistentData* partPersistentData = (PhysicsPartPersistentData*)outputBuffer;
+
+          partPersistentData->m_parentIndex = getParentPartIndex();
+          partPersistentData->m_physicsObjectID = objectID;
+          partPersistentData->m_numBoxes = numBoxes;
+          partPersistentData->m_numCapsules = numCapsules;
+          partPersistentData->m_numSpheres = numSpheres;
+          partPersistentData->m_nameToken = nameToken;
+
+          // convert to capsule orientated along y, not z, this code mirrors the creation code.
+          NMP::Matrix34 yToZ(NMP::Matrix34::kIdentity);
+
+          // convert to capsule orientated along z, not y
+          NMP::Matrix34 capsuleConversionTx(NMP::Matrix34::kIdentity);
+          capsuleConversionTx.fromEulerXYZ(NMP::Vector3(0, NM_PI_OVER_TWO, 0));
+
+          uint32_t indexBox = 0;
+          uint32_t indexCapsule = 0;
+          uint32_t indexSphere = 0;
+
+          switch (innershape->GetSubType())
+          {
+          case JPH::EShapeSubType::Sphere:
+          {
+              const JPH::SphereShape* pxSphere = (const JPH::SphereShape*)innershape;
+              NMP_ASSERT(pxSphere);
+
+              PhysicsSpherePersistentData* persistentData = partPersistentData->getSphere(indexSphere);
+
+              //JPH::Mat44 localPose = 
+              persistentData->m_localPose = NMP::Matrix34Identity(); //nmPxTransformToNmMatrix34(localPose);
+
+              persistentData->m_radius = pxSphere->GetRadius();
+
+              persistentData->m_parentIndex = 0;
+              NMP::netEndianSwap(persistentData->m_parentIndex);
+              NMP::netEndianSwap(persistentData->m_localPose);
+              NMP::netEndianSwap(persistentData->m_radius);
+
+              ++indexSphere;
+              break;
+          }
+          case JPH::EShapeSubType::Box:
+          {
+              const JPH::BoxShape* pxBox = (const JPH::BoxShape*)(innershape);
+              NMP_ASSERT(pxBox);
+
+              PhysicsBoxPersistentData* persistentData = partPersistentData->getBox(indexBox);
+
+              //JPH::Mat44 localPose = 
+              persistentData->m_localPose = NMP::Matrix34Identity(); //nmPxTransformToNmMatrix34(localPose);
+
+              persistentData->m_width = 2.0f * pxBox->GetHalfExtent().GetX();
+              persistentData->m_height = 2.0f * pxBox->GetHalfExtent().GetY();
+              persistentData->m_depth = 2.0f * pxBox->GetHalfExtent().GetZ();
+
+              persistentData->m_parentIndex = 0;
+              NMP::netEndianSwap(persistentData->m_parentIndex);
+              NMP::netEndianSwap(persistentData->m_localPose);
+              NMP::netEndianSwap(persistentData->m_width);
+              NMP::netEndianSwap(persistentData->m_height);
+              NMP::netEndianSwap(persistentData->m_depth);
+
+              ++indexBox;
+              break;
+          }
+          case JPH::EShapeSubType::Capsule:
+          {
+              const JPH::CapsuleShape* pxCapsule = (const JPH::CapsuleShape*)innershape;
+              NMP_ASSERT(pxCapsule);
+
+              PhysicsCapsulePersistentData* persistentData = partPersistentData->getCapsule(indexCapsule);
+
+              //JPH::Mat44 localPose = 
+              persistentData->m_localPose = NMP::Matrix34Identity(); //nmPxTransformToNmMatrix34(localPose);
+
+              persistentData->m_radius = pxCapsule->GetRadius();
+              persistentData->m_height = 2.0f * pxCapsule->GetHalfHeightOfCylinder();
+
+              persistentData->m_parentIndex = 0;
+              NMP::netEndianSwap(persistentData->m_parentIndex);
+              NMP::netEndianSwap(persistentData->m_localPose);
+              NMP::netEndianSwap(persistentData->m_radius);
+              NMP::netEndianSwap(persistentData->m_height);
+
+              ++indexCapsule;
+              break;
+          }
+          default:
+              break;
+          }
+          
+
+          NMP_ASSERT(indexBox == numBoxes);
+          NMP_ASSERT(indexCapsule == numCapsules);
+          NMP_ASSERT(indexSphere == numSpheres);
+
+          NMP::netEndianSwap(partPersistentData->m_numSpheres);
+          NMP::netEndianSwap(partPersistentData->m_numCapsules);
+          NMP::netEndianSwap(partPersistentData->m_numBoxes);
+          NMP::netEndianSwap(partPersistentData->m_nameToken);
+          NMP::netEndianSwap(partPersistentData->m_parentIndex);
+          NMP::netEndianSwap(partPersistentData->m_physicsObjectID);
+      }
+
+      return dataSize;
+  }
 
   NMP_ASSERT(numShapes < MAX_SHAPES_IN_VOLUME);
 
-  JPH::CompoundShape::SubShapes subshapes = dynamic_cast<const JPH::StaticCompoundShape*>(m_kinematicBody->GetShape())->GetSubShapes();
+  JPH::CompoundShape::SubShapes subshapes = ((const JPH::CompoundShape*)partshape)->GetSubShapes();
   for (uint32_t i = 0; i != numShapes; ++i)
   {
     const JPH::Shape *shape = subshapes[i].mShape;
@@ -1115,7 +1312,7 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::writeLimits()
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setStrength(float strength)
 {
-  NMP_ASSERT(m_jointInternal);
+  //NMP_ASSERT(m_jointInternal);
   NMP_ASSERT(strength >= 0.0f && strength < MAX_STRENGTH);
 
   m_strength = strength;
@@ -1125,7 +1322,7 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setStrength(float strength
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setDamping(float damping)
 {
-  NMP_ASSERT(m_jointInternal);
+  //NMP_ASSERT(m_jointInternal);
   NMP_ASSERT(damping >= 0.0f && damping < MAX_DAMPING);
   m_damping = damping;
   //m_jointInternal->setDamping(damping);
@@ -1140,7 +1337,7 @@ bool PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::supportsDriveCompensation(
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setDriveCompensation(float driveCompensation)
 {
-  NMP_ASSERT(m_jointInternal);
+  //NMP_ASSERT(m_jointInternal);
   NMP_ASSERT(driveCompensation >= 0.f); 
   setInternalCompliance(1.f/(1.f + driveCompensation));
 }
@@ -1160,7 +1357,7 @@ float PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::getDamping() const
 //----------------------------------------------------------------------------------------------------------------------
 float PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::getDriveCompensation() const
 {
-  NMP_ASSERT(m_jointInternal);
+  //NMP_ASSERT(m_jointInternal);
   //float internalCompliance = m_jointInternal->getInternalCompliance();
   //if (internalCompliance < MINIMUM_COMPLIANCE)
   //  internalCompliance = MINIMUM_COMPLIANCE;
@@ -1201,11 +1398,11 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setInternalCompliance(floa
 //----------------------------------------------------------------------------------------------------------------------
 NMP::Quat PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::getTargetOrientation()
 {
-  NMP_ASSERT(m_jointInternal);
+  //NMP_ASSERT(m_jointInternal);
   JPH::Quat returnval = JPH::Quat::sIdentity();
-  JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
-  if (d6joint)
-      returnval = d6joint->GetTargetOrientationCS();
+  //JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
+  //if (d6joint)
+  //    returnval = d6joint->GetTargetOrientationCS();
 
   return nmJPHQuatToQuat(returnval);
 }
@@ -1216,12 +1413,12 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setTargetOrientation(const
   NMP_ASSERT(orientation.isValid());
   // This check allows characters to go to sleep when a constant target is being passed in.
   // Since setTargetOrientation wakes up the character.
-  if (orientation != m_lastTargetOrientation)
-  {
-      JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
-      if (d6joint)
-          d6joint->SetTargetOrientationCS(nmQuatToJPHQuat(orientation));
-  }
+  //if (orientation != m_lastTargetOrientation)
+  //{
+  //    JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
+  //    if (d6joint)
+  //        d6joint->SetTargetOrientationCS(nmQuatToJPHQuat(orientation));
+  //}
   m_lastTargetOrientation = orientation;
 }
 
@@ -1262,28 +1459,19 @@ void PhysicsRigJoltPhysRagdoll::removeFromScene()
   m_ragdoll->Activate();
 
   removeRagdollFromScene();
-  for (uint32_t i = 0; i < getNumParts(); ++i)
-  {
-    PartJoltPhysRagdoll *part = (PartJoltPhysRagdoll*)m_parts[i];
-    if (part->m_kinematicBody)
-    {
-      getPhysicsSceneJoltPhys()->m_joltPhysScene->GetBodyInterface().RemoveBody(part->m_kinematicBody->GetID());
-    }
-  }
 }
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::addToScene()
 {
   NMP_ASSERT(m_refCount == 0);
-  for (uint32_t i = 0; i < getNumParts(); ++i)
-  {
-    PartJoltPhysRagdoll *part = (PartJoltPhysRagdoll*)m_parts[i];
-    if (part->m_kinematicBody)
-    {
-      getPhysicsSceneJoltPhys()->m_joltPhysScene->GetBodyInterface().AddBody(part->m_kinematicBody->GetID(), JPH::EActivation::Activate);
-    }
-  }
   addRagdollToScene();
+  PhysicsSceneJoltPhys* joltphys_scene = (PhysicsSceneJoltPhys*)getPhysicsScene();
+  const JPH::BodyLockInterfaceLocking& lockinterface = joltphys_scene->m_joltPhysScene->GetBodyLockInterface();
+  for (int i = 0; i < getNumParts(); i++)
+  {
+      PartJoltPhysRagdoll* ragdollpart = (PartJoltPhysRagdoll*)m_parts[i];
+      ragdollpart->m_rigidBody = ragdollpart->m_kinematicBody = lockinterface.TryGetBody(m_ragdoll->GetBodyID(i));
+  }
 }
 
 //----------------------------------------------------------------------------------------------------------------------

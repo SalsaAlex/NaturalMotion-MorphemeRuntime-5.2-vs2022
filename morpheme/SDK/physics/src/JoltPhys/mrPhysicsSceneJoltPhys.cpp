@@ -15,6 +15,28 @@
 #include "mrCharacterControllerInterfaceJoltPhys.h"
 #include "physics/mrPhysicsSerialisationBuffer.h"
 #include "mrJoltPhysIncludes.h"
+
+MR::NM_ObjectLayerPairFilterImpl s_object_vs_object_layer_filter;
+
+static MR::NM_BPLayerInterfaceImpl s_broad_phase_layer_interface;
+
+static MR::NM_ObjectVsBroadPhaseLayerFilterImpl s_object_vs_broadphase_layer_filter;
+
+// max amount of rigid bodies that you can add to the physics system. If you try to add more you'll get an error.
+const uint32_t cMaxBodies = 32768;
+
+// how many mutexes to allocate to protect rigid bodies from concurrent access. Set it to 0 for the default settings.
+const uint32_t cNumBodyMutexes = 0;
+
+// max amount of body pairs that can be queued at any time (the broad phase will detect overlapping
+// body pairs based on their bounding boxes and will insert them into a queue for the narrowphase). If you make this buffer
+// too small the queue will fill up and the broad phase jobs will start to do narrow phase work. This is slightly less efficient.
+const uint32_t cMaxBodyPairs = 32768;
+
+// maximum size of the contact constraint buffer. If more contacts (collisions between bodies) are detected than this
+// number then these contacts will be ignored and bodies will start interpenetrating / fall through the world.
+const uint32_t cMaxContactConstraints = 8192;
+
 //----------------------------------------------------------------------------------------------------------------------
 
 namespace MR
@@ -32,7 +54,11 @@ PhysicsSceneJoltPhys::PhysicsSceneJoltPhys(JPH::TempAllocator* joltAllocator,
   m_joltJobSystem(joltJobSystem),
   m_joltPhysScene(joltPhysScene)
 {
-  PhysicsRigJoltPhysBodyData::init();
+    joltPhysScene->Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints,
+        s_broad_phase_layer_interface, s_object_vs_broadphase_layer_filter,
+        s_object_vs_object_layer_filter);
+
+    PhysicsRigJoltPhysBodyData::init();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -157,7 +183,7 @@ void addImpulseToBody(JPH::Body* body, const NMP::Vector3& impulse, const NMP::V
     {
         NMP::Vector3 bodyCOM = getBodyCOMPos(body);
         NMP::Vector3 torque = NMP::vCross(position - bodyCOM, impulse) * torqueMultiplier;
-        body->AddImpulse(nmVector3ToJPHVec3(impulse));
+        body->AddImpulse(nmVector3ToJPHVec3(impulse), nmVector3ToJPHVec3(position));
         body->AddTorque(nmVector3ToJPHVec3(torque));
     }
 }

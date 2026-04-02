@@ -417,23 +417,24 @@ JPH::Body* DefaultPhysicsMgr::createBody(
     bodysettings.mAngularDamping = angularDamping;
     bodysettings.mMaxAngularVelocity = maxAngularVelocity;
     bodysettings.mAllowSleeping = true;
+    bodysettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
+    bodysettings.mMassPropertiesOverride.mMass = density;
     //set sleep threshold how ? hm
   }
 
   JPH::BodyInterface& bodyinterface = m_physicsScene->m_joltPhysScene->GetBodyInterface();
 
+  //-----------------------
+  // adjust local pose for capsules so they are oriented correctly
+  //physx::PxTransform shapeLocalPose = physx::PxTransform(physx::PxIdentity);
+  if (shape->GetSubType() == JPH::EShapeSubType::Capsule)
+  {
+    bodysettings.SetShape(new JPH::RotatedTranslatedShape(JPH::Vec3(0, 0, 0), JPH::Quat::sRotation(JPH::Vec3(1, 0, 0), NM_PI_OVER_TWO), shape));
+  }
+
   JPH::Body* body = bodyinterface.CreateBody(bodysettings);
 
   NMP_ASSERT(body);
-
-  //-----------------------
-  // adjust local pose for capsules so they are oriented correctly
-  // :is this needed for jolt physics ? we`ll see..
-  //physx::PxTransform shapeLocalPose = physx::PxTransform(physx::PxIdentity);
-  //if (geomType == physx::PxGeometryType::eCAPSULE)
-  //{
-  //  shapeLocalPose.q = physx::PxQuat(NM_PI_OVER_TWO, physx::PxVec3(0.0f, 1.0f, 0.0f));
-  //}
 
   //-----------------------
   // create a material
@@ -521,7 +522,7 @@ MR::PhysicsObjectID DefaultPhysicsMgr::createNewPhysicsBody(
   float                 linearDamping,
   float                 angularDamping)
 {
-  JPH::Shape* shape = nullptr;
+  JPH::Ref<JPH::Shape> shape = nullptr;
 
   switch (shapeType)
   {
@@ -529,19 +530,19 @@ MR::PhysicsObjectID DefaultPhysicsMgr::createNewPhysicsBody(
 
   {
     JPH::BoxShapeSettings boxsettings(JPH::Vec3(depth * 0.5f, height * 0.5f, length * 0.5f));
-    shape = boxsettings.Create().Get().GetPtr();
+    shape = boxsettings.Create().Get();
     break;
   }
 
   case MCOMMS::Attribute::PHYSICS_SHAPE_CYLINDER: // TODO... proper cylinder (would do but connect itself has no cylinder support so whatever)
   case MCOMMS::Attribute::PHYSICS_SHAPE_CAPSULE:
 
-    shape = JPH::CapsuleShapeSettings(height * 0.5f, radius).Create().Get().GetPtr();
+    shape = JPH::CapsuleShapeSettings(height * 0.5f, radius).Create().Get();
     break;
 
   case MCOMMS::Attribute::PHYSICS_SHAPE_SPHERE:
 
-    shape = JPH::SphereShapeSettings(radius).Create().Get().GetPtr();
+    shape = JPH::SphereShapeSettings(radius).Create().Get();
     break;
 
   case MCOMMS::Attribute::PHYSICS_SHAPE_MESH:
@@ -561,7 +562,7 @@ MR::PhysicsObjectID DefaultPhysicsMgr::createNewPhysicsBody(
               JPH::String error = convexresult.GetError();
               NMP_ASSERT(0);
           }
-          shape = convexresult.Get().GetPtr();
+          shape = convexresult.Get();
       }
     }
     else
@@ -587,7 +588,7 @@ MR::PhysicsObjectID DefaultPhysicsMgr::createNewPhysicsBody(
         //if (windingType == MCOMMS::Attribute::VERTICES_WINDING_COUNTERCLOCKWISE)
         //  triangleMeshDesc.flags = physx::PxMeshFlag::eFLIPNORMALS;
 
-        shape = trianglemeshresult.Get().GetPtr();
+        shape = trianglemeshresult.Get();
       }
     }
     break;
@@ -711,7 +712,7 @@ void DefaultPhysicsMgr::destroyPhysicsBody(MCOMMS::SceneObjectID objectID)
     PhysicsUserData* userData = (PhysicsUserData*)foundBody->GetUserData();
     if (userData->constraint)
     {
-      userData->constraint->Release();
+      ((MR::PhysicsSceneJoltPhys*)getPhysicsScene())->m_joltPhysScene->RemoveConstraint(userData->constraint);
       userData->constraint = 0;
     }
 
@@ -736,13 +737,11 @@ bool DefaultPhysicsMgr::createConstraint(
   bool                lockOrientation,
   bool                constrainAtCOM)
 {
-    /*
   NMP_ASSERT_MSG(!getConstraint(constraintGUID), "createConstraint called for a GUID that already exists!");
 
-  physx::PxActor *actorToConstrain = getActorByPhysicsID(physicsObjectID);
-  NMP_ASSERT_MSG(actorToConstrain, "Could not find physics object of ID %i!", physicsObjectID);
+  JPH::Body *bodyToConstrain = getBodyByPhysicsID(physicsObjectID);
+  NMP_ASSERT_MSG(bodyToConstrain, "Could not find physics object of ID %i!", physicsObjectID);
 
-  physx::PxRigidBody *bodyToConstrain = actorToConstrain->is<physx::PxRigidBody>();
   if(!bodyToConstrain)
   {
     // We can't constrain bodies if they aren't dynamic
@@ -759,9 +758,8 @@ bool DefaultPhysicsMgr::createConstraint(
   if(constrainAtCOM)
   {
     // Get the COM position of the rigid body
-    physx::PxRigidBody* rigidBody = bodyToConstrain->is<physx::PxRigidBody>();
     actualConstraintPosition = 
-      MR::nmPxVec3ToVector3(rigidBody->getGlobalPose().transform(rigidBody->getCMassLocalPose().p));
+      MR::nmJPHVec3ToVector3(bodyToConstrain->GetCenterOfMassPosition());
     newConstraint->m_grabOffsetFromCOM = constraintPosition - actualConstraintPosition;
   }
   else
@@ -770,63 +768,65 @@ bool DefaultPhysicsMgr::createConstraint(
     newConstraint->m_grabOffsetFromCOM.setToZero();
   }
 
-  physx::PxD6Joint *joint;
+  JPH::BodyCreationSettings constraintshadowsettings(new JPH::SphereShape(0.00001f),
+      MR::nmVector3ToJPHVec3(actualConstraintPosition), JPH::Quat::sIdentity(),
+      JPH::EMotionType::Kinematic, MR::NMPhysLayers::NON_COLLIDABLE);
+  JPH::Body* constraintshadow = ((MR::PhysicsSceneJoltPhys*)getPhysicsScene())->m_joltPhysScene->GetBodyInterface().CreateBody(constraintshadowsettings);
+  ((MR::PhysicsSceneJoltPhys*)getPhysicsScene())->m_joltPhysScene->GetBodyInterface().AddBody(constraintshadow->GetID(), JPH::EActivation::Activate);
+
+  JPH::SixDOFConstraintSettings settings;
+  settings.mSpace = JPH::EConstraintSpace::WorldSpace;
+
+  settings.mPosition1 = MR::nmVector3ToJPHVec3(actualConstraintPosition);
+  settings.mPosition2 = MR::nmVector3ToJPHVec3(actualConstraintPosition);
+  settings.mAxisX1 = settings.mAxisX2 = JPH::Vec3::sAxisX();
+  settings.mAxisY1 = settings.mAxisY2 = JPH::Vec3::sAxisY();
+
   if (lockOrientation)
   {
-    joint = PxD6JointCreate(
-      PxGetPhysics(), 
-      0, 
-      physx::PxTransform(MR::nmVector3ToPxVec3(actualConstraintPosition)),
-      bodyToConstrain, 
-      physx::PxTransform(
-      bodyToConstrain->getGlobalPose().transformInv(MR::nmVector3ToPxVec3(actualConstraintPosition)), 
-      bodyToConstrain->getGlobalPose().q.getConjugate()));
-    joint->setMotion(physx::PxD6Axis::eSWING1, physx::PxD6Motion::eLOCKED);
-    joint->setMotion(physx::PxD6Axis::eSWING2, physx::PxD6Motion::eLOCKED);
-    joint->setMotion(physx::PxD6Axis::eTWIST, physx::PxD6Motion::eLOCKED);
+      settings.SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationX, 0, 0);
+      settings.SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationY, 0, 0);
+      settings.SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationZ, 0, 0);
   }
   else
   {
-    joint = PxD6JointCreate(
-      PxGetPhysics(), 
-      0, 
-      physx::PxTransform(MR::nmVector3ToPxVec3(actualConstraintPosition)),
-      bodyToConstrain, 
-      physx::PxTransform(
-      bodyToConstrain->getGlobalPose().transformInv(MR::nmVector3ToPxVec3(actualConstraintPosition))));
-    joint->setMotion(physx::PxD6Axis::eSWING1, physx::PxD6Motion::eFREE);
-    joint->setMotion(physx::PxD6Axis::eSWING2, physx::PxD6Motion::eFREE);
-    joint->setMotion(physx::PxD6Axis::eTWIST, physx::PxD6Motion::eFREE);
+      settings.SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationX, -JPH::JPH_PI, JPH::JPH_PI);
+      settings.SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationY, -JPH::JPH_PI, JPH::JPH_PI);
+      settings.SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationZ, -JPH::JPH_PI, JPH::JPH_PI);
+      settings.MakeFreeAxis(JPH::SixDOFConstraint::EAxis::RotationX);
+      settings.MakeFreeAxis(JPH::SixDOFConstraint::EAxis::RotationY);
+      settings.MakeFreeAxis(JPH::SixDOFConstraint::EAxis::RotationZ);
   }
 
-#if 1
-  // use the drive, as otherwise we don't preserve momentum when releasing 
-  float dampingRatio = 1.0f;
-  float spring = 1000.0f;
-  float damping = 2.f*dampingRatio*sqrtf(spring); // critical damping
-  physx::PxD6JointDrive drive(spring,damping,PX_MAX_F32,physx::PxD6JointDriveFlag::eACCELERATION);
-  joint->setDrive(physx::PxD6Drive::eX, drive);
-  joint->setDrive(physx::PxD6Drive::eY, drive);
-  joint->setDrive(physx::PxD6Drive::eZ, drive);
-  // Free constraint to let the drive work
-  joint->setMotion(physx::PxD6Axis::eX, physx::PxD6Motion::eFREE);
-  joint->setMotion(physx::PxD6Axis::eY, physx::PxD6Motion::eFREE);
-  joint->setMotion(physx::PxD6Axis::eZ, physx::PxD6Motion::eFREE);
-#else
-  // Use a locked constraint
-  joint->setMotion(physx::PxD6Axis::eX, physx::PxD6Motion::eLOCKED);
-  joint->setMotion(physx::PxD6Axis::eY, physx::PxD6Motion::eLOCKED);
-  joint->setMotion(physx::PxD6Axis::eZ, physx::PxD6Motion::eLOCKED);
-#endif
+  settings.MakeFreeAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationX);
+  settings.MakeFreeAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationY);
+  settings.MakeFreeAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationZ);
 
-  newConstraint->m_constrainedActor = actorToConstrain;
-  newConstraint->m_jointConstraint = joint;
+  JPH::MotorSettings *motorsettings = settings.mMotorSettings;
+  motorsettings[0] = JPH::MotorSettings(10.0f, 1.0f, 100000.0f, 1.0e6f);
+  motorsettings[1] = JPH::MotorSettings(10.0f, 1.0f, 100000.0f, 1.0e6f);
+  motorsettings[2] = JPH::MotorSettings(10.0f, 1.0f, 100000.0f, 1.0e6f);
+  motorsettings[3] = JPH::MotorSettings(10.0f, 1.0f, 100000.0f, 1.0e6f);
+  motorsettings[4] = JPH::MotorSettings(10.0f, 1.0f, 100000.0f, 1.0e6f);
+  motorsettings[5] = JPH::MotorSettings(10.0f, 1.0f, 100000.0f, 1.0e6f);
+
+  JPH::Ref<JPH::SixDOFConstraint> constraint = (JPH::SixDOFConstraint*)settings.Create(*bodyToConstrain, *constraintshadow);
+  constraint->SetMotorState(JPH::SixDOFConstraintSettings::EAxis::TranslationX, JPH::EMotorState::Position);
+  constraint->SetMotorState(JPH::SixDOFConstraintSettings::EAxis::TranslationY, JPH::EMotorState::Position);
+  constraint->SetMotorState(JPH::SixDOFConstraintSettings::EAxis::TranslationZ, JPH::EMotorState::Position);
+  constraint->SetMaxFriction(JPH::SixDOFConstraintSettings::EAxis::TranslationX, 100000);
+  constraint->SetMaxFriction(JPH::SixDOFConstraintSettings::EAxis::TranslationY, 100000);
+  constraint->SetMaxFriction(JPH::SixDOFConstraintSettings::EAxis::TranslationZ, 100000);
+
+  ((MR::PhysicsSceneJoltPhys*)getPhysicsScene())->m_joltPhysScene->AddConstraint(constraint);
+
+  newConstraint->m_constrainedBody = bodyToConstrain;
+  newConstraint->m_jointConstraint = constraint;
+  newConstraint->m_constraintShadow = constraintshadow;
 
   newConstraint->m_isCOMConstraint = constrainAtCOM;
 
   m_constraintMap.insert(constraintGUID, newConstraint);
-
-  */
 
   return true;
 }
@@ -843,7 +843,7 @@ bool DefaultPhysicsMgr::destroyConstraint(uint64_t constraintGUID)
   }
 
   // Destroy the joint itself
-  constraint->m_jointConstraint->Release();
+  ((MR::PhysicsSceneJoltPhys*)getPhysicsScene())->m_joltPhysScene->RemoveConstraint(constraint->m_jointConstraint);
 
   // Remove the constraint from the map
   m_constraintMap.erase(constraintGUID);
@@ -866,12 +866,13 @@ bool DefaultPhysicsMgr::moveConstraint(uint64_t constraintGUID, const NMP::Vecto
   }
 
   // Wake up the body that's connected to the constraint.
-  //physx::PxRigidBody *rigidBody = constraint->m_constrainedActor->is<physx::PxRigidBody>();
-  //rigidBody->addForce(physx::PxVec3(0,0,0));
+  JPH::BodyID body = constraint->m_constrainedBody->GetID();
+  ((MR::PhysicsSceneJoltPhys*)getPhysicsScene())->m_joltPhysScene->GetBodyInterface().ActivateBody(body);
 
   // Move the constraint to the new point in space as requested.
   // TODO: Make use of the com offset if we are a com grab!
-  //constraint->m_jointConstraint->setLocalPose(physx::PxJointActorIndex::eACTOR0, physx::PxTransform(MR::nmVector3ToPxVec3(newGrabPosition), physx::PxQuat(physx::PxIdentity)));
+  ((MR::PhysicsSceneJoltPhys*)getPhysicsScene())->m_joltPhysScene->GetBodyInterface().SetPosition(constraint->m_constraintShadow->GetID(), MR::nmVector3ToJPHVec3(newGrabPosition + constraint->m_grabOffsetFromCOM), JPH::EActivation::Activate);
+  //constraint->m_jointConstraint->SetTargetPositionCS(JPH::Vec3::sZero());
 
   return true;
 }
@@ -904,6 +905,7 @@ bool DefaultPhysicsMgr::applyForce(
   }
 
   NMP::Vector3 forcePosition = applyAtCOM ? getBodyCOMPos(body) : worldSpacePosition;
+  ((MR::PhysicsSceneJoltPhys*)getPhysicsScene())->m_joltPhysScene->GetBodyInterface().ActivateBody(body->GetID());
   switch(mode)
   {
     case IPhysicsMgr::kFORCE:
@@ -1437,10 +1439,10 @@ void DefaultPhysicsMgr::updatePhysicalSceneObjects()
       const MCOMMS::SceneObjectID objectID = userData->objectID;
 
       // Find the scene object.
-      MCOMMS::SceneObject* const sceneObect = sceneObjectManager->getSceneObject(objectID);
-      if (sceneObect)
+      MCOMMS::SceneObject* const sceneObject = sceneObjectManager->getSceneObject(objectID);
+      if (sceneObject)
       {
-        MCOMMS::Attribute* const transformAttribute = sceneObect->getAttribute(MCOMMS::Attribute::SEMANTIC_TRANSFORM);
+        MCOMMS::Attribute* const transformAttribute = sceneObject->getAttribute(MCOMMS::Attribute::SEMANTIC_TRANSFORM);
         if (transformAttribute)
         {
           const NMP::Matrix34 transform = MR::nmJPHMat44ToNmMatrix34(body->GetWorldTransform());
