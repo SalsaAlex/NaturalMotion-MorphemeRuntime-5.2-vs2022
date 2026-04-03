@@ -159,9 +159,6 @@
     <ProjectReference Include="..\..\utils\euphoriaComms2\euphoriaComms2_WIN32.vcxproj">
       <Project>{7DBF6FCF-2C7A-461D-00A6-89C510A3C355}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\SDK\euphoriaCore\euphoriaCore_WIN32.vcxproj">
-      <Project>{DDA9676A-6018-45CC-E9AF-EC1E15BE5476}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\SDK\physics\morphemePhysicsDriver_JoltPhys_WIN32.vcxproj">
       <Project>{31DFDD31-B92A-4256-0EA9-D69C04633280}</Project>
     </ProjectReference>

@@ -36,8 +36,7 @@ bool locatePhysicsRigDefJoltPhys(uint32_t assetType, void* assetMemory);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \class MR::PhysicsRigJoltPhys
-/// \brief Base class for the Jolt Physics implementation of a physics rig, which can be either jointed
-///        or articulation.
+/// \brief Base class for the Jolt Physics implementation of a physics rig
 //----------------------------------------------------------------------------------------------------------------------
 class PhysicsRigJoltPhys : public PhysicsRig
 {
@@ -46,8 +45,6 @@ protected:
   /// internal memory.
   enum { MAX_SHAPES_IN_VOLUME = 16 }; 
 public:
-  enum Type {TYPE_JOINTED, TYPE_ARTICULATED};
-
   class PartJoltPhys : public Part
   {
     friend class PhysicsRigJoltPhys;
@@ -112,10 +109,7 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// Initialises rig ID and the type
   static void init(
-    PhysicsRigJoltPhys* physicsRigJoltPhys, Type type);
-
-  /// Indicates if this is a jointed or articulation rig
-  Type getType() const {return m_type;}
+    PhysicsRigJoltPhys* physicsRigJoltPhys);
 
   /// Returns the unique identified for this rig
   int32_t getRigID() const { return m_rigID; }
@@ -199,9 +193,6 @@ protected:
   float m_desiredJointProjectionAngularTolerance;
 
 private:
-
-  /// Indicates the Jolt Physics rig type - jointed or articulated
-  Type m_type;
 
   /// Used to keep track of which rig instance is which, e.g. so you can detect a different
   /// character's collision but ignore your own

@@ -290,7 +290,6 @@
     <ClInclude Include="include\physics\JoltPhys\mrPhysicsDriverDataJoltPhys.h" />
     <ClInclude Include="include\physics\JoltPhys\mrPhysicsRigJoltPhys.h" />
     <ClInclude Include="include\physics\JoltPhys\mrPhysicsRigJoltPhysRagdoll.h" />
-    <ClInclude Include="include\physics\JoltPhys\mrPhysicsRigJoltPhysJointed.h" />
     <ClInclude Include="include\physics\JoltPhys\mrPhysicsSceneJoltPhys.h" />
     <ClInclude Include="include\physics\JoltPhys\mrJoltPhys.h" />
     <ClInclude Include="include\physics\JoltPhys\mrJoltPhysIncludes.h" />
@@ -298,7 +297,6 @@
     <ClCompile Include="src\JoltPhys\mrPhysicsDriverDataJoltPhys.cpp" />
     <ClCompile Include="src\JoltPhys\mrPhysicsRigJoltPhys.cpp" />
     <ClCompile Include="src\JoltPhys\mrPhysicsRigJoltPhysRagdoll.cpp" />
-    <ClCompile Include="src\JoltPhys\mrPhysicsRigJoltPhysJointed.cpp" />
     <ClCompile Include="src\JoltPhys\mrPhysicsSceneJoltPhys.cpp" />
   </ItemGroup>
   <ItemGroup>

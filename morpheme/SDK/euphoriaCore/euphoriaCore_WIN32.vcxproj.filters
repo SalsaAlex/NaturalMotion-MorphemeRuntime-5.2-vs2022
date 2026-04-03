@@ -1,12 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="include\euphoria" />
-    <Filter Include="include" />
-    <Filter Include="include\euphoria\Nodes" />
-    <Filter Include="src" />
-    <Filter Include="src\Nodes" />
-    <Filter Include="sharedDefines" />
+    <Filter Include="include">
+      <UniqueIdentifier>{d1be874a-4633-43d1-8616-ef127ec3ae6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\euphoria">
+      <UniqueIdentifier>{577eca97-500a-4d20-9e3d-a944fc3bff64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\euphoria\Nodes">
+      <UniqueIdentifier>{91352deb-fe0c-4b41-bffa-cf6f4fe40143}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sharedDefines">
+      <UniqueIdentifier>{8489919d-8c85-4fe3-8325-b5a1bd95391b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{a4d94b21-f7d6-4367-9f5a-6c298bf7a7ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Nodes">
+      <UniqueIdentifier>{5746d597-1172-4329-9ac3-2053413d7bc7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\euphoria\erAttribData.h">
@@ -28,9 +40,6 @@
       <Filter>include\euphoria</Filter>
     </ClInclude>
     <ClInclude Include="include\euphoria\erCollisionProbes.h">
-      <Filter>include\euphoria</Filter>
-    </ClInclude>
-    <ClInclude Include="include\euphoria\erCollisionProbes.inl">
       <Filter>include\euphoria</Filter>
     </ClInclude>
     <ClInclude Include="include\euphoria\erContactFeedback.h">
@@ -156,6 +165,19 @@
     <ClInclude Include="include\euphoria\Nodes\erNodeTrajectoryOverride.h">
       <Filter>include\euphoria\Nodes</Filter>
     </ClInclude>
+    <ClInclude Include="..\sharedDefines\mEuphoriaDebugInterface.h">
+      <Filter>sharedDefines</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\euphoria\erCollisionProbes.inl">
+      <Filter>include\euphoria</Filter>
+    </None>
+    <None Include="..\sharedDefines\mEuphoriaDebugInterface.inl">
+      <Filter>sharedDefines</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="src\erAttribData.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -276,11 +298,5 @@
     <ClCompile Include="src\Nodes\erNodeTrajectoryOverride.cpp">
       <Filter>src\Nodes</Filter>
     </ClCompile>
-    <ClInclude Include="..\sharedDefines\mEuphoriaDebugInterface.h">
-      <Filter>sharedDefines</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sharedDefines\mEuphoriaDebugInterface.inl">
-      <Filter>sharedDefines</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

@@ -25,7 +25,6 @@
 #include "physics/JoltPhys/mrJoltPhys.h"
 #include "physics/mrPhysicsRigDef.h"
 #include "physics/JoltPhys/mrPhysicsRigJoltPhysRagdoll.h"
-#include "physics/JoltPhys/mrPhysicsRigJoltPhysJointed.h"
 #include "physics/JoltPhys/mrPhysicsSceneJoltPhys.h"
 #include "morpheme/mrCoreTaskIDs.h"
 #include "physics/mrPhysicsRig.h"
