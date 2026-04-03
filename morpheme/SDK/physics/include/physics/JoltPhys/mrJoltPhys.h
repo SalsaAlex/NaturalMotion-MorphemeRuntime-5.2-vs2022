@@ -66,9 +66,8 @@ static inline NMP::Matrix34 nmJPHMat44ToNmMatrix34(const JPH::Mat44 nxM)
 static inline const JPH::Mat44 nmMatrix34ToJPHMat44(const NMP::Matrix34& m)
 {
   JPH::Quat quat = nmQuatToJPHQuat(m.toQuat());
-  JPH::Mat44 jm = JPH::Mat44::sIdentity();
-  jm.sRotation(quat);
-  jm.SetTranslation(nmVector3ToJPHVec3(m.translation()));
+  JPH::Vec3 pos = nmVector3ToJPHVec3(m.translation());
+  JPH::Mat44 jm = JPH::Mat44::sRotationTranslation(quat, pos);
   return jm;
 }
 

@@ -421,8 +421,8 @@ float Limb::calculateLimbTwist(MR::InstanceDebugInterface* MR_OUTPUT_DEBUG_ARG(p
 {
   float limbTwist = 0.0f;
 
-  const MR::PhysicsRigPhysX3Articulation* const physicsRig =
-    static_cast<MR::PhysicsRigPhysX3Articulation*>(m_body->getPhysicsRig());
+  const MR::PhysicsRigJoltPhysRagdoll* const physicsRig =
+    static_cast<MR::PhysicsRigJoltPhysRagdoll*>(m_body->getPhysicsRig());
 
   for (int32_t i = 0, jointCount = getNumJointsInChain(); i < jointCount; ++i)
   {
@@ -766,8 +766,8 @@ void Limb::prePhysicsStep(float timeDelta, MR::InstanceDebugInterface* pDebugDra
     // Update the IK joint limits from the current physics rig joints.
     for (uint32_t i = 0; i < m_numJointsInChain; ++i)
     {
-      const MR::PhysicsRigPhysX3::JointPhysX3* const joint =
-        static_cast< const MR::PhysicsRigPhysX3::JointPhysX3* >(getPhysicsRig()->getJoint(getPhysicsRigJointIndex(i)));
+      const MR::PhysicsRigJoltPhys::JointJoltPhys* const joint =
+        static_cast< const MR::PhysicsRigJoltPhys::JoinJoltPhys* >(getPhysicsRig()->getJoint(getPhysicsRigJointIndex(i)));
 
       const NMP::Vector3 limits(
         joint->getModifiableLimits().getTwistLimitLow(),

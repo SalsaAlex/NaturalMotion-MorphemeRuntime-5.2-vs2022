@@ -69,11 +69,11 @@ static void maintainConstraint(
       body.getPhysicsRig()->getPart(constrainedLimbEndPartIndex)->getTransform(), 0.2f);
 #endif
 
-    MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation* const aimingLimbEndPart =
-      static_cast<MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation* const>(
+    MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll* const aimingLimbEndPart =
+      static_cast<MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll* const>(
       aimingLimb.getPart(aimingLimb.getNumPartsInChain() - 1));
-    MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation* const constrainedLimbEndPart =
-      static_cast<MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation* const>(
+    MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll* const constrainedLimbEndPart =
+      static_cast<MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll* const>(
       constrainedLimb.getPart(constrainedLimb.getNumPartsInChain() - 1));
     NMP_ASSERT(aimingLimbEndPart);
     NMP_ASSERT(constrainedLimbEndPart);

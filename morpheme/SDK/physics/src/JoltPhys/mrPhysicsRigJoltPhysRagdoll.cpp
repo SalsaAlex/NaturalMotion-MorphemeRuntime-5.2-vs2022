@@ -82,7 +82,7 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
   int32_t                collisionIgnoreMask)
 {
   PhysicsSceneJoltPhys* joltphys_scene = (PhysicsSceneJoltPhys*)physicsScene;
-  
+
   PhysicsRigJoltPhysRagdoll*result = (PhysicsRigJoltPhysRagdoll*)resource.ptr;
   resource.increment(sizeof(PhysicsRigJoltPhysRagdoll));
 
@@ -146,6 +146,7 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
         JPH::Mat44 localpose = nmMatrix34ToJPHMat44(spheredef.localPose);
 
         JPH::SphereShapeSettings spheresettings(spheredef.radius);
+        NMP_ASSERT(spheredef.density > 0);
         spheresettings.SetDensity(spheredef.density);
 
         JPH::Ref<JPH::Shape> joltsphere = spheresettings.Create().Get();
@@ -158,6 +159,7 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
         JPH::Mat44 localpose = nmMatrix34ToJPHMat44(boxdef.localPose);
 
         JPH::BoxShapeSettings boxsettings(nmVector3ToJPHVec3(boxdef.dimensions));
+        NMP_ASSERT(boxdef.density > 0);
         boxsettings.SetDensity(boxdef.density);
 
         JPH::Ref<JPH::Shape> joltbox = boxsettings.Create().Get();
@@ -168,8 +170,12 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
     {
         const PhysicsRigDef::Part::Volume::Capsule& capsuledef = volume.capsules[i];
         JPH::Mat44 localpose = nmMatrix34ToJPHMat44(capsuledef.localPose);
+        JPH::Mat44 capsule_correction = JPH::Mat44::sRotation(JPH::Quat::sRotation(JPH::Vec3(1, 0, 0), NM_PI_OVER_TWO));
+
+        localpose = localpose * capsule_correction;
 
         JPH::CapsuleShapeSettings capsulesettings(capsuledef.height / 2.f, capsuledef.radius);
+        NMP_ASSERT(capsuledef.density > 0);
         capsulesettings.SetDensity(capsuledef.density);
 
         JPH::Ref<JPH::Shape> joltcapsule = capsulesettings.Create().Get();
@@ -192,36 +198,6 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
   const JPH::BodyLockInterfaceLocking& lockinterface = joltphys_scene->m_joltPhysScene->GetBodyLockInterface();
   JPH::Ref<JPH::RagdollSettings> ragdollsettings = new JPH::RagdollSettings;
 
-  //setup skeleton
-  ragdollsettings->mSkeleton = new JPH::Skeleton;
-  std::vector<int> jointindexes(physicsRigDef->getNumJoints());
-  std::unordered_map<int, int> jointpart_index; //jointpart_index[partindex] == joint index
-  ragdollsettings->mSkeleton->AddJoint("root", -1);
-  for (int i = 0; i < physicsRigDef->getNumJoints(); i++)
-      jointindexes[i] = ragdollsettings->mSkeleton->AddJoint(physicsRigDef->m_joints[i]->m_name, -1/*i*/);
-
-  //parent the joints
-  //for (int i = 0; i < physicsRigDef->getNumJoints(); i++)
-  //{
-  //    JPH::Skeleton::Joint& joltjoint1 = ragdollsettings.mSkeleton->GetJoint(jointindexes[i]);
-  //    joltjoint1.mParentJointIndex = -1;
-  //    PhysicsJointDef* jointdef1 = physicsRigDef->m_joints[i];
-  //    for (int j = 0; j < physicsRigDef->getNumJoints(); j++)
-  //    {
-  //        if (i == j)
-  //            continue;
-  //
-  //        PhysicsJointDef* jointdef2 = physicsRigDef->m_joints[j];
-  //        if (jointdef1->m_childPartIndex == jointdef2->m_parentPartIndex)
-  //        {
-  //            joltjoint1.mParentJointIndex = jointindexes[j];
-  //            jointpart_index[jointdef1->m_childPartIndex] = i;
-  //            break;
-  //        }
-  //    }
-  //}
-  jointpart_index[0] = 0;
-
   ragdollsettings->mParts.resize(numParts);
 
   for (uint32_t iPart = 0; iPart < numParts; ++iPart)
@@ -237,35 +213,33 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
       bodysettings.mRotation = transform.GetQuaternion();
       bodysettings.mMotionType = JPH::EMotionType::Dynamic;
       bodysettings.mObjectLayer = NMPhysLayers::CHARACTER_PART;
-      bodysettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateMassAndInertia;
+      bodysettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
+      bodysettings.mMassPropertiesOverride.mMass = 1;
       bodysettings.mToParent = nullptr;
-
-      if (iPart != 0)
-      {
-            //auto* constraint = new JPH::SwingTwistConstraintSettings();
-            //constraint->mPosition1 = JPH::Vec3(0, 0.5f, 0);
-            //constraint->mPosition2 = JPH::Vec3(0, -0.5f, 0);
-
-            //constraint->mTwistAxis1 = JPH::Vec3::sAxisY();
-            //constraint->mTwistAxis2 = JPH::Vec3::sAxisY();
-
-            //constraint->mSwingAxis1 = JPH::Vec3::sAxisX();
-            //constraint->mSwingAxis2 = JPH::Vec3::sAxisX();
-
-            //constraint->mNormalHalfConeAngle = JPH::DegreesToRadians(30.0f);
-
-            //bodysettings.mToParent = constraint;
-      }
+      bodysettings.mGravityFactor = 1;
 
       ragdollsettings->mParts[iPart] = bodysettings;
   }
+  if (physicsRigDef->getNumJoints())
+  {//create skeleton
+    PhysicsRigJoltPhysRagdoll::createJoints(joltphys_scene, physicsRigDef, result, ragdollsettings);
+  }
 
+  ragdollsettings->DisableParentChildCollisions();
   ragdollsettings->Stabilize();
 
   result->m_ragdoll = ragdollsettings->CreateRagdoll(0, 0, joltphys_scene->m_joltPhysScene);
+  for (int i = 0; i < result->m_ragdoll->GetConstraintCount(); i++)
+  {
+      JPH::SixDOFConstraint* sixdofconstraint = (JPH::SixDOFConstraint*)result->m_ragdoll->GetConstraint(i);
+
+      sixdofconstraint->SetMotorState(JPH::SixDOFConstraintSettings::EAxis::RotationX, JPH::EMotorState::Position);
+      sixdofconstraint->SetMotorState(JPH::SixDOFConstraintSettings::EAxis::RotationY, JPH::EMotorState::Position);
+      sixdofconstraint->SetMotorState(JPH::SixDOFConstraintSettings::EAxis::RotationZ, JPH::EMotorState::Position);
+  }
   for (int i = 0; i < physicsRigDef->getNumJoints(); i++)
   {
-      new(result->m_joints[i]) MR::PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll(nullptr/*result->m_ragdoll->GetConstraint(i)*/, (PhysicsSixDOFJointDef*)physicsRigDef->m_joints[i]);
+      new(result->m_joints[i]) MR::PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll(result->m_ragdoll->GetConstraint(i), (PhysicsSixDOFJointDef*)physicsRigDef->m_joints[i]);
 
       PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll* jointJolt = (PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll*)result->m_joints[i];
       const PhysicsSixDOFJointDef* jointDef = (const PhysicsSixDOFJointDef*)physicsRigDef->m_joints[i];
@@ -314,28 +288,112 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
   return result;
 }
 
+void PhysicsRigJoltPhysRagdoll::createJoints(
+    MR::PhysicsSceneJoltPhys* physscene,
+    PhysicsRigDef* physicsRigDef,
+    PhysicsRigJoltPhysRagdoll* ragdollrig,
+    JPH::RagdollSettings* joltragdoll)
+{
+    //joint index == part index
+
+    JPH::Skeleton* rag_skel = joltragdoll->mSkeleton = new JPH::Skeleton();
+
+    rag_skel->AddJoint("root", -1);
+
+    for (int i = 0; i < physicsRigDef->getNumJoints(); i++)
+    {
+        PhysicsJointDef* jointdef = physicsRigDef->m_joints[i];
+        rag_skel->AddJoint(jointdef->m_name, jointdef->m_parentPartIndex);
+    }
+
+    for (int i = 1; i < rag_skel->GetJointCount(); i++) //skip 0 (root)
+    {
+        PhysicsJointDef* jointdef = physicsRigDef->m_joints[i - 1];
+        int childindex = jointdef->m_childPartIndex;
+        int parentindex = jointdef->m_parentPartIndex;
+
+        JPH::RagdollSettings::Part& childpart = joltragdoll->mParts[childindex];
+        JPH::RagdollSettings::Part& parentpart = joltragdoll->mParts[parentindex];
+
+        JPH::Vec3 parentCOM = parentpart.GetShape()->GetCenterOfMass();
+        JPH::Vec3 childCOM = childpart.GetShape()->GetCenterOfMass();
+
+        JPH::Mat44 parentpartframe = MR::nmMatrix34ToJPHMat44(jointdef->m_parentPartFrame);
+        JPH::Mat44 childpartframe = MR::nmMatrix34ToJPHMat44(jointdef->m_childPartFrame);
+
+        switch (jointdef->m_jointType)
+        {
+            case PhysicsJointDef::JOINT_TYPE_SIX_DOF:
+            {
+                PhysicsSixDOFJointDef* sixdofjointdef = (PhysicsSixDOFJointDef*)jointdef;
+                JPH::SixDOFConstraintSettings* csettings = new JPH::SixDOFConstraintSettings;
+                //temporary fix all axis
+                csettings->MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationX);
+                csettings->MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationY);
+                csettings->MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationZ);
+                csettings->MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationX);
+                csettings->MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationY);
+                csettings->MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationZ);
+
+                csettings->mSwingType = JPH::ESwingType::Cone;
+
+                csettings->mEnabled = true;
+
+                csettings->mSpace = JPH::EConstraintSpace::LocalToBodyCOM;
+
+                csettings->mPosition2 = childpartframe.GetTranslation() - childCOM;
+                csettings->mPosition1 = parentpartframe.GetTranslation() - parentCOM;
+
+                csettings->mAxisX1 = parentpartframe.GetAxisX();
+                csettings->mAxisY1 = parentpartframe.GetAxisY();
+                csettings->mAxisX2 = childpartframe.GetAxisX();
+                csettings->mAxisY2 = childpartframe.GetAxisY();
+
+                float swing1_limit = sixdofjointdef->m_hardLimits.getSwing1Limit();
+                float swing2_limit = sixdofjointdef->m_hardLimits.getSwing2Limit();
+                float twist_lowlimit = sixdofjointdef->m_hardLimits.getTwistLimitLow();
+                float twist_highlimit = sixdofjointdef->m_hardLimits.getTwistLimitHigh();
+
+                csettings->SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationY,
+                    -swing1_limit, swing1_limit);
+                csettings->SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationZ,
+                    -swing2_limit, swing2_limit);
+                csettings->SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationX,
+                    twist_lowlimit, twist_highlimit);
+
+                for (int axis = JPH::SixDOFConstraintSettings::RotationX;
+                    axis <= JPH::SixDOFConstraintSettings::RotationZ;
+                    ++axis)
+                {
+                    JPH::MotorSettings& motor = csettings->mMotorSettings[axis];
+
+                    motor.mMinForceLimit = -500; motor.mMaxForceLimit = 500;
+                    motor.mMinTorqueLimit = -500; motor.mMaxTorqueLimit = 500;
+                    motor.mSpringSettings.mDamping = 0.4;
+                    motor.mSpringSettings.mStiffness = 1;
+                    motor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
+                }
+                
+                childpart.mToParent = csettings;
+            }
+            break;
+            default:
+                NMP_ASSERT_FAIL();
+                break;
+
+        }
+    }
+}
+
 //----------------------------------------------------------------------------------------------------------------------
 bool PhysicsRigJoltPhysRagdoll::term()
 {
   JPH::PhysicsSystem *joltPhysScene = getPhysicsSceneJoltPhys()->m_joltPhysScene;
   if (joltPhysScene)
   {
-    for (uint32_t i = getNumParts(); i-- != 0; )
-    {
-      PartJoltPhysRagdoll *part = (PartJoltPhysRagdoll*)m_parts[i];
-      PhysicsRigJoltPhysBodyData::destroy(
-        PhysicsRigJoltPhysBodyData::getFromBody(part->getBody()), part->getBody());
-      if (part->getKinematicBody())
-      {
-        PhysicsRigJoltPhysBodyData::destroy(
-          PhysicsRigJoltPhysBodyData::getFromBody(part->getKinematicBody()), part->getKinematicBody());
-        joltPhysScene->GetBodyInterface().RemoveBody(part->getKinematicBody()->GetID());
-      }
-    }
-
-    // Releasing the aggregate alone results in the contents being re-added to the scene directly.
-    // So - release the articulation first. 
-    m_ragdoll->Release();
+    m_ragdoll->RemoveFromPhysicsSystem();
+    delete m_ragdoll;
+    m_ragdoll = nullptr;
   }
 
   return true;
@@ -1400,9 +1458,9 @@ NMP::Quat PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::getTargetOrientation(
 {
   //NMP_ASSERT(m_jointInternal);
   JPH::Quat returnval = JPH::Quat::sIdentity();
-  //JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
-  //if (d6joint)
-  //    returnval = d6joint->GetTargetOrientationCS();
+  JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
+  if (d6joint)
+      returnval = d6joint->GetTargetOrientationCS();
 
   return nmJPHQuatToQuat(returnval);
 }
@@ -1413,12 +1471,12 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setTargetOrientation(const
   NMP_ASSERT(orientation.isValid());
   // This check allows characters to go to sleep when a constant target is being passed in.
   // Since setTargetOrientation wakes up the character.
-  //if (orientation != m_lastTargetOrientation)
-  //{
-  //    JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
-  //    if (d6joint)
-  //        d6joint->SetTargetOrientationCS(nmQuatToJPHQuat(orientation));
-  //}
+  if (orientation != m_lastTargetOrientation)
+  {
+      JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
+      if (d6joint)
+          d6joint->SetTargetOrientationCS(nmQuatToJPHQuat(orientation));
+  }
   m_lastTargetOrientation = orientation;
 }
 
@@ -1534,7 +1592,7 @@ void PhysicsRigJoltPhysRagdoll::makeDynamic()
     {
       PartJoltPhysRagdoll *part = (PartJoltPhysRagdoll*)m_parts[i];
       // re-enable gravity
-      part->m_rigidBody->GetMotionProperties()->SetGravityFactor(0);
+      part->m_rigidBody->GetMotionProperties()->SetGravityFactor(1);
     }
   }
 }
@@ -1547,24 +1605,24 @@ void PhysicsRigJoltPhysRagdoll::moveAllToKinematicPos()
   // Move the kinematic shape somewhere far.
   JPH::Mat44 kinematicPose = nmMatrix34ToJPHMat44(m_kinematicPose);
 
-  for (uint32_t i = 0; i < getNumParts(); ++i)
-  {
-    // move the dynamic part
-    PartJoltPhysRagdoll *part = (PartJoltPhysRagdoll*)m_parts[i];
-    JPH::Mat44 transform = part->m_rigidBody->GetWorldTransform();
-    transform.SetTranslation(transform.GetTranslation() + delta);
-    getPhysicsSceneJoltPhys()->m_joltPhysScene->GetBodyInterface().
-        SetPositionAndRotation(part->m_rigidBody->GetID(), transform.GetTranslation(), transform.GetQuaternion(), JPH::EActivation::Activate);
-    part->m_rigidBody->SetLinearVelocity(JPH::Vec3(0,0,0));
-    part->m_rigidBody->SetAngularVelocity(JPH::Vec3(0,0,0));
-    // disable gravity
-    part->m_rigidBody->GetMotionProperties()->SetGravityFactor(0.0f);
-    if (part->m_kinematicBody)
-    {
-        getPhysicsSceneJoltPhys()->m_joltPhysScene->GetBodyInterface().
-            SetPositionAndRotation(part->m_kinematicBody->GetID(), kinematicPose.GetTranslation(), kinematicPose.GetQuaternion(), JPH::EActivation::Activate);
-    }
-  }
+  //for (uint32_t i = 0; i < getNumParts(); ++i)
+  //{
+  //  // move the dynamic part
+  //  PartJoltPhysRagdoll *part = (PartJoltPhysRagdoll*)m_parts[i];
+  //  JPH::Mat44 transform = part->m_rigidBody->GetWorldTransform();
+  //  transform.SetTranslation(transform.GetTranslation() + delta);
+  //  getPhysicsSceneJoltPhys()->m_joltPhysScene->GetBodyInterface().
+  //      SetPositionAndRotation(part->m_rigidBody->GetID(), transform.GetTranslation(), transform.GetQuaternion(), JPH::EActivation::Activate);
+  //  part->m_rigidBody->SetLinearVelocity(JPH::Vec3(0,0,0));
+  //  part->m_rigidBody->SetAngularVelocity(JPH::Vec3(0,0,0));
+  //  // disable gravity
+  //  part->m_rigidBody->GetMotionProperties()->SetGravityFactor(0.0f);
+  //  if (part->m_kinematicBody)
+  //  {
+  //      getPhysicsSceneJoltPhys()->m_joltPhysScene->GetBodyInterface().
+  //          SetPositionAndRotation(part->m_kinematicBody->GetID(), kinematicPose.GetTranslation(), kinematicPose.GetQuaternion(), JPH::EActivation::Activate);
+  //  }
+  //}
 }
 
 //----------------------------------------------------------------------------------------------------------------------

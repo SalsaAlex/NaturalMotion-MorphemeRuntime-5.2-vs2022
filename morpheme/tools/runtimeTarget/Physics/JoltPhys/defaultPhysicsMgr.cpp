@@ -721,6 +721,9 @@ void DefaultPhysicsMgr::destroyPhysicsBody(MCOMMS::SceneObjectID objectID)
 
     //finally delete the body
     JPH::BodyInterface& bodyinterface = m_physicsScene->m_joltPhysScene->GetBodyInterface();
+    if (foundBody->IsInBroadPhase())
+        bodyinterface.RemoveBody(foundBody->GetID());
+
     bodyinterface.DestroyBody(foundBody->GetID());
 
     m_sceneBodies[foundBodyIndex] = m_sceneBodies.back();

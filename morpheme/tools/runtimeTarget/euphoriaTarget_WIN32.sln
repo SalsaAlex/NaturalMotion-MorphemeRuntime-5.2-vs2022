@@ -24,7 +24,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "morphemePhysicsComms2", "..
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "morphemePhysicsCore", "..\..\SDK\physics\morphemePhysicsCore_WIN32.vcxproj", "{79CD03AF-41CC-469B-B0B1-DD18BDBD1643}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "morphemePhysicsDriver_PhysX3", "..\..\SDK\physics\morphemePhysicsDriver_PhysX3_WIN32.vcxproj", "{31DFDD31-B92A-4256-0EA9-D69C04633280}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "morphemePhysicsDriver_JoltPhys", "..\..\SDK\physics\morphemePhysicsDriver_JoltPhys_WIN32.vcxproj", "{31DFDD31-B92A-4256-0EA9-D69C04633280}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "morphemeSimpleBundle", "..\..\utils\simpleBundle\morphemeSimpleBundle_WIN32.vcxproj", "{A16C3047-7B5D-42CE-B4AA-190E025E16DC}"
 EndProject

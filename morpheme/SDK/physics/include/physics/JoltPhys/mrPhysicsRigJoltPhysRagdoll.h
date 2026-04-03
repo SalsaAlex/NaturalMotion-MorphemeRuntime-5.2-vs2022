@@ -311,6 +311,12 @@ public:
     int32_t                collisionTypeMask,
     int32_t                collisionIgnoreMask);
 
+  static void createJoints(
+      MR::PhysicsSceneJoltPhys* physscene,
+      PhysicsRigDef* physicsRigDef,
+      PhysicsRigJoltPhysRagdoll* ragdollrig,
+      JPH::RagdollSettings* joltragdoll);
+
   bool term() NM_OVERRIDE;
 
   void updatePrePhysics(float timeStep) NM_OVERRIDE;

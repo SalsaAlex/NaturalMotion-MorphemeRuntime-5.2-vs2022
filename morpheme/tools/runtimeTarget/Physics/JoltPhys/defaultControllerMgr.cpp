@@ -399,7 +399,7 @@ void DefaultControllerMgr::createControllerRecord(
 
   // set the position of the physical body to the 'graveyard', 
   // PHYSICS_GRAVEYARD_ALTITUDE units times the size of the character below the origin.  
-  NMP::Vector3 graveyardPos = worldUpDirection * PHYSICS_GRAVEYARD_ALTITUDE * ccDef->getHeight();
+  NMP::Vector3 graveyardPos = worldUpDirection;// * PHYSICS_GRAVEYARD_ALTITUDE * ccDef->getHeight();
   spaceGraveyard(graveyardPos, 2.0f);
   ccRecord->m_graveyardPos = graveyardPos;
     

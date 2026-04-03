@@ -12,12 +12,12 @@
 #define NM_ENDCONSTRAINT_H
 
 #include "erDebugDraw.h"
-#include "mrPhysX3.h"
-#include "mrPhysicsRigPhysX3Articulation.h"
-#include "mrPhysX3Includes.h"
+#include "mrJoltPhys.h"
+#include "mrPhysicsRigJoltPhysRagdoll.h"
+#include "mrJoltPhysIncludes.h"
 #include "erLimbTransforms.h"
 #include "erEuphoriaUserData.h"
-#include "mrPhysicsScenePhysX3.h"
+#include "mrPhysicsSceneJoltPhys.h"
 
 namespace ER
 {

@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Euphoria" />
-    <Filter Include="Physics\PhysX3" />
+    <Filter Include="Physics\JoltPhys" />
     <Filter Include="Physics" />
   </ItemGroup>
   <ItemGroup>
@@ -57,23 +57,23 @@
     <ClInclude Include="networkDefRecordManager.h" />
     <ClCompile Include="networkInstanceRecordManager.cpp" />
     <ClInclude Include="networkInstanceRecordManager.h" />
-    <ClCompile Include="Physics\PhysX3\defaultControllerMgr.cpp">
-      <Filter>Physics\PhysX3</Filter>
+    <ClCompile Include="Physics\JoltPhys\defaultControllerMgr.cpp">
+      <Filter>Physics\JoltPhys</Filter>
     </ClCompile>
-    <ClInclude Include="Physics\PhysX3\defaultControllerMgr.h">
-      <Filter>Physics\PhysX3</Filter>
+    <ClInclude Include="Physics\JoltPhys\defaultControllerMgr.h">
+      <Filter>Physics\JoltPhys</Filter>
     </ClInclude>
-    <ClCompile Include="Physics\PhysX3\defaultPhysicsMgr.cpp">
-      <Filter>Physics\PhysX3</Filter>
+    <ClCompile Include="Physics\JoltPhys\defaultPhysicsMgr.cpp">
+      <Filter>Physics\JoltPhys</Filter>
     </ClCompile>
-    <ClInclude Include="Physics\PhysX3\defaultPhysicsMgr.h">
-      <Filter>Physics\PhysX3</Filter>
+    <ClInclude Include="Physics\JoltPhys\defaultPhysicsMgr.h">
+      <Filter>Physics\JoltPhys</Filter>
     </ClInclude>
-    <ClCompile Include="Physics\PhysX3\memoryStream.cpp">
-      <Filter>Physics\PhysX3</Filter>
+    <ClCompile Include="Physics\JoltPhys\memoryStream.cpp">
+      <Filter>Physics\JoltPhys</Filter>
     </ClCompile>
-    <ClInclude Include="Physics\PhysX3\memoryStream.h">
-      <Filter>Physics\PhysX3</Filter>
+    <ClInclude Include="Physics\JoltPhys\memoryStream.h">
+      <Filter>Physics\JoltPhys</Filter>
     </ClInclude>
     <ClCompile Include="runtimeTargetContext.cpp" />
     <ClInclude Include="runtimeTargetContext.h" />
