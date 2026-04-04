@@ -41,9 +41,8 @@ bool locatePhysicsRigDefJoltPhys(uint32_t NMP_USED_FOR_ASSERTS(assetType), void*
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void PhysicsRigJoltPhys::init(PhysicsRigJoltPhys* physicsRigJoltPhys, Type type)
+void PhysicsRigJoltPhys::init(PhysicsRigJoltPhys* physicsRigJoltPhys)
 {
-  physicsRigJoltPhys->m_type = type;
   physicsRigJoltPhys->m_rigID = g_rigID++;
   physicsRigJoltPhys->m_characterControllerBody = 0;
   physicsRigJoltPhys->m_kinematicPose.identity();
@@ -537,7 +536,7 @@ void PhysicsRigJoltPhys::scaleFrictionOnPart(const int32_t partIndex, const floa
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void PhysicsRigJoltPhys::registerJointOnRig(JPH::SixDOFConstraint* joint)
+void PhysicsRigJoltPhys::registerJointOnRig(JPH::TwoBodyConstraint* joint)
 {
   if (!m_registeredJoints.replace(joint, true))
   {
@@ -546,7 +545,7 @@ void PhysicsRigJoltPhys::registerJointOnRig(JPH::SixDOFConstraint* joint)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void PhysicsRigJoltPhys::deRegisterJointOnRig(JPH::SixDOFConstraint* joint)
+void PhysicsRigJoltPhys::deRegisterJointOnRig(JPH::TwoBodyConstraint* joint)
 {
   if (!m_registeredJoints.erase(joint))
   {
@@ -564,7 +563,7 @@ void PhysicsRigJoltPhys::updateRegisteredJoints()
     if (!registered)
     {
       // The joint hasn't been deregistered, and it wasn't updated, so it needs to be released.
-      JPH::SixDOFConstraint* joint = it.key();
+      JPH::TwoBodyConstraint* joint = it.key();
       joint->Release(); //fix
       m_registeredJoints.erase(joint);
       // Erasing invalidates the walker so just start again

@@ -137,8 +137,6 @@
     <ClInclude Include="Physics\JoltPhys\defaultControllerMgr.h" />
     <ClCompile Include="Physics\JoltPhys\defaultPhysicsMgr.cpp" />
     <ClInclude Include="Physics\JoltPhys\defaultPhysicsMgr.h" />
-    <ClCompile Include="Physics\JoltPhys\memoryStream.cpp" />
-    <ClInclude Include="Physics\JoltPhys\memoryStream.h" />
     <ClCompile Include="runtimeTarget.cpp" />
     <ClCompile Include="runtimeTargetContext.cpp" />
     <ClInclude Include="runtimeTargetContext.h" />

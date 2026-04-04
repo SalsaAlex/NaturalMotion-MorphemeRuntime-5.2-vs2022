@@ -41,8 +41,6 @@
 #include "morpheme/mrManager.h"
 #include "physics/mrPhysics.h"
 
-#include "memoryStream.h"
-
 #include "morpheme/mrDispatcher.h"
 #ifdef NM_HOST_CELL_PPU
   #include "morpheme/mrDispatcherPS3.h"
@@ -264,7 +262,6 @@ DefaultPhysicsMgr::DefaultPhysicsMgr(
   IPhysicsMgr(),
   m_assetMgr(assetMgr),
   m_context(context),
-  m_physicsRigType(MR::PhysicsRigJoltPhys::TYPE_ARTICULATED),
   m_frameIndex(0),
   m_physicsScene(NULL),
   m_characterControllerManager(NULL),
@@ -273,23 +270,6 @@ DefaultPhysicsMgr::DefaultPhysicsMgr(
   m_physicsAndCharacterControllerUpdate(MR::PHYSICS_AND_CC_UPDATE_SEPARATE)
 {
   m_assetMgr->setPhysicsManager(this);
-
-  const char* physicsRigType = NULL;
-  commandLineArguments.getOptionValue("-physicsRigType", &physicsRigType);
-
-  if (physicsRigType)
-  {
-    if (strcmp(physicsRigType, "TYPE_ARTICULATED") == 0)
-    {
-      m_physicsRigType = MR::PhysicsRigJoltPhys::TYPE_ARTICULATED;
-      NMP_MSG("Using physics rig type TYPE_ARTICULATED\n");
-    }
-    else if (strcmp(physicsRigType, "TYPE_JOINTED") == 0)
-    {
-      m_physicsRigType = MR::PhysicsRigJoltPhys::TYPE_JOINTED;
-      NMP_MSG("Using physics rig type TYPE_JOINTED\n");
-    }
-  }
 
   resetSDKS();
 
@@ -805,20 +785,20 @@ bool DefaultPhysicsMgr::createConstraint(
   settings.MakeFreeAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationZ);
 
   JPH::MotorSettings *motorsettings = settings.mMotorSettings;
-  motorsettings[0] = JPH::MotorSettings(10.0f, 1.0f, 100000.0f, 1.0e6f);
-  motorsettings[1] = JPH::MotorSettings(10.0f, 1.0f, 100000.0f, 1.0e6f);
-  motorsettings[2] = JPH::MotorSettings(10.0f, 1.0f, 100000.0f, 1.0e6f);
-  motorsettings[3] = JPH::MotorSettings(10.0f, 1.0f, 100000.0f, 1.0e6f);
-  motorsettings[4] = JPH::MotorSettings(10.0f, 1.0f, 100000.0f, 1.0e6f);
-  motorsettings[5] = JPH::MotorSettings(10.0f, 1.0f, 100000.0f, 1.0e6f);
+  motorsettings[0] = JPH::MotorSettings(10.0f, 0.5f, 100000.0f, 1.0e6f);
+  motorsettings[1] = JPH::MotorSettings(10.0f, 0.5f, 100000.0f, 1.0e6f);
+  motorsettings[2] = JPH::MotorSettings(10.0f, 0.5f, 100000.0f, 1.0e6f);
+  motorsettings[3] = JPH::MotorSettings(10.0f, 0.5f, 100000.0f, 1.0e6f);
+  motorsettings[4] = JPH::MotorSettings(10.0f, 0.5f, 100000.0f, 1.0e6f);
+  motorsettings[5] = JPH::MotorSettings(10.0f, 0.5f, 100000.0f, 1.0e6f);
 
   JPH::Ref<JPH::SixDOFConstraint> constraint = (JPH::SixDOFConstraint*)settings.Create(*bodyToConstrain, *constraintshadow);
   constraint->SetMotorState(JPH::SixDOFConstraintSettings::EAxis::TranslationX, JPH::EMotorState::Position);
   constraint->SetMotorState(JPH::SixDOFConstraintSettings::EAxis::TranslationY, JPH::EMotorState::Position);
   constraint->SetMotorState(JPH::SixDOFConstraintSettings::EAxis::TranslationZ, JPH::EMotorState::Position);
-  constraint->SetMaxFriction(JPH::SixDOFConstraintSettings::EAxis::TranslationX, 100000);
-  constraint->SetMaxFriction(JPH::SixDOFConstraintSettings::EAxis::TranslationY, 100000);
-  constraint->SetMaxFriction(JPH::SixDOFConstraintSettings::EAxis::TranslationZ, 100000);
+  constraint->SetMaxFriction(JPH::SixDOFConstraintSettings::EAxis::TranslationX, 10000000);
+  constraint->SetMaxFriction(JPH::SixDOFConstraintSettings::EAxis::TranslationY, 10000000);
+  constraint->SetMaxFriction(JPH::SixDOFConstraintSettings::EAxis::TranslationZ, 10000000);
 
   ((MR::PhysicsSceneJoltPhys*)getPhysicsScene())->m_joltPhysScene->AddConstraint(constraint);
 
@@ -1074,8 +1054,6 @@ void DefaultPhysicsMgr::createPhysicsRig(MR::Network *network, NMP::Vector3* ini
 
   if (physicsRigDef != NULL)
   {
-    if (m_physicsRigType == MR::PhysicsRigJoltPhys::TYPE_ARTICULATED)
-    {
       
       NMP::Memory::Resource resource = NMPMemoryAllocateFromFormat(
         MR::PhysicsRigJoltPhysRagdoll::getMemoryRequirements(physicsRigDef));
@@ -1099,31 +1077,6 @@ void DefaultPhysicsMgr::createPhysicsRig(MR::Network *network, NMP::Vector3* ini
         JPH::Body* body = part->getBody();
         assignPhysicsIDToBody(body);
       }
-    }
-    else
-    {
-      NMP::Memory::Resource resource = NMPMemoryAllocateFromFormat(
-        MR::PhysicsRigJoltPhysJointed::getMemoryRequirements(physicsRigDef)); 
-      NMP_ASSERT(resource.ptr);
-      MR::PhysicsRigJoltPhysJointed* physicsRig = MR::PhysicsRigJoltPhysJointed::init(
-        resource,
-        physicsRigDef,
-        getPhysicsScene(),
-        animRigDef,
-        getAnimToPhysicsMap(network->getNetworkDef(), network->getActiveAnimSetIndex()),
-        1 << MR::GROUP_CHARACTER_PART,
-        (1 << MR::GROUP_CHARACTER_CONTROLLER) | (1 << MR::GROUP_NON_COLLIDABLE) | (1 << MR::GROUP_INTERACTION_PROXY));
-      physicsRig->setKinematicPos(*initialPosition);
-      setPhysicsRig(network, physicsRig);
-
-      uint32_t numParts = physicsRig->getNumParts();
-      for (uint32_t i = 0; i != numParts; ++i)
-      {
-        MR::PhysicsRigJoltPhysJointed::PartJoltPhysJointed* part = physicsRig->getPartJoltPhysJointed(i);
-        JPH::Body* body = part->getBody();
-        assignPhysicsIDToBody(body);
-      }
-    }
   }
   else
   { // There is no physics rig in this anim set.

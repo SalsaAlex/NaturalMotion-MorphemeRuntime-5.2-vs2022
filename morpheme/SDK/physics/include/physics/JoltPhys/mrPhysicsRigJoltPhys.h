@@ -174,9 +174,9 @@ public:
   /// the rig gets an update and the joint hasn't been deregistered, then the joint will be
   /// released. This allows operator nodes to create joints that will be released when the operator
   /// stops being active.
-  void registerJointOnRig(JPH::SixDOFConstraint* joint);
+  void registerJointOnRig(JPH::TwoBodyConstraint* joint);
   /// Should be called when a joint has been released.
-  void deRegisterJointOnRig(JPH::SixDOFConstraint* joint);
+  void deRegisterJointOnRig(JPH::TwoBodyConstraint* joint);
 
 protected:
   /// This should be called internally in the pre-physics update
@@ -201,7 +201,7 @@ private:
   /// the body being used for character control
   JPH::Character*  m_characterControllerBody;
 
-  typedef NMP::hash_map<JPH::SixDOFConstraint*, bool> RegisteredJoints;
+  typedef NMP::hash_map<JPH::TwoBodyConstraint*, bool> RegisteredJoints;
   RegisteredJoints m_registeredJoints;
 };
 

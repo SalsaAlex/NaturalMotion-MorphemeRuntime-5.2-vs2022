@@ -47,12 +47,6 @@
     <ClInclude Include="Physics\JoltPhys\defaultPhysicsMgr.h">
       <Filter>Physics\JoltPhys</Filter>
     </ClInclude>
-    <ClCompile Include="Physics\JoltPhys\memoryStream.cpp">
-      <Filter>Physics\JoltPhys</Filter>
-    </ClCompile>
-    <ClInclude Include="Physics\JoltPhys\memoryStream.h">
-      <Filter>Physics\JoltPhys</Filter>
-    </ClInclude>
     <ClCompile Include="runtimeTarget.cpp" />
     <ClCompile Include="runtimeTargetContext.cpp" />
     <ClInclude Include="runtimeTargetContext.h" />

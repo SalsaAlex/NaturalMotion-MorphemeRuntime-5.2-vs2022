@@ -87,7 +87,7 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
   resource.increment(sizeof(PhysicsRigJoltPhysRagdoll));
 
   new (result) PhysicsRigJoltPhysRagdoll((PhysicsSceneJoltPhys*) physicsScene);
-  PhysicsRigJoltPhys::init(result, PhysicsRigJoltPhys::TYPE_ARTICULATED);
+  PhysicsRigJoltPhys::init(result);
   result->m_cachedSleepThreshold = 0.0f;
 
   uint32_t numParts = physicsRigDef->getNumParts();
@@ -231,11 +231,10 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
   result->m_ragdoll = ragdollsettings->CreateRagdoll(0, 0, joltphys_scene->m_joltPhysScene);
   for (int i = 0; i < result->m_ragdoll->GetConstraintCount(); i++)
   {
-      JPH::SixDOFConstraint* sixdofconstraint = (JPH::SixDOFConstraint*)result->m_ragdoll->GetConstraint(i);
+      JPH::SwingTwistConstraint* swingtwistconstraint = (JPH::SwingTwistConstraint*)result->m_ragdoll->GetConstraint(i);
 
-      sixdofconstraint->SetMotorState(JPH::SixDOFConstraintSettings::EAxis::RotationX, JPH::EMotorState::Position);
-      sixdofconstraint->SetMotorState(JPH::SixDOFConstraintSettings::EAxis::RotationY, JPH::EMotorState::Position);
-      sixdofconstraint->SetMotorState(JPH::SixDOFConstraintSettings::EAxis::RotationZ, JPH::EMotorState::Position);
+      swingtwistconstraint->SetSwingMotorState(JPH::EMotorState::Position);
+      swingtwistconstraint->SetTwistMotorState(JPH::EMotorState::Position);
   }
   for (int i = 0; i < physicsRigDef->getNumJoints(); i++)
   {
@@ -326,14 +325,7 @@ void PhysicsRigJoltPhysRagdoll::createJoints(
             case PhysicsJointDef::JOINT_TYPE_SIX_DOF:
             {
                 PhysicsSixDOFJointDef* sixdofjointdef = (PhysicsSixDOFJointDef*)jointdef;
-                JPH::SixDOFConstraintSettings* csettings = new JPH::SixDOFConstraintSettings;
-                //temporary fix all axis
-                csettings->MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationX);
-                csettings->MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationY);
-                csettings->MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationZ);
-                csettings->MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationX);
-                csettings->MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationY);
-                csettings->MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationZ);
+                JPH::SwingTwistConstraintSettings* csettings = new JPH::SwingTwistConstraintSettings;
 
                 csettings->mSwingType = JPH::ESwingType::Cone;
 
@@ -344,35 +336,35 @@ void PhysicsRigJoltPhysRagdoll::createJoints(
                 csettings->mPosition2 = childpartframe.GetTranslation() - childCOM;
                 csettings->mPosition1 = parentpartframe.GetTranslation() - parentCOM;
 
-                csettings->mAxisX1 = parentpartframe.GetAxisX();
-                csettings->mAxisY1 = parentpartframe.GetAxisY();
-                csettings->mAxisX2 = childpartframe.GetAxisX();
-                csettings->mAxisY2 = childpartframe.GetAxisY();
+                csettings->mTwistAxis1 = parentpartframe.GetAxisX();
+                csettings->mPlaneAxis1 = parentpartframe.GetAxisY();
+                csettings->mTwistAxis2 = childpartframe.GetAxisX();
+                csettings->mPlaneAxis2 = childpartframe.GetAxisY();
 
                 float swing1_limit = sixdofjointdef->m_hardLimits.getSwing1Limit();
                 float swing2_limit = sixdofjointdef->m_hardLimits.getSwing2Limit();
                 float twist_lowlimit = sixdofjointdef->m_hardLimits.getTwistLimitLow();
                 float twist_highlimit = sixdofjointdef->m_hardLimits.getTwistLimitHigh();
 
-                csettings->SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationY,
-                    -swing1_limit, swing1_limit);
-                csettings->SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationZ,
-                    -swing2_limit, swing2_limit);
-                csettings->SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationX,
-                    twist_lowlimit, twist_highlimit);
 
-                for (int axis = JPH::SixDOFConstraintSettings::RotationX;
-                    axis <= JPH::SixDOFConstraintSettings::RotationZ;
-                    ++axis)
-                {
-                    JPH::MotorSettings& motor = csettings->mMotorSettings[axis];
+                csettings->mTwistMinAngle = twist_lowlimit;
+                csettings->mTwistMaxAngle = twist_highlimit;
 
-                    motor.mMinForceLimit = -500; motor.mMaxForceLimit = 500;
-                    motor.mMinTorqueLimit = -500; motor.mMaxTorqueLimit = 500;
-                    motor.mSpringSettings.mDamping = 0.4;
-                    motor.mSpringSettings.mStiffness = 1;
-                    motor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
-                }
+                csettings->mNormalHalfConeAngle = swing1_limit;
+                csettings->mPlaneHalfConeAngle = swing2_limit;
+
+                JPH::MotorSettings& swingmotor = csettings->mSwingMotorSettings;
+                swingmotor.mMinTorqueLimit = -5000; 
+                swingmotor.mMaxTorqueLimit = 5000;
+                swingmotor.mSpringSettings.mDamping = 1;
+                swingmotor.mSpringSettings.mStiffness = 100;
+                swingmotor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
+                JPH::MotorSettings& twistmotor = csettings->mTwistMotorSettings;
+                twistmotor.mMinTorqueLimit = -5000;
+                twistmotor.mMaxTorqueLimit = 5000;
+                twistmotor.mSpringSettings.mDamping = 1;
+                twistmotor.mSpringSettings.mStiffness = 100;
+                twistmotor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
                 
                 childpart.mToParent = csettings;
             }
@@ -383,6 +375,7 @@ void PhysicsRigJoltPhysRagdoll::createJoints(
 
         }
     }
+    joltragdoll->CalculateBodyIndexToConstraintIndex();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1458,9 +1451,9 @@ NMP::Quat PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::getTargetOrientation(
 {
   //NMP_ASSERT(m_jointInternal);
   JPH::Quat returnval = JPH::Quat::sIdentity();
-  JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
-  if (d6joint)
-      returnval = d6joint->GetTargetOrientationCS();
+  JPH::SwingTwistConstraint* st_joint = dynamic_cast<JPH::SwingTwistConstraint*>(m_jointInternal);
+  if (st_joint)
+      returnval = st_joint->GetTargetOrientationCS();
 
   return nmJPHQuatToQuat(returnval);
 }
@@ -1473,9 +1466,9 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setTargetOrientation(const
   // Since setTargetOrientation wakes up the character.
   if (orientation != m_lastTargetOrientation)
   {
-      JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
-      if (d6joint)
-          d6joint->SetTargetOrientationCS(nmQuatToJPHQuat(orientation));
+      JPH::SwingTwistConstraint* st_joint = dynamic_cast<JPH::SwingTwistConstraint*>(m_jointInternal);
+      if (st_joint)
+          st_joint->SetTargetOrientationCS(nmQuatToJPHQuat(orientation));
   }
   m_lastTargetOrientation = orientation;
 }
@@ -1484,9 +1477,9 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setTargetOrientation(const
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setVelocity(const NMP::Vector3 &velocity)
 {
   NMP_ASSERT(velocity.isValid());
-  JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(m_jointInternal);
-  if (d6joint)
-      d6joint->SetTargetVelocityCS(nmVector3ToJPHVec3(velocity));
+  JPH::SwingTwistConstraint* st_joint = dynamic_cast<JPH::SwingTwistConstraint*>(m_jointInternal);
+  if (st_joint)
+      st_joint->SetTargetAngularVelocityCS(nmVector3ToJPHVec3(velocity));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2226,9 +2219,9 @@ void PhysicsRigJoltPhysRagdoll::applyActiveAnimation(uint32_t jointIndex, const 
   }   
   // Don't force either of the parts to have collision - no way we could know which one _should_ have collision if it's
   // disabled elsewhere.
-  JPH::SixDOFConstraint* d6joint = dynamic_cast<JPH::SixDOFConstraint*>(joint);
-  if(d6joint)
-    d6joint->SetTargetOrientationCS(nmQuatToJPHQuat(targetQuat));
+  JPH::SwingTwistConstraint* st_joint = dynamic_cast<JPH::SwingTwistConstraint*>(joint);
+  if(st_joint)
+      st_joint->SetTargetOrientationCS(nmQuatToJPHQuat(targetQuat));
   return; 
 }
 
@@ -2251,16 +2244,16 @@ void PhysicsRigJoltPhysRagdoll::applyActiveAnimation(
   {
     if (!jointChooser.useJoint(i))
       continue;
-
+  
     PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll *joint = (JointJoltPhysRagdoll*)m_joints[i];
     const PhysicsSixDOFJointDef* jointDef = static_cast<const PhysicsSixDOFJointDef*>(m_physicsRigDef->m_joints[i]);
     PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll *childPart = (PartJoltPhysRagdoll*)m_parts[jointDef->m_childPartIndex];
     childPart->makeKinematic(false, 1.0f, false);
     childPart->m_isBeingKeyframed = false;
-
+  
     // Don't force either of the bones to have collision - no way we could know which one _should_
     // have collision if it's disabled elsewhere.
-
+  
     float newStrength = joint->getMaxStrength() * strengthMultiplier;
     float newDamping  = joint->getMaxDamping() * dampingMultiplier;
     joint->setStrength(newStrength);
@@ -2268,31 +2261,33 @@ void PhysicsRigJoltPhysRagdoll::applyActiveAnimation(
     joint->setInternalCompliance(internalCompliance);
     joint->setExternalCompliance(externalCompliance);
     joint->enableLimit(enableJointLimits);
-
+  
     if (strengthMultiplier < 0.0000001f)
       continue;
-
+  
     NMP::Quat curQ;
     getQuatFromTransformBuffer(jointDef->m_childPartIndex, targetBuffer, fallbackBuffer, curQ);
-
+  
     // q is the rotation of the child relative to the parent (in parent space).
     // We need to account for the offset axes in the joint.
-
+  
     // Get the local joint axes in each frame as l0, l1
     NMP::Quat l0 = jointDef->m_parentFrameQuat;
     NMP::Quat l1 = jointDef->m_childFrameQuat;
-
+  
     // Now "assuming" the parent is at the origin (since we already have the relative rotation q)
     // we want to calculate rot, the relative rotation of the child local frame from the parent local frame
     NMP::Quat l0Inv = ~l0;
-
+  
     // Target orientations outside the limits cause oscillations when physical limits are enabled
     if (limitClampFraction >= 0.0f)
     {
       joint->clampToLimits(curQ, limitClampFraction, NULL);
     }
     NMP::Quat curFrameQ = l0Inv * curQ * l1;
-    joint->setTargetOrientation(curFrameQ);
+
+    JPH::SwingTwistConstraint* joltjoint = (JPH::SwingTwistConstraint*)m_ragdoll->GetConstraint(jointDef->m_childPartIndex - 1);
+    joltjoint->SetTargetOrientationCS(nmQuatToJPHQuat(curFrameQ));
   }
 }
 
