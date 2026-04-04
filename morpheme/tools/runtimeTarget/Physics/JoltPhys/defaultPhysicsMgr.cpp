@@ -758,6 +758,7 @@ bool DefaultPhysicsMgr::createConstraint(
 
   JPH::SixDOFConstraintSettings settings;
   settings.mSpace = JPH::EConstraintSpace::WorldSpace;
+  settings.mNumPositionStepsOverride = settings.mNumVelocityStepsOverride = 32;
 
   settings.mPosition1 = MR::nmVector3ToJPHVec3(actualConstraintPosition);
   settings.mPosition2 = MR::nmVector3ToJPHVec3(actualConstraintPosition);
@@ -780,9 +781,9 @@ bool DefaultPhysicsMgr::createConstraint(
       settings.MakeFreeAxis(JPH::SixDOFConstraint::EAxis::RotationZ);
   }
 
-  settings.MakeFreeAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationX);
-  settings.MakeFreeAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationY);
-  settings.MakeFreeAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationZ);
+  settings.MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationX);
+  settings.MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationY);
+  settings.MakeFixedAxis(JPH::SixDOFConstraintSettings::EAxis::TranslationZ);
 
   JPH::MotorSettings *motorsettings = settings.mMotorSettings;
   motorsettings[0] = JPH::MotorSettings(10.0f, 0.5f, 100000.0f, 1.0e6f);
@@ -853,7 +854,7 @@ bool DefaultPhysicsMgr::moveConstraint(uint64_t constraintGUID, const NMP::Vecto
 
   // Move the constraint to the new point in space as requested.
   // TODO: Make use of the com offset if we are a com grab!
-  ((MR::PhysicsSceneJoltPhys*)getPhysicsScene())->m_joltPhysScene->GetBodyInterface().SetPosition(constraint->m_constraintShadow->GetID(), MR::nmVector3ToJPHVec3(newGrabPosition + constraint->m_grabOffsetFromCOM), JPH::EActivation::Activate);
+  ((MR::PhysicsSceneJoltPhys*)getPhysicsScene())->m_joltPhysScene->GetBodyInterface().MoveKinematic(constraint->m_constraintShadow->GetID(), MR::nmVector3ToJPHVec3(newGrabPosition + constraint->m_grabOffsetFromCOM), JPH::Quat::sIdentity(), m_physicsScene->getLastPhysicsTimeStep());
   //constraint->m_jointConstraint->SetTargetPositionCS(JPH::Vec3::sZero());
 
   return true;
@@ -1732,6 +1733,12 @@ void DefaultPhysicsMgr::resetSDKS()
   JPH::Vec3 gravity(0, -9.81f, 0);
 
   JPH::PhysicsSystem* phys_system = new JPH::PhysicsSystem();
+  JPH::PhysicsSettings physsettings;
+  physsettings.mDeterministicSimulation = false;
+  physsettings.mBaumgarte = 0.4f;
+  physsettings.mNumVelocitySteps = physsettings.mNumPositionSteps = 16;
+
+  phys_system->SetPhysicsSettings(physsettings);
 
   NMP_ASSERT(phys_system);
   void* alignedMemory = NMP::Memory::memAllocAligned(sizeof(MR::PhysicsSceneJoltPhys), NMP_VECTOR_ALIGNMENT);

@@ -354,17 +354,20 @@ void PhysicsRigJoltPhysRagdoll::createJoints(
                 csettings->mPlaneHalfConeAngle = swing2_limit;
 
                 JPH::MotorSettings& swingmotor = csettings->mSwingMotorSettings;
-                swingmotor.mMinTorqueLimit = -5000; 
-                swingmotor.mMaxTorqueLimit = 5000;
+                swingmotor.mMinTorqueLimit = -20000; 
+                swingmotor.mMaxTorqueLimit = 20000;
                 swingmotor.mSpringSettings.mDamping = 1;
                 swingmotor.mSpringSettings.mStiffness = 100;
                 swingmotor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
                 JPH::MotorSettings& twistmotor = csettings->mTwistMotorSettings;
-                twistmotor.mMinTorqueLimit = -5000;
-                twistmotor.mMaxTorqueLimit = 5000;
+                twistmotor.mMinTorqueLimit = -20000;
+                twistmotor.mMaxTorqueLimit = 20000;
                 twistmotor.mSpringSettings.mDamping = 1;
                 twistmotor.mSpringSettings.mStiffness = 100;
                 twistmotor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
+
+                //maybe this is too big ?
+                csettings->mNumPositionStepsOverride = csettings->mNumVelocityStepsOverride = 32;
                 
                 childpart.mToParent = csettings;
             }
