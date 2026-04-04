@@ -155,7 +155,7 @@ bool ERNetworkInstanceRecord::init(
       getAnimToPhysicsMap(getNetwork()->getNetworkDef(), 
       getNetwork()->getActiveAnimSetIndex()));
 
-    if (isBehavioural && physicsRig->getType() == MR::PhysicsRigPhysX3::TYPE_ARTICULATED)
+    if (isBehavioural)
     {
       uint32_t ignoreGroups = (1 << MR::GROUP_CHARACTER_CONTROLLER) | (1 << MR::GROUP_NON_COLLIDABLE) | (1 << MR::GROUP_CHARACTER_PART_WITH_PROXY);
       if (m_useProxyCharacter)
