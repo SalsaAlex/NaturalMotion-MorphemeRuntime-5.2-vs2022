@@ -41,9 +41,8 @@ bool locatePhysicsRigDefPhysX3(uint32_t NMP_USED_FOR_ASSERTS(assetType), void* a
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void PhysicsRigPhysX3::init(PhysicsRigPhysX3* physicsRigPhysX3, Type type, physx::PxClientID ownerClientID, uint32_t clientBehaviourFlags)
+void PhysicsRigPhysX3::init(PhysicsRigPhysX3* physicsRigPhysX3, physx::PxClientID ownerClientID, uint32_t clientBehaviourFlags)
 {
-  physicsRigPhysX3->m_type = type;
   physicsRigPhysX3->m_rigID = g_rigID++;
   physicsRigPhysX3->m_characterControllerActor = 0;
   physicsRigPhysX3->m_ownerClientID = ownerClientID;
@@ -121,13 +120,7 @@ void PhysicsRigPhysX3::PartPhysX3::addAngularAcceleration(const NMP::Vector3& an
 //----------------------------------------------------------------------------------------------------------------------
 PhysicsRigPhysX3Articulation* PhysicsRigPhysX3::getPhysicsRigPhysX3Articulation()
 {
-  return m_type == TYPE_ARTICULATED ? (PhysicsRigPhysX3Articulation*) this : 0;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-PhysicsRigPhysX3Jointed* PhysicsRigPhysX3::getPhysicsRigPhysX3Jointed()
-{
-  return m_type == TYPE_JOINTED ? (PhysicsRigPhysX3Jointed*) this : 0;
+  return (PhysicsRigPhysX3Articulation*) this;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

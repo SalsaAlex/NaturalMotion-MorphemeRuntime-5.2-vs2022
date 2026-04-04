@@ -46,7 +46,6 @@ protected:
   /// internal memory.
   enum { MAX_SHAPES_IN_VOLUME = 16 }; 
 public:
-  enum Type {TYPE_JOINTED, TYPE_ARTICULATED};
 
   class PartPhysX3 : public Part
   {
@@ -113,10 +112,7 @@ public:
   /// Initialises rig ID and the type
   /// See PhysX documentation for information on the ownerClientID and clientBehaviourBits
   static void init(
-    PhysicsRigPhysX3* physicsRigPhysX3, Type type, physx::PxClientID ownerClientID, uint32_t clientBehaviourFlags);
-
-  /// Indicates if this is a jointed or articulation rig
-  Type getType() const {return m_type;}
+    PhysicsRigPhysX3* physicsRigPhysX3, physx::PxClientID ownerClientID, uint32_t clientBehaviourFlags);
 
   /// Will return a pointer only if this is of type TYPE_ARTICULATED
   class PhysicsRigPhysX3Articulation* getPhysicsRigPhysX3Articulation();
@@ -221,9 +217,6 @@ protected:
   float m_desiredJointProjectionAngularTolerance;
 
 private:
-
-  /// Indicates the PhysX 3 rig type - jointed or articulated
-  Type m_type;
 
   /// Used to keep track of which rig instance is which, e.g. so you can detect a different
   /// character's collision but ignore your own

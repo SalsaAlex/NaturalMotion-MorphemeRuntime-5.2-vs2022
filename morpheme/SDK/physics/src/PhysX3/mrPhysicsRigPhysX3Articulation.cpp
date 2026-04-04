@@ -90,7 +90,7 @@ PhysicsRigPhysX3Articulation *PhysicsRigPhysX3Articulation::init(
   resource.increment(sizeof(PhysicsRigPhysX3Articulation));
 
   new (result) PhysicsRigPhysX3Articulation((PhysicsScenePhysX3*) physicsScene);
-  PhysicsRigPhysX3::init(result, PhysicsRigPhysX3::TYPE_ARTICULATED, ownerClientID, clientBehaviourBits);
+  PhysicsRigPhysX3::init(result, ownerClientID, clientBehaviourBits);
   result->m_cachedSleepThreshold = 0.0f;
 
   uint32_t numParts = physicsRigDef->getNumParts();

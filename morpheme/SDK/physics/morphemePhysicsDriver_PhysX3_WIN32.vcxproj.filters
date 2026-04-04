@@ -20,9 +20,6 @@
     <ClInclude Include="include\physics\PhysX3\mrPhysicsRigPhysX3Articulation.h">
       <Filter>include\physics\PhysX3</Filter>
     </ClInclude>
-    <ClInclude Include="include\physics\PhysX3\mrPhysicsRigPhysX3Jointed.h">
-      <Filter>include\physics\PhysX3</Filter>
-    </ClInclude>
     <ClInclude Include="include\physics\PhysX3\mrPhysicsScenePhysX3.h">
       <Filter>include\physics\PhysX3</Filter>
     </ClInclude>
@@ -48,9 +45,6 @@
       <Filter>src\PhysX3</Filter>
     </ClCompile>
     <ClCompile Include="src\PhysX3\mrPhysicsRigPhysX3Articulation.cpp">
-      <Filter>src\PhysX3</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysX3\mrPhysicsRigPhysX3Jointed.cpp">
       <Filter>src\PhysX3</Filter>
     </ClCompile>
     <ClCompile Include="src\PhysX3\mrPhysicsScenePhysX3.cpp">

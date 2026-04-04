@@ -309,9 +309,6 @@ protected:
   DefaultAssetMgr*            const m_assetMgr;
   RuntimeTargetContext*       const m_context;
 
-  MR::PhysicsRigPhysX3::Type  m_physicsRigType; ///< the type of physics rig to create when createPhysicsRig is
-                                                ///  called, articulated or jointed.
-
   std::vector<physx::PxJoint*>      m_joints;
   std::vector<physx::PxMaterial*>   m_materials;
   std::vector<physx::PxActor*>      m_sceneActors;

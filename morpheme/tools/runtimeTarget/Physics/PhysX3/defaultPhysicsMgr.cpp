@@ -26,7 +26,6 @@
 #include "mrPhysX3Includes.h"
 #include "physics/mrPhysicsRigDef.h"
 #include "mrPhysicsRigPhysX3Articulation.h"
-#include "mrPhysicsRigPhysX3Jointed.h"
 #include "mrPhysicsScenePhysX3.h"
 #include "morpheme/mrCoreTaskIDs.h"
 #include "physics/mrPhysicsRig.h"
@@ -385,7 +384,6 @@ DefaultPhysicsMgr::DefaultPhysicsMgr(
   IPhysicsMgr(),
   m_assetMgr(assetMgr),
   m_context(context),
-  m_physicsRigType(MR::PhysicsRigPhysX3::TYPE_ARTICULATED),
   m_frameIndex(0),
   m_physicsScene(NULL),
   m_cpuDispatcher(NULL),
@@ -399,23 +397,6 @@ DefaultPhysicsMgr::DefaultPhysicsMgr(
   const char* pvdFilename = NULL;
   commandLineArguments.getOptionValue("-pvdFilename", &pvdFilename);
   PhysicsSDK::setPVDFileName(pvdFilename);
-
-  const char* physicsRigType = NULL;
-  commandLineArguments.getOptionValue("-physicsRigType", &physicsRigType);
-
-  if (physicsRigType)
-  {
-    if (strcmp(physicsRigType, "TYPE_ARTICULATED") == 0)
-    {
-      m_physicsRigType = MR::PhysicsRigPhysX3::TYPE_ARTICULATED;
-      NMP_MSG("Using physics rig type TYPE_ARTICULATED\n");
-    }
-    else if (strcmp(physicsRigType, "TYPE_JOINTED") == 0)
-    {
-      m_physicsRigType = MR::PhysicsRigPhysX3::TYPE_JOINTED;
-      NMP_MSG("Using physics rig type TYPE_JOINTED\n");
-    }
-  }
 
   resetSDKS();
 
@@ -1282,60 +1263,30 @@ void DefaultPhysicsMgr::createPhysicsRig(MR::Network *network, NMP::Vector3* ini
 
   if (physicsRigDef != NULL)
   {
-    if (m_physicsRigType == MR::PhysicsRigPhysX3::TYPE_ARTICULATED)
-    {
+    NMP::Memory::Resource resource = NMPMemoryAllocateFromFormat(
+      MR::PhysicsRigPhysX3Articulation::getMemoryRequirements(physicsRigDef));
       
-      NMP::Memory::Resource resource = NMPMemoryAllocateFromFormat(
-        MR::PhysicsRigPhysX3Articulation::getMemoryRequirements(physicsRigDef));
-        
-      //NMP::Memory::Resource resource = NMPMemoryAllocateFromFormat(MR::PhysicsRigPhysX3Articulation::getMemoryRequirements(physicsRigDef));
-      NMP_ASSERT(resource.ptr);
-      MR::PhysicsRigPhysX3Articulation* physicsRig = MR::PhysicsRigPhysX3Articulation::init(
-        resource,
-        physicsRigDef,
-        getPhysicsScene(),
-        physx::PX_DEFAULT_CLIENT,
-        15, // all client behaviour bits
-        animRigDef,
-        getAnimToPhysicsMap(network->getNetworkDef(), network->getActiveAnimSetIndex()),
-        1 << MR::GROUP_CHARACTER_PART,
-        (1 << MR::GROUP_CHARACTER_CONTROLLER) | (1 << MR::GROUP_NON_COLLIDABLE) | (1 << MR::GROUP_INTERACTION_PROXY));
-      physicsRig->setKinematicPos(*initialPosition);
-      setPhysicsRig(network, physicsRig);
+    //NMP::Memory::Resource resource = NMPMemoryAllocateFromFormat(MR::PhysicsRigPhysX3Articulation::getMemoryRequirements(physicsRigDef));
+    NMP_ASSERT(resource.ptr);
+    MR::PhysicsRigPhysX3Articulation* physicsRig = MR::PhysicsRigPhysX3Articulation::init(
+      resource,
+      physicsRigDef,
+      getPhysicsScene(),
+      physx::PX_DEFAULT_CLIENT,
+      15, // all client behaviour bits
+      animRigDef,
+      getAnimToPhysicsMap(network->getNetworkDef(), network->getActiveAnimSetIndex()),
+      1 << MR::GROUP_CHARACTER_PART,
+      (1 << MR::GROUP_CHARACTER_CONTROLLER) | (1 << MR::GROUP_NON_COLLIDABLE) | (1 << MR::GROUP_INTERACTION_PROXY));
+    physicsRig->setKinematicPos(*initialPosition);
+    setPhysicsRig(network, physicsRig);
 
-      uint32_t numParts = physicsRig->getNumParts();
-      for (uint32_t i = 0; i != numParts; ++i)
-      {
-        MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation* part = physicsRig->getPartPhysX3Articulation(i);
-        physx::PxActor* actor = part->getArticulationLink();
-        assignPhysicsIDToActor(actor);
-      }
-    }
-    else
+    uint32_t numParts = physicsRig->getNumParts();
+    for (uint32_t i = 0; i != numParts; ++i)
     {
-      NMP::Memory::Resource resource = NMPMemoryAllocateFromFormat(
-        MR::PhysicsRigPhysX3Jointed::getMemoryRequirements(physicsRigDef)); 
-      NMP_ASSERT(resource.ptr);
-      MR::PhysicsRigPhysX3Jointed* physicsRig = MR::PhysicsRigPhysX3Jointed::init(
-        resource,
-        physicsRigDef,
-        getPhysicsScene(),
-        physx::PX_DEFAULT_CLIENT,
-        15, // all client behaviour bits
-        animRigDef,
-        getAnimToPhysicsMap(network->getNetworkDef(), network->getActiveAnimSetIndex()),
-        1 << MR::GROUP_CHARACTER_PART,
-        (1 << MR::GROUP_CHARACTER_CONTROLLER) | (1 << MR::GROUP_NON_COLLIDABLE) | (1 << MR::GROUP_INTERACTION_PROXY));
-      physicsRig->setKinematicPos(*initialPosition);
-      setPhysicsRig(network, physicsRig);
-
-      uint32_t numParts = physicsRig->getNumParts();
-      for (uint32_t i = 0; i != numParts; ++i)
-      {
-        MR::PhysicsRigPhysX3Jointed::PartPhysX3Jointed* part = physicsRig->getPartPhysXJointed(i);
-        physx::PxActor* actor = part->getRigidDynamic();
-        assignPhysicsIDToActor(actor);
-      }
+      MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation* part = physicsRig->getPartPhysX3Articulation(i);
+      physx::PxActor* actor = part->getArticulationLink();
+      assignPhysicsIDToActor(actor);
     }
   }
   else

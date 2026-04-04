@@ -286,7 +286,6 @@
     <ClInclude Include="include\physics\PhysX3\mrPhysicsDriverDataPhysX3.h" />
     <ClInclude Include="include\physics\PhysX3\mrPhysicsRigPhysX3.h" />
     <ClInclude Include="include\physics\PhysX3\mrPhysicsRigPhysX3Articulation.h" />
-    <ClInclude Include="include\physics\PhysX3\mrPhysicsRigPhysX3Jointed.h" />
     <ClInclude Include="include\physics\PhysX3\mrPhysicsScenePhysX3.h" />
     <ClInclude Include="include\physics\PhysX3\mrPhysX3.h" />
     <ClInclude Include="include\physics\PhysX3\mrPhysX3Configure.h" />
@@ -296,7 +295,6 @@
     <ClCompile Include="src\PhysX3\mrPhysicsDriverDataPhysX3.cpp" />
     <ClCompile Include="src\PhysX3\mrPhysicsRigPhysX3.cpp" />
     <ClCompile Include="src\PhysX3\mrPhysicsRigPhysX3Articulation.cpp" />
-    <ClCompile Include="src\PhysX3\mrPhysicsRigPhysX3Jointed.cpp" />
     <ClCompile Include="src\PhysX3\mrPhysicsScenePhysX3.cpp" />
   </ItemGroup>
   <ItemGroup>
