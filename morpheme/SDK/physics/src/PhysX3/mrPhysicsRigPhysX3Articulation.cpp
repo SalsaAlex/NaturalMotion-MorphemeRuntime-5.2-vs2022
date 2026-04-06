@@ -559,7 +559,7 @@ void PhysicsRigPhysX3Articulation::createJoints(
   articulation->setName("PhysicsRigPhysX3Articulation");
 
   // TODO expose these in connect - MORPH-11268
-  articulation->setSolverIterationCounts(4, 2);
+  articulation->setSolverIterationCounts(24, 16);
 
   physicsRig->setArticulation(articulation);
 
@@ -1003,7 +1003,7 @@ void PhysicsRigPhysX3Articulation::updatePostPhysics(float timeStep)
 #endif // MR_OUTPUT_DEBUGGING
 
   resetJointLimits();
-  m_desiredJointProjectionIterations = 0;
+  m_desiredJointProjectionIterations = 4;
   m_desiredJointProjectionLinearTolerance = FLT_MAX;
 
   for (uint32_t i = 0 ; i < physicsRigPhysX->getNumParts() ; ++i)

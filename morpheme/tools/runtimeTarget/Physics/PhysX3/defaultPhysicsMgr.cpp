@@ -54,6 +54,7 @@
 #endif // defined(NM_HOST_CELL_PPU)
 
 #include "../../runtimeTargetLogger.h"
+#include <thread>
 
 static const float minContactOffset = 0.0001f;
 
@@ -1946,7 +1947,9 @@ void DefaultPhysicsMgr::resetSDKS()
   physx::PxSceneDesc sceneDesc(PxGetPhysics().getTolerancesScale());
 
   // task dispatchers - pass in the number of worker threads
-  m_cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(0);
+  unsigned int threads = std::thread::hardware_concurrency();
+
+  m_cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(threads ? threads - 1 : 0);
   sceneDesc.cpuDispatcher = m_cpuDispatcher; 
 
 #ifdef NM_HOST_CELL_PPU

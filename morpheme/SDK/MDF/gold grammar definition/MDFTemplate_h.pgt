@@ -1,0 +1,98 @@
+#pragma once
+// Copyright (c) 2013 NaturalMotion.  All Rights Reserved.
+// Not to be copied, adapted, modified, used, distributed, sold,
+// licensed or commercially exploited in any manner without the
+// written consent of NaturalMotion.
+//
+// All non public elements of this software are the confidential
+// information of NaturalMotion and may not be disclosed to any
+// person nor used for any purpose not expressly approved by
+// NaturalMotion in writing.
+
+/*
+ * --- THIS FILE IS GENERATED FROM GOLD GRAMMAR DEFINITIONS ---
+ *       To edit, change the PGT templates and re-export!
+ */
+
+#include "ParserDefs.h"
+#include "ParserBase.h"
+#include <assert.h>
+
+class MDFFeedbackInterface;
+class MDFSyntaxHighlightingInterface;
+
+/*
+ * MDFTypes Grammar, Version 3
+ * NaturalMotion ltd.
+ */
+namespace MDFTypes
+{
+  struct Context;
+  
+  // --------------------------------------------------------------------
+  // Symbol IDs
+  // --------------------------------------------------------------------
+
+##SYMBOL-TABLE
+  enum SymbolID
+  {
+##SYMBOLS
+    /* %Index% */  Symbol_%ID%,
+##END-SYMBOLS
+  };
+##END-SYMBOL-TABLE
+
+
+
+  // --------------------------------------------------------------------
+  // Rule IDs
+  // --------------------------------------------------------------------
+
+##RULE-TABLE
+  enum RuleEnum
+  {
+##RULES
+    reRule_%ID%,
+##END-RULES
+  };
+##END-RULE-TABLE
+
+
+  // --------------------------------------------------------------------
+  // 
+  // --------------------------------------------------------------------
+
+  class Parser : public ParserBase
+  {
+  private:
+##RULE-TABLE
+##RULES
+    // %Description%
+    void Rule_%ID%(Token *token);
+
+##END-RULES
+    typedef void (Parser::*RuleHandler)(Token *token);
+    static const RuleHandler gRuleJumpTable[%Count%];
+##END-RULE-TABLE
+
+    virtual void executeRule(Token *token)
+    {
+      assert(token->m_reductionRule >= 0);
+      m_trackingLastHitLine = token->m_line;
+      (*this.*gRuleJumpTable[token->m_reductionRule])(token);
+    }
+
+    virtual void processSavedComments(const SavedComments &savedComments);
+    
+    inline MDFTypes::Context* getContext() { return reinterpret_cast<MDFTypes::Context*>(m_context); }
+
+    virtual void recursiveFunctionDeclarationConcat(const Grammar& grammar, Token *token, unsigned int startToken);
+    
+public:
+
+    static const Grammar sGrammar;
+
+    Parser(MDFFeedbackInterface* fbi, MDFSyntaxHighlightingInterface *shi) : ParserBase(sGrammar, fbi, shi) {}
+};
+
+} // namespace MDFTypes

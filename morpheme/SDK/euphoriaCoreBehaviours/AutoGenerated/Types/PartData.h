@@ -1,7 +1,7 @@
 #pragma once
 
 /*
- * Copyright (c) 2013 NaturalMotion Ltd. All rights reserved.
+ * Copyright (c) 2026 NaturalMotion Ltd. All rights reserved.
  *
  * Not to be copied, adapted, modified, used, distributed, sold,
  * licensed or commercially exploited in any manner without the

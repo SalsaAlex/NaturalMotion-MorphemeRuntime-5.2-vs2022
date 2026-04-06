@@ -1,7 +1,7 @@
 #pragma once
 
 /*
- * Copyright (c) 2013 NaturalMotion Ltd. All rights reserved.
+ * Copyright (c) 2026 NaturalMotion Ltd. All rights reserved.
  *
  * Not to be copied, adapted, modified, used, distributed, sold,
  * licensed or commercially exploited in any manner without the
@@ -188,7 +188,7 @@ public:
   {
     NMP_ASSERT(data->m_floats->m_numValues == 20);
     NMP_ASSERT(data->m_ints->m_numValues == 5);
-    //NMP_ASSERT(data->m_uint64s->m_numValues == 0);
+    NMP_ASSERT(data->m_uint64s->m_numValues == 0);
 
 
     MinSupportSlope = data->m_floats->m_values[0];
@@ -223,7 +223,7 @@ public:
   {
     NMP_ASSERT(data->m_floats->m_numValues == 5);
     NMP_ASSERT(data->m_ints->m_numValues == 2);
-    //NMP_ASSERT(data->m_uint64s->m_numValues == 1);
+    NMP_ASSERT(data->m_uint64s->m_numValues == 1);
     // Vector 3 are stored in a float array with 4 entries per item
     NMP_ASSERT(data->m_vector3Data->m_numValues == 12);
 
@@ -233,7 +233,7 @@ public:
     m_cp.EdgeStart.set(data->m_vector3Data->m_values[0], data->m_vector3Data->m_values[1], data->m_vector3Data->m_values[2]);
     m_cp.EdgeEnd.set(data->m_vector3Data->m_values[4], data->m_vector3Data->m_values[5], data->m_vector3Data->m_values[6]);
     m_cp.EdgeNormal.set(data->m_vector3Data->m_values[8], data->m_vector3Data->m_values[9], data->m_vector3Data->m_values[10]);
-    //m_cp.PhysicsObjectID = (void*) (data->m_uint64s->m_values[0]);
+    m_cp.PhysicsObjectID = nullptr; //(void*) (data->m_uint64s->m_values[0]);
     m_cp.PullUpAmount = data->m_floats->m_values[1];
     m_cp.PullUpStrengthScale = data->m_floats->m_values[2];
     m_cp.HoldImportance[0] = data->m_floats->m_values[3];

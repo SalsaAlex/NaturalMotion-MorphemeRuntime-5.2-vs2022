@@ -1,0 +1,226 @@
+"Name"           = 'MDFTypes Grammar'
+"Version"        = '3'
+"Author"         = 'NaturalMotion'
+"About"          = 'Grammar for NaturalMotion MDF type definition files (.types)'
+"Start Symbol"   = <TypesRoots>
+"Case Sensitive" = true
+"Auto Whitespace" = true
+
+! ===========================================================================
+! Character Sets
+! ===========================================================================
+
+{StringChars}   = {All Printable} - ["\]
+{WordChars}     = {AlphaNumeric} + [_]
+{FloatSuffix}   = [f]
+
+! ===========================================================================
+! Terminals
+! ===========================================================================
+
+! ----- Whitespace & Comments -----
+! The lexer recognises both // and # as line comment starters,
+! and the standard /* ... */ block comment pair.
+Whitespace = {Whitespace}+
+!Comment Line = '//' !{Printable}*
+!Comment Line = '# '  !{Printable}*
+Comment Start = '/*'
+Comment End = '*/'
+            
+CommentLine = ('//' | '#') {Printable}*
+            
+CommentLine @= { Type = Noise }
+
+! ----- Special compound-punctuation tokens -----
+! These must be declared before single-char punctuation so the
+! DFA prefers the longer match.
+'};'            = '};'
+'::'            = '::'
+'=>'            = '=>'
+
+! ----- Plain punctuation -----
+! (GOLD uses the quoted literal directly in rules; listing them here
+!  makes the terminal table order match the original .egt exactly.)
+'-'   = '-'
+'('   = '('
+')'   = ')'
+','   = ','
+':'   = ':'
+';'   = ';'
+'['   = '['
+']'   = ']'
+'{'   = '{'
+'}'   = '}'
+'+'   = '+'
+'='   = '='
+
+! ----- Keywords -----
+! GOLD resolves keyword-vs-identifier via longest-match + keyword priority.
+! 'private:' and 'public:' include the colon so they lex as single tokens.
+alias           = 'alias'
+enum            = 'enum'
+namespace       = 'namespace'
+struct          = 'struct'
+typedef         = 'typedef'
+'private:'      = 'private:'
+'public:'       = 'public:'
+
+! ----- Identifier tokens -----
+! IdentifierTerm  : normal C-style identifier (letter/underscore start).
+!                   Underscore-only start is reserved for ModKeyword below.
+! IdRef           : & used as reference qualifier in declarations.
+! IdStar          : * used as pointer qualifier (also multiply in EnumExpr).
+! ModKeyword      : __word__ style annotation keywords, e.g. __local__
+!                   Pattern: double-underscore, one-or-more alnum/underscore
+!                   word body, double-underscore suffix.
+IdentifierTerm  = {Letter} {WordChars}*
+IdRef           = '&'
+IdStar          = '*'
+ModKeyword      = '__' {WordChars}+ '__'
+
+! ----- Literals -----
+! DecLiteral  : optional leading minus so negative constants lex as one token.
+! FloatLiteral: requires the 'f' suffix (NaturalMotion convention).
+!               Supports  .5f  /  1.5f  /  -1.5f  forms.
+! StringLiteral: standard double-quoted string with backslash escapes.
+DecLiteral      = '-'? {Digit}+
+FloatLiteral    = '-'? {Digit}* '.' {Digit}+ 'f'
+StringLiteral   = '"' ( {StringChars} | '\' {All Printable} )* '"'
+
+! ----- Compound specifier tokens -----
+! These are lexed as atomic tokens rather than parsed from sub-expressions.
+! ArraySpecifier : [N]   e.g. [4]  - fixed-size array dimension.
+! TSizeSpecifier : {N}   e.g. {8}  - type-size annotation used with typedef.
+ArraySpecifier  = '[' {Digit}+ ']'
+TSizeSpecifier  = '{' {Digit}+ '}'
+
+! ===========================================================================
+! Grammar Rules
+! ===========================================================================
+
+! ---------------------------------------------------------------------------
+! Top level
+! ---------------------------------------------------------------------------
+
+<TypesRoots>    ::= <Roots>
+
+<Roots>         ::= <Root>
+                |   <Roots> <Root>
+
+<Root>          ::= 'namespace' IdentifierTerm '{' <Roots> '}'
+                |   <CustomOption> 'struct' IdentifierTerm <StructInheritance> '{' <DataBlockDefs> '};'
+                |   <CustomOption> 'alias'  <VarCascade> '=>' IdentifierTerm <CustomOption> ';'
+                |   <CustomOption> 'typedef' <VarCascade> TSizeSpecifier <CustomOption> ';'
+
+<StructInheritance>  ::= ':' <VarCascade>
+                     |                              ! empty - no base type
+
+! ---------------------------------------------------------------------------
+! Custom modifier keyword options  (e.g. __local__, __no_ccp__(someArg))
+! ---------------------------------------------------------------------------
+
+<CustomOption>       ::= <CustomOptions>
+                     |                              ! empty
+
+<CustomOptions>      ::= <CustomOptionKeyword>
+                     |   <CustomOptions> <CustomOptionKeyword>
+
+<CustomOptionKeyword> ::= ModKeyword
+                      |   ModKeyword '(' IdentifierTerm ')'
+                      |   ModKeyword '(' StringLiteral  ')'
+                      |   ModKeyword '(' DecLiteral     ')'
+
+! ---------------------------------------------------------------------------
+! Struct / data-block body
+! ---------------------------------------------------------------------------
+
+<DataBlockDefs>  ::= <DataBlockDef>
+                 |   <DataBlockDefs> <DataBlockDef>
+
+<DataBlockDef>   ::= <VarDecl>
+                 |   <FnDecl>
+                 |   'private:'
+                 |   'public:'
+
+! ---------------------------------------------------------------------------
+! Variable declarations
+! ---------------------------------------------------------------------------
+
+<VarDecl>    ::= <VarTypeList> <VarSpecs> ';'
+             |   'enum' IdentifierTerm '{' <Enums> '};'
+
+<VarSpecs>   ::= <VarSpec>
+             |   <VarSpecs> ',' <VarSpec>
+
+<VarSpec>    ::= <VarIdentifier>
+             |   <VarIdentifier> ArraySpecifier
+             |   <VarIdentifier> '[' IdentifierTerm ']'
+
+<VarTypeList> ::= <VarType>
+              |   <VarTypeList> <VarType>
+
+! A VarType is either a (possibly namespaced) type name or a modifier keyword.
+<VarType>    ::= <VarCascade>
+             |   <CustomOptionKeyword>
+
+! Namespaced identifier: A::B::C
+<VarCascade> ::= IdentifierTerm '::' <VarCascade>
+             |   IdentifierTerm
+
+<VarIdentifier> ::= IdStar IdentifierTerm    ! pointer:    Type *name
+                |   IdRef  IdentifierTerm    ! reference:  Type &name
+                |   IdentifierTerm           ! plain:      Type  name
+
+! ---------------------------------------------------------------------------
+! Enum value expressions  (support +, -, * between values)
+! ---------------------------------------------------------------------------
+
+<EnumExprValue> ::= DecLiteral
+                |   IdentifierTerm
+
+<EnumExpr>   ::= <EnumExpr> '+' <EnumExprValue>
+             |   <EnumExpr> '-' <EnumExprValue>
+             |   <EnumExpr> IdStar <EnumExprValue>   ! IdStar doubles as '*'
+             |   <EnumExprValue>
+
+<Enum>       ::= IdentifierTerm
+             |   IdentifierTerm '=' <EnumExpr>
+
+<Enums>      ::= <Enum>
+             |   <Enums> ',' <Enum>
+
+! ---------------------------------------------------------------------------
+! Function declarations  (prefixed with '+')
+! ---------------------------------------------------------------------------
+
+<FnDecl>     ::= '+' <FnNameAndReturn> '(' <FnArgs> ')' <FnIsConst> ';'
+
+<FnNameAndReturn> ::= <VarTypeList> <FnName>   ! return type + name
+                  |   <FnName>                  ! no explicit return type
+
+<FnName>     ::= IdStar IdentifierTerm          ! function returning pointer
+             |   IdRef  IdentifierTerm          ! function returning reference
+             |   IdentifierTerm
+
+<FnArgs>     ::= <FnArg>
+             |   <FnArgs> ',' <FnArg>
+             |                                  ! empty argument list
+
+! An argument can have an optional default value.
+! Default can be a named-function call:  Type arg = FuncName(a, b)
+! or a numeric literal:                  Type arg = 1.0f
+<FnArg>      ::= <VarTypeList> <VarIdentifier>
+             |   <VarTypeList> <VarIdentifier> '=' <VarCascade> '(' <FnLiterals> ')'
+             |   <VarTypeList> <VarIdentifier> '=' <FnNumLiteral>
+
+<FnNumLiteral> ::= FloatLiteral
+               |   DecLiteral
+
+<FnLiteral>  ::= <FnNumLiteral>
+             |   IdentifierTerm
+
+<FnLiterals> ::= <FnLiteral>
+             |   <FnLiterals> ',' <FnLiteral>
+
+<FnIsConst>  ::= IdentifierTerm                ! typically 'const'
+             |                                  ! not const

@@ -1,0 +1,48 @@
+*Module Modifiers
+	__generate_interface__ 	: Generate in and feedOut interfaces for this module (which must also be mmGlobalAccess)
+	__no_update__ 			: No update interface required for this module (do not declare or attempt to call one)
+	__no_feedback__ 		: No feedback interface required for this module (do not declare or attempt to call one)
+	__global_access__ 		: mark this module as having full access (eg. need to interface with physics engine)
+	__limb__ 				: flag this module as a 'limb' type; any instance of it will add a new limb instance to the system during analysis
+	__pix__ 				: add PIX profile points to this module's update & feedback
+
+
+*Type Modifiers
+	__align__ 				: set the memory alignment (in bytes) for this type, eg. __align__(16)
+	__validator__ 			: nominate a function to call to validate this type (after being set, etc)
+	__post_combine__ 		: nominate a function to call on this type's data immediately following combination
+	__preprocessor__ 		: only use if a preprocessor macro is defined
+	__extern_class__ 		: tag as an externally defined type of type 'class <name>'
+	__extern_struct__ 		: tag as an externally defined type of type 'struct <name>'
+	__import_builtin__ 		: treat this type as globally available, fundamentally defined in the compiler (eg. float)
+	__blendable__ 			: defines that this type can be blended with floating-point scaling during combine()s
+
+
+*Variable Declaration Modifiers
+	__validator__ 			: nominate a function to call to validate this type (after being set, etc)
+
+
+*Struct Modifiers
+	__no_combiner__ 		: don't auto-generate a combine() function for this struct
+	__validator__ 			: nominate a function to call to validate this type (after being set, etc)
+
+
+*Behaviour Variable Modifiers
+	__private__ 			: don't add accessors for this variable when writing behaviour classes
+	__enum_default__ 		: when defining an enum {}, this value is the default used when instantiating it
+	__enum_no_instance__ 	: when defining an enum {}, don't treat it as a instantiatable variable, just generate the enum declaration (eg. for constants)
+	__per_anim_set__ 		: !!undocumented!!
+	__compulsory_input__ 	: Used to flag that a node input must be set
+	__title__ 				: The title (display name)
+	__limb_index__ 			: Indicates that connect UI should treat this variable as a limb index
+	__limb_part_index__ 	: Indicates that connect UI should treat this variable as a limb part index
+	__physics_part_index__ 	: Indicates that connect UI should treat this variable as an index into the physics rig
+	__expose_as_pin__ 		: !!undocumented!!
+
+
+*Connection Set Modifiers
+	__no_inheritance__ 		: for named connection sets, do not copy connections from the default (unnamed) set
+
+
+*Connection Task Modifiers
+	__override__ 			: when redefining a connection in a named set, one has to manually specify that you are overriding (replacing) that connection (like C# virtual fns)
