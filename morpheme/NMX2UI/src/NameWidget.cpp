@@ -1,0 +1,7 @@
+
+namespace nmxui
+{
+	
+	
+	
+} //namespace nmxui
