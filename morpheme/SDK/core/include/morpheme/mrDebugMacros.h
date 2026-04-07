@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 #define MR_DEBUG_DRAW_SPHERE_GLOBAL(point, radius, colour) \
-  MR_DEBUG_DRAW_GLOBAL_INTERNAL(drawSphere, tm, radius, colour)
+  MR_DEBUG_DRAW_GLOBAL_INTERNAL(drawSphere, point, radius, colour)
 
 //----------------------------------------------------------------------------------------------------------------------
 #define MR_DEBUG_DRAW_MATRIX_GLOBAL(matrix, size) \

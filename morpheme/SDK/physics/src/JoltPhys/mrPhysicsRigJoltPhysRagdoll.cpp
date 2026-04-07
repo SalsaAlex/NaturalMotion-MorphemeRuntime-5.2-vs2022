@@ -26,6 +26,8 @@
 
 #include "NMPlatform/NMvpu.h"
 
+#include "morpheme/mrDebugMacros.h"
+
 //----------------------------------------------------------------------------------------------------------------------
 #define MINIMUM_COMPLIANCE 0.001f
 
@@ -2249,6 +2251,7 @@ void PhysicsRigJoltPhysRagdoll::applyActiveAnimation(
       continue;
   
     PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll *joint = (JointJoltPhysRagdoll*)m_joints[i];
+    JPH::SwingTwistConstraint* joltjoint = (JPH::SwingTwistConstraint*)joint->m_jointInternal;
     const PhysicsSixDOFJointDef* jointDef = static_cast<const PhysicsSixDOFJointDef*>(m_physicsRigDef->m_joints[i]);
     PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll *childPart = (PartJoltPhysRagdoll*)m_parts[jointDef->m_childPartIndex];
     childPart->makeKinematic(false, 1.0f, false);
@@ -2288,9 +2291,14 @@ void PhysicsRigJoltPhysRagdoll::applyActiveAnimation(
       joint->clampToLimits(curQ, limitClampFraction, NULL);
     }
     NMP::Quat curFrameQ = l0Inv * curQ * l1;
+    JPH::Vec3 pos = joltjoint->GetBody1()->GetCenterOfMassTransform() * joltjoint->GetLocalSpacePosition1();
+    NMP::Matrix34 transform = NMP::Matrix34Identity();
+    transform.setTranslation(MR::nmJPHVec3ToVector3(pos));
 
-    JPH::SwingTwistConstraint* joltjoint = (JPH::SwingTwistConstraint*)m_ragdoll->GetConstraint(jointDef->m_childPartIndex - 1);
+    MR_DEBUG_DRAW_SPHERE_GLOBAL(transform, 2.f, NMP::Colour::DARK_GREEN);
+
     joltjoint->SetTargetOrientationCS(nmQuatToJPHQuat(curFrameQ));
+    
   }
 }
 
