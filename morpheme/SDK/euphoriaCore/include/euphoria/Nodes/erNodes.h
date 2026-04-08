@@ -255,7 +255,7 @@ NM_INLINE void initEuphoria(uint32_t numDispatchers, MR::Dispatcher** dispatcher
   for (uint32_t i = 0; i < numDispatchers; ++i)
     ER::registerNMBehaviourTasks(dispatchers[i]);
 
-  MR::JoltPhysPerShapeData::initialiseMap();
+  MR::JoltPhysPerBodyData::initialiseMap();
   ER::EuphoriaRigPartUserData::initialiseMap();
 
   // Accumulate any semantic registration requirements in the manager.
@@ -274,7 +274,7 @@ NM_INLINE void finaliseInitEuphoria()
 /// \brief Destroy static structures used by euphoria
 NM_INLINE void destroyEuphoria()
 {
-  MR::JoltPhysPerShapeData::destroyMap();
+  MR::JoltPhysPerBodyData::destroyMap();
   ER::EuphoriaRigPartUserData::destroyMap();
 }
 

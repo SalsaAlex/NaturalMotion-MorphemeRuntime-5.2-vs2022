@@ -504,11 +504,11 @@ MR::AttribData* nodeOperatorRollDownStairsOutputCPUpdate(
           // 4. Determine the Push from the linear and angular velocity blend weights
           const NMP::Vector3 pushAcceleration(calculatePushAcceleration(pushAccelerationMaxMagnitude, weightFromVelocity, slopeDirection, physicsRig));
 
-          MR::PhysicsRigPhysX3::PartPhysX3* const pelvisPhysicsPart =
-            static_cast< MR::PhysicsRigPhysX3::PartPhysX3* >(physicsRig->getPart(spineLimb.getRootIndex()));
+          MR::PhysicsRigJoltPhys::PartJoltPhys* const pelvisPhysicsPart =
+            static_cast< MR::PhysicsRigJoltPhys::PartJoltPhys*>(physicsRig->getPart(spineLimb.getRootIndex()));
           NMP_ASSERT(pelvisPhysicsPart);
 
-          MR::addAccelerationToActor(*pelvisPhysicsPart->getRigidBody(), pushAcceleration);
+          MR::addAccelerationToBody(pelvisPhysicsPart->getRigidBody(), pushAcceleration);
           MR_DEBUG_DRAW_LINE(net->getDispatcher()->getDebugInterface(), pelvisPhysicsPart->getTransform().translation(), pushAcceleration, NMP::Colour::YELLOW);
 
           // 5 Determine the angular acceleration correction to align spine with step-horizontal
@@ -519,7 +519,7 @@ MR::AttribData* nodeOperatorRollDownStairsOutputCPUpdate(
             stateData->m_sideRollAmount, 
             body,physicsRig,
             net->getDispatcher()->getDebugInterface()));
-          MR::addAngularAccelerationToActor(*pelvisPhysicsPart->getRigidBody(), spineAlignmentAcceleration);
+          MR::addAngularAccelerationToBody(pelvisPhysicsPart->getRigidBody(), spineAlignmentAcceleration);
 
           // determine if character is rolling
           isRollingOutput = (weightFromVelocity >= stateData->m_minMotionRatioToBeConsideredRolling);

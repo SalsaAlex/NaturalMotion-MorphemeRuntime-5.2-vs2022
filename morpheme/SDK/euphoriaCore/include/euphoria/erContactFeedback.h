@@ -15,54 +15,56 @@
 
 namespace ER
 {
-//----------------------------------------------------------------------------------------------------------------------
-/// Base class so that users can register their own handler for collisions that are reported to and
-/// registered by Euphoria.
-//----------------------------------------------------------------------------------------------------------------------
-class UserContactHandler
-{
-public:
+	//----------------------------------------------------------------------------------------------------------------------
+	/// Base class so that users can register their own handler for collisions that are reported to and
+	/// registered by Euphoria.
+	//----------------------------------------------------------------------------------------------------------------------
+	class UserContactHandler
+	{
+	public:
 
-  virtual ~UserContactHandler() {}
+		virtual ~UserContactHandler() {}
 
-  /// This will be called when there is an active contact.
-  virtual void onContact(
-	const JPH::Body& inBody1, const JPH::Body& inBody2r) = 0;
-};
+		/// This will be called when there is an active contact.
+		virtual void onContact(
+			const JPH::Body& inBody1, const JPH::Body& inBody2r) = 0;
+	};
 
-// This class allows euphoria to access contact forces resulting from character collisions
-class ContactFeedback : public JPH::ContactListener
-{
-public:
-  static void initialise(MR::PhysicsScene* physicsScene);
-  static void deinitialise(MR::PhysicsScene* physicsScene);
+	// This class allows euphoria to access contact forces resulting from character collisions
+	class ContactFeedback : public JPH::ContactListener
+	{
+	public:
+		static void initialise(::MR::PhysicsScene* physicsScene);
+		static void deinitialise(::MR::PhysicsScene* physicsScene);
 
-  static void setUserContactHandler(UserContactHandler* handler);
+		static void setUserContactHandler(UserContactHandler* handler);
 
-  // Debug Draw
-  static bool getDrawContactsFlag();
-  static void setDrawContactsFlag(bool drawEnabled);
-  static bool getDrawDetailedContactsFlag();
-  static void setDrawDetailedContactsFlag(bool drawEnabled);
+		// Debug Draw
+		static bool getDrawContactsFlag();
+		static void setDrawContactsFlag(bool drawEnabled);
+		static bool getDrawDetailedContactsFlag();
+		static void setDrawDetailedContactsFlag(bool drawEnabled);
 
-protected:
-  UserContactHandler* m_userContactHandler;
+	protected:
+		UserContactHandler* m_userContactHandler;
 
-protected:
-	// See: ContactListener
-	JPH::ValidateResult	OnContactValidate(const JPH::Body& inBody1, const JPH::Body& inBody2,
-		JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult& inCollisionResult)
-		NM_OVERRIDE;
+	protected:
+		// See: ContactListener
+		JPH::ValidateResult	OnContactValidate(const JPH::Body& inBody1, const JPH::Body& inBody2,
+			JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult& inCollisionResult)
+			NM_OVERRIDE;
 
-	void OnContactAdded(const JPH::Body& inBody1,
+		void OnContactAdded(const JPH::Body& inBody1,
 			const JPH::Body& inBody2, const JPH::ContactManifold& inManifold,
 			JPH::ContactSettings& ioSettings) NM_OVERRIDE;
 
-	void OnContactPersisted(const JPH::Body& inBody1,
-		const JPH::Body& inBody2, const JPH::ContactManifold& inManifold,
-		JPH::ContactSettings& ioSettings) NM_OVERRIDE;
+		void OnContactPersisted(const JPH::Body& inBody1,
+			const JPH::Body& inBody2, const JPH::ContactManifold& inManifold,
+			JPH::ContactSettings& ioSettings) NM_OVERRIDE;
 
-	void OnContactRemoved(const JPH::SubShapeIDPair& inSubShapePair) NM_OVERRIDE;
-}
+		void OnContactRemoved(const JPH::SubShapeIDPair& inSubShapePair) NM_OVERRIDE;
+	};
+
+}; // namespace ER
 
 #endif // NM_CONTACTFEEDBACK_H

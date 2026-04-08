@@ -1102,14 +1102,14 @@ bool AttribDataOperatorHitState::handleHitMessage(const HitMessageData* smd, MR:
   m_hsi.rigPartIndex = rigPartIndex;
   ER::Character* character = ER::networkGetCharacter(net);
 
-  MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation *selectedPart = 
-    (MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation *)character->getBody().getPhysicsRig()->getPart(rigPartIndex);
+  MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll* selectedPart =
+    (MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll*)character->getBody().getPhysicsRig()->getPart(rigPartIndex);
   NMP_ASSERT(selectedPart);
-  m_hsi.selectedActor = selectedPart->getArticulationLink();
+  m_hsi.selectedBody = selectedPart->getRigidBody();
 
 
-  character->getBody().getActorLimbPartIndex(
-    (physx::PxActor*)m_hsi.selectedActor, m_hsi.limbIndex, m_hsi.partIndex);
+  character->getBody().getBodyLimbPartIndex(
+    m_hsi.selectedBody, m_hsi.limbIndex, m_hsi.partIndex);
 
   m_hsi.priority = smd->m_priority;
 

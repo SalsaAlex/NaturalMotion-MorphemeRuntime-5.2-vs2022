@@ -44,7 +44,7 @@ public:
   void disable();
 
   // Configuring the constraint.
-  // shape id >=  0: specific dynamic or static actor
+  // shape id >=  0: specific dynamic or static body
   // shape id <= -1: constrain with "virtual" edge, i.e. world.
   void setDesiredTransformWs(const ER::HandFootTransform& desTM, int64_t shapeID);
   void setSeparationThresholds(float posMin, float posMax, float angMin, float angMax);
@@ -63,14 +63,14 @@ protected:
 
   // These are for a more coherent interface to different PhysX versions.
   void createConstraint(
-    physx::PxRigidActor* endPartActor,
+    JPH::Body* endPartBody,
     const NMP::Matrix34& constraintInEndPartFrame,
-    physx::PxRigidActor* objectActor,
+      JPH::Body* objectBody,
     const NMP::Matrix34& constraintInObjectFrame);
 
-  physx::PxD6Joint* createJoint(
-    physx::PxRigidActor* actor1,
-    physx::PxRigidActor* actor2,
+  JPH::SixDOFConstraint* createJoint(
+    JPH::Body* body1,
+    JPH::Body* body2,
     const NMP::Matrix34& pose1,
     const NMP::Matrix34& pose2,
     uint16_t lockedLinearDofs,
@@ -82,7 +82,7 @@ protected:
   void disableCollisions();
   void resetCollisions();
 
-  physx::PxRigidActor* getContactedActor();
+  JPH::Body* getContactedBody();
   MR::PhysicsRig::Part* getRootPart();
   MR::PhysicsRig::Part* getEndPart();
 
@@ -90,11 +90,11 @@ protected:
   void getConstraintDistance(
     float& positionErr,
     float& rotationErr,
-    bool   objectActorIsDynamic,
+    bool   objectBodyIsDynamic,
     float  timeDelta,
     NMP::Vector3& closestPointOffset);
 
-  // Checks whether target actor is in range for making constraint.
+  // Checks whether target body is in range for making constraint.
   bool checkConstrainability(float positionErr);
 
   // For blending constraint TM from current pose to target pose.
@@ -102,7 +102,7 @@ protected:
   void blendToDesiredPosition(float dt, NMP::Matrix34& blendTM);
 
   void applyHelperForce(
-    bool  desiredInActorSpace,
+    bool  desiredInBodySpace,
     float angErr,
     MR::InstanceDebugInterface* MR_OUTPUT_DEBUG_ARG(pDebugDrawInst));
 
@@ -110,7 +110,7 @@ protected:
   void debugDraw(
     const NMP::Matrix34& controlledTM,
     const NMP::Matrix34& currentDesired,
-    physx::PxRigidActor* otherActor,
+    JPH::Body* otherBody,
     MR::InstanceDebugInterface* pDebugDrawInst,
     const ER::DimensionalScaling& MR_OUTPUT_DEBUG_ARG(dimensionalScaling)
     );
@@ -118,16 +118,16 @@ protected:
 
   // Put Vector3 etc etc for alignment.
   NMP::Vector3 m_up;                        // Opposite to gravity.
-  ER::HandFootTransform m_desiredHandTM;    // Joint will enforce this hand orientation (assuming other actor is "fixed").
+  ER::HandFootTransform m_desiredHandTM;    // Joint will enforce this hand orientation (assuming other body is "fixed").
 
   int64_t m_targetShapeID;                  // A shape to try connecting to.
-  physx::PxD6Joint* m_constraint;           // The actual underlying PhysX constraint.
+  JPH::SixDOFConstraint* m_constraint;      // The actual underlying Jolt constraint.
 
   bool m_collisionsWereModified;            // For resetting the collisions if they were disabled at joint creation.
   bool m_originalCollisionFlag;
   uint32_t m_originalCollisionPairFlag;     // 0 means there was no explicit pairFlag defined when collisions were disabled.
 
-  physx::PxRigidActor* m_constrainedActor;  // The other actor when joint has been created  (NULL otherwise).
+  JPH::Body* m_constrainedBody;             // The other bdoy when joint has been created  (NULL otherwise).
   Limb* m_limb;                             // Stored pointer to limb, wants access to private members, hence declared friend in limb.
 
   float m_posConstrainedDuration;
@@ -143,7 +143,7 @@ protected:
   uint16_t m_lockedLinearDofs;   // Bitmask toggling individual dofs (corresponding flags defined in enum PhysXDofFlag (physX30.h).
   uint16_t m_lockedAngularDofs;  // Bitmask toggling individual dofs
   bool m_doConstrain;            // Toggle constraint creation.
-  bool m_disableCollisions;      // Collisions between constrained actors.
+  bool m_disableCollisions;      // Collisions between constrained bodies.
   bool m_useCheatForces;
 }; // EndConstraint
 

@@ -29,7 +29,7 @@ class GravityCompensation
 public:
   void init(int numLimbs, class Limb* limbRef);
   void deinit();
-  void apply(MR::PhysicsRig* physicsRig, MR::InstanceDebugInterface* pDebugDrawInst);
+  void apply(::MR::PhysicsRig* physicsRig, ::MR::InstanceDebugInterface* pDebugDrawInst);
   void setLimbLength(int limb, int length);
   void setLimbBodyIndex(int limb, int count, int bodyIndex);
   NM_INLINE void setGravity(const NMP::Vector3& gravity) { m_gravity = gravity; }
@@ -114,9 +114,9 @@ private:
   int m_bridgeSupportLimb;
 
   void applyGravityCompensation(
-    MR::InstanceDebugInterface* pDebugDrawInst,
+    ::MR::InstanceDebugInterface* pDebugDrawInst,
     int limbIndex,
-    MR::PhysicsRig* physicsRig,
+    ::MR::PhysicsRig* physicsRig,
     PartData* partData,
     const NMP::Vector3* grav);
 };

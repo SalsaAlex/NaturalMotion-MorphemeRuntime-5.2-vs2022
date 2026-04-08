@@ -90,13 +90,13 @@ public:
   /// individual parts. This isn't needed if the character will also have an interaction proxy.
   static Body* createInstance(
     BodyDef*           bodyDef,
-    MR::PhysicsRig*    physicsRig,
+    ::MR::PhysicsRig*    physicsRig,
     int                animSetIndex,
     bool               addPartsToEuphoria);
   /// Destroys the body and frees associated memory, including any per-shape data on the physics rig parts.
   static void destroyInstance(Body*  body);
   /// Runs pre-physics step
-  void prePhysicsStep(float timeDelta, MR::InstanceDebugInterface* pDebugDrawInst);
+  void prePhysicsStep(float timeDelta, ::MR::InstanceDebugInterface* pDebugDrawInst);
   /// Runs post-physics step
   void postPhysicsStep(float timeDelta);
   /// Disables euphoria on each limb
@@ -107,10 +107,10 @@ public:
   bool restoreState(MR::PhysicsSerialisationBuffer& savedState);
 
   /// Helper to get the Body from the user data in the physics rig
-  static Body* getFromPhysicsRig(const MR::PhysicsRig* physicsRig) {return (Body*) (physicsRig->getUserData());}
+  static Body* getFromPhysicsRig(const ::MR::PhysicsRig* physicsRig) {return (Body*) (physicsRig->getUserData());}
 
-  MR::PhysicsRig* getPhysicsRig() {return m_physicsRig;}
-  const MR::PhysicsRig* getPhysicsRig() const {return m_physicsRig;}
+  ::MR::PhysicsRig* getPhysicsRig() {return m_physicsRig;}
+  const ::MR::PhysicsRig* getPhysicsRig() const {return m_physicsRig;}
 
 public:
 
@@ -165,7 +165,7 @@ public:
   /// Set the guide pose associated with the guide pose ID (and if they were set, or just defaulted)
   void setHamstringStiffness(float stiffness) { m_hamstringStiffness = stiffness; }
   void setSoftLimitStiffness(float stiffness) { m_softLimitStiffness = stiffness; }
-  void handlePhysicsJointMask(const MR::PhysicsRig::JointChooser& jointChooser);
+  void handlePhysicsJointMask(const ::MR::PhysicsRig::JointChooser& jointChooser);
 
   /// Indicates if Euphoria is allowed to operate on the joint (determined by the physics output mask)
   bool getOutputEnabledOnJoint(uint32_t iJoint) { return m_outputEnabledOnJoints[iJoint]; }
@@ -195,7 +195,7 @@ public:
   LimbTypeEnum::Type getBodyLimbPartIndex(const JPH::Body* body, int& limbRigIndex, int& partLimbIndex) const;
   LimbTypeEnum::Type getKinematicBodyLimbPartIndex(const JPH::Body* body, int& limbRigIndex, int& partLimbIndex) const;
   // Retrieve the Part from a given limb and part index
-  const MR::PhysicsRig::Part* getPartFromLimbPartIndex(const int limbRigIndex, const int partLimbIndex)const ;
+  const ::MR::PhysicsRig::Part* getPartFromLimbPartIndex(const int limbRigIndex, const int partLimbIndex)const ;
 
   // Returns the limbtype given the limb/part index
   LimbTypeEnum::Type getLimbTypeFromLimbPartIndex(int32_t limb, int32_t part) const;
@@ -203,9 +203,9 @@ public:
   /// Register user handler for contact reports
   void setUserContactHandler(UserContactHandler* handler);
 
-  ER::RigConstraintManager* getRigConstraintManager() { return m_rigConstraintManager; }
+  ::ER::RigConstraintManager* getRigConstraintManager() { return m_rigConstraintManager; }
 
-  ER::RigConstraint* createRigConstraint(
+  ::ER::RigConstraint* createRigConstraint(
     const uint32_t partIndexA,
     const NMP::Matrix34& partJointFrameA,
     const uint32_t partIndexB,
@@ -229,9 +229,9 @@ private:
   // Aux for instance creation and destruction
   //
   /// Allocate memory (for limbs etc.) aux for createInstance()
-  void create(BodyDef* bodyDef, class MR::PhysicsScene* physicsScene);
+  void create(BodyDef* bodyDef, class ::MR::PhysicsScene* physicsScene);
   /// Initialise (instance specific properties, limbs etc.) aux for createInstance()
-  void initialise(MR::PhysicsRig* physicsRig, int animSetIndex, bool addPartsToEuphoria);
+  void initialise(::MR::PhysicsRig* physicsRig, int animSetIndex, bool addPartsToEuphoria);
   /// Deallocates associated memory (limbs etc.) aux for destroyInstance()
   void destroy();
 
@@ -242,16 +242,16 @@ private:
   void updateContactState();
 
   /// Debug draw joint limit
-  void drawDials(MR::InstanceDebugInterface* pDebugDrawInst, int index, float size);
+  void drawDials(::MR::InstanceDebugInterface* pDebugDrawInst, int index, float size);
   void drawLimit(
-    MR::InstanceDebugInterface* pDebugDrawInst, int index, float swing1Limit, float swing2Limit, float twistMin, float twistMax, float size, bool drawFrame, const NMP::Vector3& offset,
+      ::MR::InstanceDebugInterface* pDebugDrawInst, int index, float swing1Limit, float swing2Limit, float twistMin, float twistMax, float size, bool drawFrame, const NMP::Vector3& offset,
     bool swingEnabled = true, bool twistEnabled = true);
 
   /// Apply soft limits and hamstrings to physics rig,
-  void applySmartJointLimits(MR::InstanceDebugInterface* pDebugDrawInst);
+  void applySmartJointLimits(::MR::InstanceDebugInterface* pDebugDrawInst);
   /// Calculate desired orientation for joint at index from soft limits
   void calculateSoftLimits(
-    MR::InstanceDebugInterface* pDebugDrawInst, 
+    ::MR::InstanceDebugInterface* pDebugDrawInst,
     Body::PerLinkData& linkData, 
     bool applyToSwing, 
     bool applyToTwist, 
@@ -299,7 +299,7 @@ private:
 
 public:
   BodyDef* m_definition;
-  MR::PhysicsScene* m_physicsScene;
+  ::MR::PhysicsScene* m_physicsScene;
   GravityCompensation* m_gravComp;
 
   int m_animSetIndex;
@@ -329,7 +329,7 @@ public:
 #endif // NMP_ENABLE_ASSERTS
 
 private:
-  MR::PhysicsRig* m_physicsRig;
+    ::MR::PhysicsRig* m_physicsRig;
 
   NMP::BitArray* m_debugDrawFlags;
   NMP::BitArray* m_featureFlags;

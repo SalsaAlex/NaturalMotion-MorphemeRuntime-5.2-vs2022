@@ -12,17 +12,17 @@
 #define NM_COLLISIONPROBES_H
 
 #include "erDebugDraw.h"
-#include "Physics/PhysX3/mrPhysX3Includes.h"
+#include "Physics/JoltPhys/mrJoltPhysIncludes.h"
 
 namespace MR
 {
-  class PhysicsScenePhysX3;
-  class PhysicsRigPhysX3Articulation;
+  class PhysicsSceneJoltPhys;
+  class PhysicsRigJoltPhysRagdoll;
 }
 
 namespace ER
 {
-  physx::PxShape* getPxShapeFromShapeID(int64_t shapeID);
+  JPH::Shape* getJPHShapeFromShapeID(int64_t shapeID);
 
 /// The sphere sweep request structure. Usable inside behaviour modules and physics engine independent
 struct SphereSweep
@@ -31,7 +31,7 @@ struct SphereSweep
   NMP::Vector3 motion;
   NMP::Vector3 motion2;
   float radius;
-  int64_t targetShapeID;
+  int64_t targetBodyID;
   int probeID;
 
   void debugDraw(const NMP::Vector3& colour, MR::InstanceDebugInterface* pDebugDrawInst) const;
@@ -58,8 +58,7 @@ public:
   /// Performs the specified sweep (on the specified scene) and stores the results as member data
   bool applySweep(
     const SphereSweep& sweep,
-    MR::PhysicsScenePhysX3* scene,
-    physx::PxClientID clientID,
+    MR::PhysicsSceneJoltPhys* scene,
     uint32_t ignoreGroups,
     bool dynamic,
     float distScale,

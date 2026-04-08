@@ -31,6 +31,7 @@
     <ProjectName>euphoriaCore</ProjectName>
     <ProjectGuid>{A86F0F8E-4178-4C88-30BB-0B39F46150F1}</ProjectGuid>
     <RootNamespace>euphoriaCore</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target BE32 Release|Win32'" Label="Configuration">
@@ -115,7 +116,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\PhysX3;$(PHYSX3_PATH)\Include;$(PHYSX3_PATH)\Include\characterkinematic;$(PHYSX3_PATH)\Include\cloth;$(PHYSX3_PATH)\Include\common;$(PHYSX3_PATH)\Include\cooking;$(PHYSX3_PATH)\Include\depracated;$(PHYSX3_PATH)\Include\extensions;$(PHYSX3_PATH)\Include\foundation;$(PHYSX3_PATH)\Include\geometry;$(PHYSX3_PATH)\Include\gpu;$(PHYSX3_PATH)\Include\particles;$(PHYSX3_PATH)\Include\physxprofilesdk;$(PHYSX3_PATH)\Include\physxvisualdebuggersdk;$(PHYSX3_PATH)\Include\pvd;$(PHYSX3_PATH)\Include\pxtask;$(PHYSX3_PATH)\Include\RepX;$(PHYSX3_PATH)\Include\vehicle;$(PHYSX3_PATH)\Include\foundation\windows;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\JoltPhys;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NM_PHYSX3;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -130,6 +131,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)euphoriaCore_debug.lib</OutputFile>
@@ -138,7 +140,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\PhysX3;$(PHYSX3_PATH)\Include;$(PHYSX3_PATH)\Include\characterkinematic;$(PHYSX3_PATH)\Include\cloth;$(PHYSX3_PATH)\Include\common;$(PHYSX3_PATH)\Include\cooking;$(PHYSX3_PATH)\Include\depracated;$(PHYSX3_PATH)\Include\extensions;$(PHYSX3_PATH)\Include\foundation;$(PHYSX3_PATH)\Include\geometry;$(PHYSX3_PATH)\Include\gpu;$(PHYSX3_PATH)\Include\particles;$(PHYSX3_PATH)\Include\physxprofilesdk;$(PHYSX3_PATH)\Include\physxvisualdebuggersdk;$(PHYSX3_PATH)\Include\pvd;$(PHYSX3_PATH)\Include\pxtask;$(PHYSX3_PATH)\Include\RepX;$(PHYSX3_PATH)\Include\vehicle;$(PHYSX3_PATH)\Include\foundation\windows;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\JoltPhys;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;NM_PHYSX3;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -152,6 +154,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)euphoriaCore.lib</OutputFile>
@@ -160,7 +163,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Target LE32 Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\PhysX3;$(PHYSX3_PATH)\Include;$(PHYSX3_PATH)\Include\characterkinematic;$(PHYSX3_PATH)\Include\cloth;$(PHYSX3_PATH)\Include\common;$(PHYSX3_PATH)\Include\cooking;$(PHYSX3_PATH)\Include\depracated;$(PHYSX3_PATH)\Include\extensions;$(PHYSX3_PATH)\Include\foundation;$(PHYSX3_PATH)\Include\geometry;$(PHYSX3_PATH)\Include\gpu;$(PHYSX3_PATH)\Include\particles;$(PHYSX3_PATH)\Include\physxprofilesdk;$(PHYSX3_PATH)\Include\physxvisualdebuggersdk;$(PHYSX3_PATH)\Include\pvd;$(PHYSX3_PATH)\Include\pxtask;$(PHYSX3_PATH)\Include\RepX;$(PHYSX3_PATH)\Include\vehicle;$(PHYSX3_PATH)\Include\foundation\windows;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\JoltPhys;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NM_PHYSX3;NM_TARGET_BIGENDIAN=0;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -175,6 +178,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)euphoriaCore_target_LE32_debug.lib</OutputFile>
@@ -183,7 +187,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Target LE32 Release|Win32'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\PhysX3;$(PHYSX3_PATH)\Include;$(PHYSX3_PATH)\Include\characterkinematic;$(PHYSX3_PATH)\Include\cloth;$(PHYSX3_PATH)\Include\common;$(PHYSX3_PATH)\Include\cooking;$(PHYSX3_PATH)\Include\depracated;$(PHYSX3_PATH)\Include\extensions;$(PHYSX3_PATH)\Include\foundation;$(PHYSX3_PATH)\Include\geometry;$(PHYSX3_PATH)\Include\gpu;$(PHYSX3_PATH)\Include\particles;$(PHYSX3_PATH)\Include\physxprofilesdk;$(PHYSX3_PATH)\Include\physxvisualdebuggersdk;$(PHYSX3_PATH)\Include\pvd;$(PHYSX3_PATH)\Include\pxtask;$(PHYSX3_PATH)\Include\RepX;$(PHYSX3_PATH)\Include\vehicle;$(PHYSX3_PATH)\Include\foundation\windows;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\JoltPhys;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;NM_ENABLE_EXCEPTIONS=1;NM_PHYSX3;NM_TARGET_BIGENDIAN=0;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -197,6 +201,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)euphoriaCore_target_LE32.lib</OutputFile>
@@ -205,7 +210,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Target BE32 Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\PhysX3;$(PHYSX3_PATH)\Include;$(PHYSX3_PATH)\Include\characterkinematic;$(PHYSX3_PATH)\Include\cloth;$(PHYSX3_PATH)\Include\common;$(PHYSX3_PATH)\Include\cooking;$(PHYSX3_PATH)\Include\depracated;$(PHYSX3_PATH)\Include\extensions;$(PHYSX3_PATH)\Include\foundation;$(PHYSX3_PATH)\Include\geometry;$(PHYSX3_PATH)\Include\gpu;$(PHYSX3_PATH)\Include\particles;$(PHYSX3_PATH)\Include\physxprofilesdk;$(PHYSX3_PATH)\Include\physxvisualdebuggersdk;$(PHYSX3_PATH)\Include\pvd;$(PHYSX3_PATH)\Include\pxtask;$(PHYSX3_PATH)\Include\RepX;$(PHYSX3_PATH)\Include\vehicle;$(PHYSX3_PATH)\Include\foundation\windows;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\JoltPhys;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NM_PHYSX3;NM_TARGET_BIGENDIAN=1;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -220,6 +225,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)euphoriaCore_target_BE32_debug.lib</OutputFile>
@@ -228,7 +234,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Target BE32 Release|Win32'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\PhysX3;$(PHYSX3_PATH)\Include;$(PHYSX3_PATH)\Include\characterkinematic;$(PHYSX3_PATH)\Include\cloth;$(PHYSX3_PATH)\Include\common;$(PHYSX3_PATH)\Include\cooking;$(PHYSX3_PATH)\Include\depracated;$(PHYSX3_PATH)\Include\extensions;$(PHYSX3_PATH)\Include\foundation;$(PHYSX3_PATH)\Include\geometry;$(PHYSX3_PATH)\Include\gpu;$(PHYSX3_PATH)\Include\particles;$(PHYSX3_PATH)\Include\physxprofilesdk;$(PHYSX3_PATH)\Include\physxvisualdebuggersdk;$(PHYSX3_PATH)\Include\pvd;$(PHYSX3_PATH)\Include\pxtask;$(PHYSX3_PATH)\Include\RepX;$(PHYSX3_PATH)\Include\vehicle;$(PHYSX3_PATH)\Include\foundation\windows;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\JoltPhys;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;NM_ENABLE_EXCEPTIONS=1;NM_PHYSX3;NM_TARGET_BIGENDIAN=1;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -242,6 +248,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)euphoriaCore_target_BE32.lib</OutputFile>

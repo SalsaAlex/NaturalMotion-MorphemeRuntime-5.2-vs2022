@@ -51,7 +51,7 @@ public:
   LimbIK& getIK() NM_OVERRIDE { return m_limbIK; }
   const LimbIK& getIK() const NM_OVERRIDE { return m_limbIK; }
   Body* getBody() const NM_OVERRIDE { return m_body; };
-  MR::PhysicsRig* getPhysicsRig() const NM_OVERRIDE { return m_physicsRig; };
+  ::MR::PhysicsRig* getPhysicsRig() const NM_OVERRIDE { return m_physicsRig; };
   LimbDef* getDefinition() const NM_OVERRIDE { return m_definition; };
 
   ReachLimit getReachLimit() { return m_definition->m_reachLimit; };
@@ -65,9 +65,9 @@ public:
   uint32_t getNumPartsBeforeBase() const NM_OVERRIDE;
   int getPhysicsRigPartIndex(int limbPartIndex) const NM_OVERRIDE;
   int getPhysicsRigJointIndex(int limbJointIndex) const NM_OVERRIDE;
-  MR::PhysicsRig::Part* getPart(int limbPartIndex) NM_OVERRIDE;
-  const MR::PhysicsRig::Part* getPart(int limbPartIndex) const NM_OVERRIDE;
-  MR::PhysicsRig::Joint* getJoint(int physRigJointIndex) NM_OVERRIDE;
+  ::MR::PhysicsRig::Part* getPart(int limbPartIndex) NM_OVERRIDE;
+  const ::MR::PhysicsRig::Part* getPart(int limbPartIndex) const NM_OVERRIDE;
+  ::MR::PhysicsRig::Joint* getJoint(int physRigJointIndex) NM_OVERRIDE;
 
   bool getIsRootLimb() const NM_OVERRIDE { return m_isRootLimb; }
   LimbTypeEnum::Type getType() const NM_OVERRIDE { return m_definition->m_type; }
@@ -95,7 +95,7 @@ public:
 #endif
 
 #if defined(MR_OUTPUT_DEBUGGING)
-  MR::LimbIndex findLimbIndex() const;
+  ::MR::LimbIndex findLimbIndex() const;
   void setDebugControlAmounts(const LimbControlAmounts& controlAmounts, float stiffnessFraction) NM_OVERRIDE {
     m_controlAmounts = controlAmounts; m_stiffnessFraction = stiffnessFraction;}
   const LimbControlAmounts& getDebugControlAmounts(float& stiffnessFraction) const NM_OVERRIDE {
@@ -111,7 +111,7 @@ public:
   // you now know the physical character, but no memory allocating here, this is why we don't need a deinitialise
   void initialise();
   void destroy();
-  void prePhysicsStep(float timeDelta, MR::InstanceDebugInterface* pDebugDrawInst);
+  void prePhysicsStep(float timeDelta, ::MR::InstanceDebugInterface* pDebugDrawInst);
   void postPhysicsStep(float timeDelta);
   void disable();
 
@@ -175,7 +175,7 @@ public:
   void setEffectorControlParams(const EffectorControlParams& ecp) { m_ECP = ecp; }
 
   /// Returns the errors between the IK target and the last IK solution
-  const ER::LimbIK::SolverErrorData& getIKSolverErrorData() const { return m_IKSolveData; }
+  const ::ER::LimbIK::SolverErrorData& getIKSolverErrorData() const { return m_IKSolveData; }
 
   //--------------------------------------------------------------------------------------------------------------------
 
@@ -240,7 +240,7 @@ public:
   // Returns the sum of the twist in each joint in the limb. The twist of each joint is measured as the rotation between
   // the joint frames about the vector from the previous to the current joint and the vector from the current to the
   // next joint.
-  float calculateLimbTwist(MR::InstanceDebugInterface* pDebugDrawInst) const;
+  float calculateLimbTwist(::MR::InstanceDebugInterface* pDebugDrawInst) const;
 
   // Set the max IK iterations used by default (usually 1).
   void setIncrementalIKIterations(const uint32_t iterationCount) { m_incrementalIKIterations = iterationCount; }
@@ -254,7 +254,7 @@ public:
 private:
 //----------------------------------------------------------------------------------------------------------------------
   /// Writes procedurally generated guide pose into the IK.
-  void calculateGuidePose(MR::InstanceDebugInterface* pDebugDrawInst);
+  void calculateGuidePose(::MR::InstanceDebugInterface* pDebugDrawInst);
 
   /// Blends poses according to swivel amount.
   /// Specified result is fully neg for -1, fully pos for +1 or somewhere in between.
@@ -264,7 +264,7 @@ private:
   void calculateIKSubstepTarget(
     NMP::Vector3& targetPos, NMP::Quat& targetQuat, NMP::Vector3& targetNormal,
     const NMP::Vector3& localNormal, const NMP::Quat& rootQuat, const NMP::Vector3& rootPos,
-    const NMP::Quat* currentJointQuats, float subStep, MR::InstanceDebugInterface* pDebugDrawInst);
+    const NMP::Quat* currentJointQuats, float subStep, ::MR::InstanceDebugInterface* pDebugDrawInst);
 
   // aux for COM state data update
   void updateCentreOfMassState();
@@ -279,7 +279,7 @@ private:
   };
 
 #if defined(MR_OUTPUT_DEBUGGING)
-  void debugDraw(MR::InstanceDebugInterface* pDebugDrawInst);
+  void debugDraw(::MR::InstanceDebugInterface* pDebugDrawInst);
 #endif // defined(MR_OUTPUT_DEBUGGING)
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -314,7 +314,7 @@ private:
 
   LimbDef* m_definition;
   Body* m_body;
-  MR::PhysicsRig* m_physicsRig;
+  ::MR::PhysicsRig* m_physicsRig;
   LimbIK m_limbIK;
 
   // Joint angles from physics and for physics used in substepping or for initialising the IK when
@@ -368,7 +368,7 @@ private:
   uint32_t m_incrementalIKIterations;         // The number of IK iterations used when incremental IK is enabled.
   uint32_t m_nonIncrementalIKIterations;  // The number of IK iterations used when incremental IK is disabled.
   
-  ER::LimbIK::SolverErrorData m_IKSolveData;
+  ::ER::LimbIK::SolverErrorData m_IKSolveData;
 
   float m_leafLimitScale; // foot/hand limit scale
 };
@@ -416,7 +416,7 @@ inline uint32_t Limb::getBaseIndex() const
 //----------------------------------------------------------------------------------------------------------------------
 inline uint32_t Limb::getMidIndex() const
 {
-  return m_definition->m_midIndex > 0 ? m_definition->m_midIndex : ER::PART_INDEX_UNSPECIFIED;
+  return m_definition->m_midIndex > 0 ? m_definition->m_midIndex : PART_INDEX_UNSPECIFIED;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -444,19 +444,19 @@ inline int Limb::getPhysicsRigJointIndex(int limbJointIndex) const
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-inline MR::PhysicsRig::Part* Limb::getPart(int limbPartIndex)
+inline ::MR::PhysicsRig::Part* Limb::getPart(int limbPartIndex)
 {
   return m_physicsRig->getPart(getPhysicsRigPartIndex(limbPartIndex));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-inline const MR::PhysicsRig::Part* Limb::getPart(int limbPartIndex) const
+inline const ::MR::PhysicsRig::Part* Limb::getPart(int limbPartIndex) const
 {
   return m_physicsRig->getPart(getPhysicsRigPartIndex(limbPartIndex));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-inline MR::PhysicsRig::Joint* Limb::getJoint(int limbJointIndex)
+inline ::MR::PhysicsRig::Joint* Limb::getJoint(int limbJointIndex)
 {
   return m_physicsRig->getJoint(getPhysicsRigJointIndex(limbJointIndex));
 }

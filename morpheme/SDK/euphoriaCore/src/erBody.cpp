@@ -103,7 +103,7 @@ Body* Body::createInstance(
   physicsRig->setUserData(body);
   body->create(bodyDef, physicsRig->getPhysicsScene());
   body->initialise(physicsRig, animSetIndex, addPartsToEuphoria);
-  ContactFeedback::initialise(physicsRig->getPhysicsScene(), ((MR::PhysicsRigJoltPhys*)physicsRig)->getClientID());
+  ContactFeedback::initialise(physicsRig->getPhysicsScene());
   return body;
 }
 
@@ -278,7 +278,7 @@ void Body::initialise(
   m_softLimitStiffness = 0.0f;
   m_animSetIndex = animSetIndex;
 
-  // Create the per-shape data - needed for other characters to interact with our parts.
+  // Create the per-body data - needed for other characters to interact with our parts.
   if (addPartsToEuphoria)
   {
     for (uint32_t iPart = 0; iPart < m_physicsRig->getNumParts(); ++iPart)
@@ -286,14 +286,8 @@ void Body::initialise(
       MR::PhysicsRig::Part* part = m_physicsRig->getPart(iPart);
       MR::PhysicsRigJoltPhys::PartJoltPhys* partJoltPhys = (MR::PhysicsRigJoltPhys::PartJoltPhys*) part;
       JPH::Body *rigidBody = partJoltPhys->getRigidBody();
-      uint32_t numShapes = rigidBody->getNbShapes();
-      for (uint32_t iShape = 0; iShape != numShapes; ++iShape)
-      {
-        physx::PxShape* shape = 0;
-        rigidBody->getShapes(&shape, 1, iShape);
-        NMP_ASSERT(MR::JoltPhysPerShapeData::getFromShape(shape) == 0);
-        MR::JoltPhysPerShapeData::create(shape);
-      }
+      NMP_ASSERT(MR::JoltPhysPerBodyData::getFromBody(rigidBody) == 0);
+      MR::JoltPhysPerBodyData::create(rigidBody);
     }
   }
 
@@ -319,17 +313,11 @@ void Body::destroy()
     ER::EuphoriaRigPartUserData* data = ER::EuphoriaRigPartUserData::getFromPart(part);
     ER::EuphoriaRigPartUserData::destroy(data, part);
 
-    // Destroy the per shape data
+    // Destroy the per body data
     MR::PhysicsRigJoltPhys::PartJoltPhys* partJoltPhys = (MR::PhysicsRigJoltPhys::PartJoltPhys*) part;
     JPH::Body* rigidBody = partJoltPhys->getRigidBody();
-    uint32_t numShapes = rigidBody->getNbShapes();
-    for (uint32_t iShape = 0; iShape != numShapes; ++iShape)
-    {
-      physx::PxShape* shape = 0;
-      rigidBody->getShapes(&shape, 1, iShape);
-      MR::JoltPhysPerShapeData* shapeData = MR::JoltPhysPerShapeData::getFromShape(shape);
-      MR::JoltPhysPerShapeData::destroy(shapeData, shape);
-    }
+    MR::JoltPhysPerBodyData* bodyData = MR::JoltPhysPerBodyData::getFromBody(rigidBody);
+    MR::JoltPhysPerBodyData::destroy(bodyData, rigidBody);
   }
 
   for (uint32_t i = 0; i < m_definition->m_numLimbs; ++i)

@@ -11,12 +11,12 @@
 //----------------------------------------------------------------------------------------------------------------------
 #include "euphoria/erCollisionProbes.h"
 
-#include "mrPhysicsScenePhysX3.h"
-#include "mrPhysX3.h"
-#include "mrPhysicsRigPhysX3Articulation.h"
+#include "mrPhysicsSceneJoltPhys.h"
+#include "mrJoltPhys.h"
+#include "mrPhysicsRigJoltPhysRagdoll.h"
 #include "euphoria/erDebugDraw.h"
 #include "euphoria/erEuphoriaUserData.h"
-#include "mrPhysX3Includes.h"
+#include "mrJoltPhysIncludes.h"
 #include "NMGeomUtils/NMGeomUtils.h"
 
 #include "euphoria/erValueValidators.h"
@@ -32,16 +32,16 @@ static bool debug_drawSweepResult = true;
 
 namespace ER
 {
-physx::PxShape* getPxShapeFromShapeID(int64_t shapeID)
+JPH::Body* getJPHBodyFromBodyID(int64_t bodyID)
 {
-  physx::PxShape* shape = (physx::PxShape*) (size_t) shapeID;
-  const bool shapeExists = (shapeID != -1 && shapeID != 0 && MR::PhysXPerShapeData::getFromShape(shape));
+  JPH::Body* body = (JPH::Body*) (size_t) bodyID;
+  const bool shapeExists = (bodyID != -1 && bodyID != 0 && MR::JoltPhysPerBodyData::getFromBody(body));
   if (!shapeExists)
     return 0;
-  // Also check that the shape/actor is part of the scene - if not then we should always ignore it
-  if (!shape->getActor()->getScene())
+  // Also check that the body is part of the scene - if not then we should always ignore it
+  if (!body->IsInBroadPhase())
     return 0;
-  return shape;
+  return body;
 }
 
 void SphereSweep::debugDraw(
@@ -55,30 +55,11 @@ void SphereSweep::debugDraw(
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-class EuphoriaPhysX3QueryFilterCallback : public MR::MorphemePhysX3QueryFilterCallback
-{
-public:
-  EuphoriaPhysX3QueryFilterCallback(const physx::PxFilterData& queryFilterData, int ignoreID=-1) : 
-      MorphemePhysX3QueryFilterCallback(queryFilterData, ignoreID) {}
-private:
-  physx::PxQueryHitType::Enum preFilter(const physx::PxFilterData& filterData, const physx::PxShape* shape, const physx::PxRigidActor* actor, physx::PxHitFlags& hitFlags) NM_OVERRIDE;
-};
-
-//----------------------------------------------------------------------------------------------------------------------
-physx::PxQueryHitType::Enum EuphoriaPhysX3QueryFilterCallback::preFilter(const physx::PxFilterData& filterData, const physx::PxShape* shape, const physx::PxRigidActor* actor, physx::PxHitFlags& hitFlags)
-{
-  if (!MR::PhysXPerShapeData::getFromShape(const_cast<physx::PxShape*>(shape)))
-    return physx::PxQueryHitType::eNONE;
-  return MorphemePhysX3QueryFilterCallback::preFilter(filterData, shape, actor, hitFlags);
-}
-
-//----------------------------------------------------------------------------------------------------------------------
 /// Performs the specified sweep (on the specified scene) and stores the results as member data
 //----------------------------------------------------------------------------------------------------------------------
 bool SweepResult::applySweep(
   const SphereSweep& sweep,
-  MR::PhysicsScenePhysX3* scene,
-  physx::PxClientID clientID,
+  MR::PhysicsSceneJoltPhys* scene,
   uint32_t ignoreGroups,
   bool dynamic,
   float distScale,
@@ -93,17 +74,7 @@ bool SweepResult::applySweep(
   pos[1] = pos[0] + motionDir[0];
   physx::PxReal distance[2] = { motionDir[0].normalize(), motionDir[1].normalize() };
   uint32_t contacted = false;
-  //physx::PxImpactHit* probeHit = NULL;
-  physx::PxLocationHit* probeHit = NULL;
-  physx::PxSweepHit sweepHit;
-  physx::PxRaycastHit rayHit;
-  // defines what data is filled in from a successful probe
-  physx::PxSceneQueryFlags hintFlags =
-    physx::PxSceneQueryFlag::eDISTANCE |
-    //physx::PxSceneQueryFlag::eIMPACT |
-    physx::PxSceneQueryFlag::eNORMAL; //|
-    //physx::PxSceneQueryFlag::eINITIAL_OVERLAP;
-  physx::PxSceneQueryFlags queryFlags = physx::PxSceneQueryFlags(hintFlags);
+
   int i = 0;
   if (dynamic)
   {

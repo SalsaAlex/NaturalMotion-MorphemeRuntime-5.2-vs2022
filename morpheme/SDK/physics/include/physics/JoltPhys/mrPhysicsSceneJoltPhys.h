@@ -222,34 +222,34 @@ public:
 };
 
 
-#define INITIAL_SHAPEMAP_SIZE 256
+#define INITIAL_BODYMAP_SIZE 256
 //----------------------------------------------------------------------------------------------------------------------
-/// \struct JoltPhysPerShapeData
+/// \struct JoltPhysPerBodyData
 ///
-/// Per-shape data that is needed on physics objects if Euphoria is being used
+/// Per-body data that is needed on physics objects if Euphoria is being used
 //----------------------------------------------------------------------------------------------------------------------
-struct JoltPhysPerShapeData
+struct JoltPhysPerBodyData
 {
   static void initialiseMap()
   {
-    NMP_ASSERT_MSG(s_mapAllocator == NULL && s_shapeToDataMap == NULL, "JoltPhysPerShapeData map already initialised.");
+    NMP_ASSERT_MSG(s_mapAllocator == NULL && s_bodyToDataMap == NULL, "JoltPhysPerBodyData map already initialised.");
 
     NMP::Memory::Resource resource = NMPMemoryAllocateFromFormat(NMP::HeapAllocator::getMemoryRequirements());
     s_mapAllocator = NMP::HeapAllocator::init(resource);
 
-    NMP::Memory::Format mapFormat(sizeof(ShapeToDataMap));
+    NMP::Memory::Format mapFormat(sizeof(BodyToDataMap));
     NMP::Memory::Resource mapResource = NMPMemoryAllocateFromFormat(mapFormat);
-    s_shapeToDataMap = ShapeToDataMap::init(mapResource, INITIAL_SHAPEMAP_SIZE, s_mapAllocator);
+    s_bodyToDataMap = BodyToDataMap::init(mapResource, INITIAL_BODYMAP_SIZE, s_mapAllocator);
     NMP_ASSERT(mapResource.format.size == 0);
   }
 
   static void destroyMap()
   {
-    if (s_shapeToDataMap)
+    if (s_bodyToDataMap)
     {
-      s_shapeToDataMap->~ShapeToDataMap();
-      NMP::Memory::memFree(s_shapeToDataMap);
-      s_shapeToDataMap = NULL;
+      s_bodyToDataMap->~BodyToDataMap();
+      NMP::Memory::memFree(s_bodyToDataMap);
+      s_bodyToDataMap = NULL;
     }
 
     if (s_mapAllocator)
@@ -261,35 +261,35 @@ struct JoltPhysPerShapeData
     }
   }
 
-  static JoltPhysPerShapeData* create(JPH::Shape* shape)
+  static JoltPhysPerBodyData* create(JPH::Body* body)
   {
-    if (!s_shapeToDataMap)
+    if (!s_bodyToDataMap)
       return 0;
-    JoltPhysPerShapeData* data = (JoltPhysPerShapeData*) NMPMemoryAlloc(sizeof(JoltPhysPerShapeData));
+    JoltPhysPerBodyData* data = (JoltPhysPerBodyData*) NMPMemoryAlloc(sizeof(JoltPhysPerBodyData));
     NMP_ASSERT(data);
-    new (data) JoltPhysPerShapeData(shape);
+    new (data) JoltPhysPerBodyData(body);
     return data;
   }
 
-  static void destroy(JoltPhysPerShapeData* data, JPH::Shape* shape)
+  static void destroy(JoltPhysPerBodyData* data, JPH::Body* body)
   {
-    if (!s_shapeToDataMap)
+    if (!s_bodyToDataMap)
       return;
     if (!data)
       return;
-    if (shape)
+    if (body)
     {
-      s_shapeToDataMap->erase(shape);
+      s_bodyToDataMap->erase(body);
     }
     NMP::Memory::memFree(data);
   }
 
-  static JoltPhysPerShapeData* getFromShape(JPH::Shape* shape)
+  static JoltPhysPerBodyData* getFromBody(JPH::Body* body)
   {
-    if (!s_shapeToDataMap)
+    if (!s_bodyToDataMap)
       return 0;
-    JoltPhysPerShapeData* pVal = 0;
-    s_shapeToDataMap->find(shape, &pVal);
+    JoltPhysPerBodyData* pVal = 0;
+    s_bodyToDataMap->find(body, &pVal);
     return pVal;
   }
 
@@ -300,18 +300,18 @@ struct JoltPhysPerShapeData
   int32_t m_dataIndex; // Index into the array of EA objects
 
 private:
-  typedef NMP::hash_map<JPH::Shape*, JoltPhysPerShapeData*>  ShapeToDataMap;
+  typedef NMP::hash_map<JPH::Body*, JoltPhysPerBodyData*>  BodyToDataMap;
 
-  JoltPhysPerShapeData(JPH::Shape* shape) : m_dataIndex(0)
+  JoltPhysPerBodyData(JPH::Body* body) : m_dataIndex(0)
   {
-    NMP_ASSERT(getFromShape(shape) == 0);
-    s_shapeToDataMap->insert(shape, this);
+    NMP_ASSERT(getFromBody(body) == 0);
+    s_bodyToDataMap->insert(body, this);
 #if defined(MR_OUTPUT_DEBUGGING)
     m_debugColour.setToZero();
 #endif
   }
 
-  static ShapeToDataMap*      s_shapeToDataMap;
+  static BodyToDataMap*      s_bodyToDataMap;
   static NMP::HeapAllocator*  s_mapAllocator;
 };
 

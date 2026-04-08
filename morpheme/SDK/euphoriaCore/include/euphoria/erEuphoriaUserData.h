@@ -15,10 +15,9 @@
 #include "NMPlatform/NMHashMap.h"
 #include "erDebugDraw.h"
 
-namespace physx
+namespace JPH
 {
-class PxShape;
-class PxActor;
+class Body;
 }
 
 namespace MR
@@ -114,25 +113,24 @@ struct EuphoriaRigPartUserData
   int64_t getLastCollisionID() const {return m_lastCollisionID;}
   /// Returns the number of contacts that have been recorded in the last physics step
   uint16_t getNumContacts() const {return m_numContacts;}
-  /// Returns the shape for the specified contact
-  physx::PxShape& getContactedShape(uint16_t contactIndex) const 
+  /// Returns the body for the specified contact
+  JPH::Body* getContactedBody(uint16_t contactIndex) const 
   {
     NMP_ASSERT(contactIndex < m_numContacts);
-    NMP_ASSERT(m_contactedShapes[contactIndex]);
-    return *m_contactedShapes[contactIndex];
+    NMP_ASSERT(m_contactedBodies[contactIndex]);
+    return m_contactedBodies[contactIndex];
   }
   /// Returns a unique ID for the specified contact
-  int64_t getContactedShapeID(uint16_t contactIndex) const
+  int64_t getContactedBodyID(uint16_t contactIndex) const
   {
     NMP_ASSERT(contactIndex < m_numContacts);
-    NMP_ASSERT(m_contactedShapes[contactIndex]);
-    return (int64_t) (size_t) m_contactedShapes[contactIndex];
+    NMP_ASSERT(m_contactedBodies[contactIndex]);
+    return (int64_t) (size_t) m_contactedBodies[contactIndex];
   }
 
   /// Process contact (erContactFeedback.cpp)
   void processData(
-    physx::PxActor* contactedActor, 
-    physx::PxShape* contactedShape, 
+    JPH::Body* contactedBody, 
     const NMP::Vector3& point, 
     const NMP::Vector3& normal, 
     float impulseMagnitude);
@@ -160,10 +158,10 @@ struct EuphoriaRigPartUserData
     m_numContacts = 0;
   }
 
-  /// Free the shape list
+  /// Free the body list
   void destroy()
   {
-    NMP::Memory::memFree(m_contactedShapes);
+    NMP::Memory::memFree(m_contactedBodies);
   }
 
   // Data
@@ -177,7 +175,7 @@ private:
   int64_t       m_lastCollisionID;
 
   // These refer to the current update only
-  physx::PxShape** m_contactedShapes;
+  JPH::Body**      m_contactedBodies;
   uint16_t         m_numContacts;
   uint16_t         m_maxNumContacts;
   bool             m_accumulating;
@@ -201,7 +199,7 @@ private:
     NMP_ASSERT(getFromPart(part) == 0);
     s_rigPartToDataMap->insert(part, this);
 
-    m_contactedShapes = (physx::PxShape**) NMPMemoryAlloc(sizeof(physx::PxShape*)*m_maxNumContacts);
+    m_contactedBodies = (JPH::Body**) NMPMemoryAlloc(sizeof(JPH::Body*)*m_maxNumContacts);
     startNewContact();
 
 #if defined(MR_OUTPUT_DEBUGGING)

@@ -321,6 +321,8 @@ void PhysicsRigJoltPhysRagdoll::createJoints(
 
         JPH::Mat44 parentpartframe = MR::nmMatrix34ToJPHMat44(jointdef->m_parentPartFrame);
         JPH::Mat44 childpartframe = MR::nmMatrix34ToJPHMat44(jointdef->m_childPartFrame);
+        parentpartframe = JPH::Mat44::sRotationTranslation(MR::nmQuatToJPHQuat(jointdef->m_parentFrameQuat), parentpartframe.GetTranslation());
+        childpartframe = JPH::Mat44::sRotationTranslation(MR::nmQuatToJPHQuat(jointdef->m_childFrameQuat), childpartframe.GetTranslation());
 
         switch (jointdef->m_jointType)
         {
@@ -339,9 +341,9 @@ void PhysicsRigJoltPhysRagdoll::createJoints(
                 csettings->mPosition1 = parentpartframe.GetTranslation() - parentCOM;
 
                 csettings->mTwistAxis1 = parentpartframe.GetAxisX();
-                csettings->mPlaneAxis1 = parentpartframe.GetAxisY();
+                csettings->mPlaneAxis1 = parentpartframe.GetAxisZ();
                 csettings->mTwistAxis2 = childpartframe.GetAxisX();
-                csettings->mPlaneAxis2 = childpartframe.GetAxisY();
+                csettings->mPlaneAxis2 = childpartframe.GetAxisZ();
 
                 float swing1_limit = sixdofjointdef->m_hardLimits.getSwing1Limit();
                 float swing2_limit = sixdofjointdef->m_hardLimits.getSwing2Limit();
@@ -1372,6 +1374,8 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setStrength(float strength
   NMP_ASSERT(strength >= 0.0f && strength < MAX_STRENGTH);
 
   m_strength = strength;
+  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mStiffness = strength;
+  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mStiffness = strength;
   //m_jointInternal->setStiffness(strength);
 }
 
@@ -1381,6 +1385,8 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setDamping(float damping)
   //NMP_ASSERT(m_jointInternal);
   NMP_ASSERT(damping >= 0.0f && damping < MAX_DAMPING);
   m_damping = damping;
+  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mDamping = damping;
+  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mDamping = damping;
   //m_jointInternal->setDamping(damping);
 }
 

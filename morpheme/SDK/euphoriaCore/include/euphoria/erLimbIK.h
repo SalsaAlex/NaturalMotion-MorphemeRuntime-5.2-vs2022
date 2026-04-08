@@ -184,8 +184,8 @@ public:
   // APIs
   //---------------------------------------------------------------------------------
   void init(
-    const MR::PhysicsRigDef* physicsRigDef,
-    const ER::LimbDef* limbDef);
+    const ::MR::PhysicsRigDef* physicsRigDef,
+    const ::ER::LimbDef* limbDef);
   void resetInternalState(); ///< Setting the old IK position to the zero angle state etc.
   void deinit();
 
@@ -211,7 +211,7 @@ public:
     const NMP::Vector3& targetNormal, const NMP::Vector3& localNormal, const NMP::Vector3& targetPoint,
     LimbIK::SolverErrorData*    sed,
     const float                 timeDelta,
-    MR::InstanceDebugInterface* pDebugDrawInst,
+    ::MR::InstanceDebugInterface* pDebugDrawInst,
     const NMP::Matrix34&        rootBodyMatrixForDebug, 
     const DimensionalScaling&   dimensionalScaling);
 
@@ -274,20 +274,20 @@ private:
   // debug draw functions
 public:
 
-  MR::LimbIndex m_limbIndex;
-  void setLimbIndex(MR::LimbIndex limbIndex);
+  ::MR::LimbIndex m_limbIndex;
+  void setLimbIndex(::MR::LimbIndex limbIndex);
   void drawLimb(
-    MR::InstanceDebugInterface* pDebugDrawInst, const NMP::Quat* quats, const NMP::Matrix34& offsetForDebug, const NMP::Vector3& boneColour,
+    ::MR::InstanceDebugInterface* pDebugDrawInst, const NMP::Quat* quats, const NMP::Matrix34& offsetForDebug, const NMP::Vector3& boneColour,
     bool drawLimits, bool drawJointFrames, const DimensionalScaling& dimensionalScaling) const;
 
 private:
 
   void calcLimbDrawInfo(const NMP::Quat* quats, LimbDrawData& ldd) const; ///< aux for public API drawLimb
   void drawLimb(
-    MR::InstanceDebugInterface* pDebugDrawInst, const LimbDrawData& ldd, const NMP::Matrix34& offsetForDebug, const NMP::Vector3& boneColour,
+    ::MR::InstanceDebugInterface* pDebugDrawInst, const LimbDrawData& ldd, const NMP::Matrix34& offsetForDebug, const NMP::Vector3& boneColour,
     bool drawLimits, bool drawJointFrames, const DimensionalScaling& dimensionalScaling) const;
-  void drawLimit(MR::InstanceDebugInterface* pDebugDrawInst, int jointId, const JointDrawData& jdd, float size) const;
-  void drawTwistSwingPointers(MR::InstanceDebugInterface* pDebugDrawInst, const NMP::Matrix34& frame1World, const NMP::Matrix34& frame2World, float size) const;
+  void drawLimit(::MR::InstanceDebugInterface* pDebugDrawInst, int jointId, const JointDrawData& jdd, float size) const;
+  void drawTwistSwingPointers(::MR::InstanceDebugInterface* pDebugDrawInst, const NMP::Matrix34& frame1World, const NMP::Matrix34& frame2World, float size) const;
 #endif // defined(MR_OUTPUT_DEBUGGING)
 
 }; // class limbNMIK

@@ -767,7 +767,7 @@ void Limb::prePhysicsStep(float timeDelta, MR::InstanceDebugInterface* pDebugDra
     for (uint32_t i = 0; i < m_numJointsInChain; ++i)
     {
       const MR::PhysicsRigJoltPhys::JointJoltPhys* const joint =
-        static_cast< const MR::PhysicsRigJoltPhys::JoinJoltPhys* >(getPhysicsRig()->getJoint(getPhysicsRigJointIndex(i)));
+        static_cast< const MR::PhysicsRigJoltPhys::JointJoltPhys* >(getPhysicsRig()->getJoint(getPhysicsRigJointIndex(i)));
 
       const NMP::Vector3 limits(
         joint->getModifiableLimits().getTwistLimitLow(),
@@ -1078,7 +1078,7 @@ bool Limb::restoreState(MR::PhysicsSerialisationBuffer& savedState)
   // constrained state, it will destroy itself in the next frame. And if it is restored to a constrained state, then it
   // will continue to be constrained. If this has unforeseen consequences, we can revert to the safer version of
   // simply disabling the constraint.
-  physx::PxD6Joint* constraint = m_endConstraint.m_constraint;
+  JPH::SixDOFConstraint* constraint = m_endConstraint.m_constraint;
 
   *this = savedState.getValue<Limb>();
 

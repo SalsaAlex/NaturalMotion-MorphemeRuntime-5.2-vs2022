@@ -19,7 +19,7 @@ RigConstraint::RigConstraint(
   const NMP::Matrix34& partJointFrameA,
   const uint32_t partIndexB,
   const NMP::Matrix34& partJointFrameB,
-  MR::PhysicsRigPhysX3Articulation* const physicsRig)
+  MR::PhysicsRigJoltPhysRagdoll* const physicsRig)
 :m_constraint(NULL)
 ,m_partIndexA(partIndexA)
 ,m_partIndexB(partIndexB)
@@ -32,15 +32,15 @@ RigConstraint::RigConstraint(
 
   if (physicsRig)
   {
-    physx::PxRigidActor* const partActorA = physicsRig->getPartPhysX3Articulation(m_partIndexA)->getArticulationLink();
-    physx::PxRigidActor* const partActorB = physicsRig->getPartPhysX3Articulation(m_partIndexB)->getArticulationLink();
+    JPH::Body* const partBodyA = physicsRig->getPartJoltPhysRagdoll(m_partIndexA)->getRigidBody();
+    JPH::Body* const partBodyB = physicsRig->getPartJoltPhysRagdoll(m_partIndexB)->getRigidBody();
 
-    NMP_ASSERT(partActorA && partActorB);
+    NMP_ASSERT(partBodyA && partBodyB);
 
-    if (partActorA && partActorB)
+    if (partBodyA && partBodyB)
     {
       m_constraint =
-        createJoint(partActorA, partActorB, partJointFrameA, partJointFrameB, lockedLinearDofs, lockedAngularDofs);
+        createJoint(partBodyA, partBodyB, partJointFrameA, partJointFrameB, lockedLinearDofs, lockedAngularDofs);
     }
   }
 }
@@ -63,7 +63,7 @@ bool RigConstraint::referencesPart(const uint32_t partIndex) const
 //----------------------------------------------------------------------------------------------------------------------
 void RigConstraint::setLinearDof(const uint32_t axis, const bool locked)
 {
-  const physx::PxD6Axis::Enum pxAxis = static_cast<physx::PxD6Axis::Enum>(physx::PxD6Axis::eX + axis);
+  const JPH::SixDOFConstraint::EAxis jphAxis = static_cast<JPH::SixDOFConstraint::EAxis>(JPH::SixDOFConstraint::EAxis::TranslationX + axis);
   const physx::PxD6Motion::Enum pxMotionType = locked ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE;
 
   m_constraint->setMotion(pxAxis, pxMotionType);
@@ -72,10 +72,21 @@ void RigConstraint::setLinearDof(const uint32_t axis, const bool locked)
 //----------------------------------------------------------------------------------------------------------------------
 void RigConstraint::setAngularDof(const uint32_t axis, const bool locked)
 {
-  const physx::PxD6Axis::Enum pxAxis = static_cast<physx::PxD6Axis::Enum>(physx::PxD6Axis::eTWIST + axis);
-  const physx::PxD6Motion::Enum pxMotionType = locked ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE;
+  JPH::Vec3 rotmins = m_constraint->GetRotationLimitsMin();
+  JPH::Vec3 rotmaxs = m_constraint->GetRotationLimitsMax();
 
-  m_constraint->setMotion(pxAxis, pxMotionType);
+  if (locked)
+  {
+      rotmins.SetComponent(axis, 0);
+      rotmaxs.SetComponent(axis, 0);
+  }
+  else
+  {
+      rotmins.SetComponent(axis, -NM_PI);
+      rotmaxs.SetComponent(axis, NM_PI);
+  }
+
+  m_constraint->SetRotationLimits(rotmins, rotmaxs);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -118,20 +129,20 @@ void RigConstraint::setDrive(const physx::PxD6Drive::Enum axis, const physx::PxD
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-physx::PxD6Joint* RigConstraint::createJoint(
-  physx::PxRigidActor* actor1,
-  physx::PxRigidActor* actor2,
+JPH::SixDOFConstraint* RigConstraint::createJoint(
+  JPH::Body* body1,
+  JPH::Body* body2,
   const NMP::Matrix34& pose1,
   const NMP::Matrix34& pose2,
   uint16_t lockedLinearDofs,
   uint16_t lockedAngularDofs)
 {
-  physx::PxD6Joint* joint = PxD6JointCreate(
+  JPH::SixDOFConstraint* joint = JPHSixDOFJointCreate(
     PxGetPhysics(),
-    actor1,
-    MR::nmMatrix34ToPxTransform(pose1),
-    actor2,
-    MR::nmMatrix34ToPxTransform(pose2));
+    body1,
+    MR::nmMatrix34ToJPHMat44(pose1),
+    body2,
+    MR::nmMatrix34ToJPHMat44(pose2));
   NMP_ASSERT(joint);
 
   if (joint)
@@ -202,7 +213,7 @@ RigConstraint* RigConstraintManager::create(
   const NMP::Matrix34& partJointFrameA,
   const uint32_t partIndexB,
   const NMP::Matrix34& partJointFrameB,
-  MR::PhysicsRigPhysX3Articulation* const physicsRig)
+  MR::PhysicsRigJoltPhysRagdoll* const physicsRig)
 {
   NMP_ASSERT(partIndexA != partIndexB);
 

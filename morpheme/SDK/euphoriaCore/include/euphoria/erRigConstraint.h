@@ -39,7 +39,7 @@ public:
     const NMP::Matrix34& partJointFrameA,
     const uint32_t partIndexB,
     const NMP::Matrix34& partJointFrameB,
-    MR::PhysicsRigJoltPhysRagdoll* const physicsRig);
+    ::MR::PhysicsRigJoltPhysRagdoll* const physicsRig);
 
   ~RigConstraint();
 
@@ -92,7 +92,7 @@ public:
     const NMP::Matrix34& partJointFrameA,
     const uint32_t partIndexB,
     const NMP::Matrix34& partJointFrameB,
-    MR::PhysicsRigJoltPhysRagdoll* const physicsRig);
+    ::MR::PhysicsRigJoltPhysRagdoll* const physicsRig);
 
   void destroy(const uint32_t partIndexA, const uint32_t partIndexB);
 
