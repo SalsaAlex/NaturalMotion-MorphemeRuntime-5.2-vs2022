@@ -18,8 +18,8 @@
 #include "ImpactPredictorPackaging.h"
 #include "ImpactPredictor.h"
 #include "MyNetwork.h"
-#include "mrPhysX3.h"
-#include "mrPhysicsScenePhysX3.h"
+#include "mrJoltPhys.h"
+#include "mrPhysicsSceneJoltPhys.h"
 #include "euphoria/erBody.h"
 #include "euphoria/erDebugDraw.h"
 #include "Types/Environment_CollideResult.h"
@@ -179,8 +179,8 @@ void ImpactPredictorFeedbackPackage::feedback(float timeStep, MR::InstanceDebugI
 
       if (in->getProtectHazardFilteringImportance() != 0.0f)
       {
-        const physx::PxShape* const shape = ER::getPxShapeFromShapeID(patch.state.shapeID);
-        if (shape)
+        const JPH::Body* const body = ER::getJPHBodyFromBodyID(patch.state.bodyID);
+        if (body)
         {
           // Filter-out non-hazardous patches i.e. where their corresponding shapes have been masked as ignorable hazard.
           const ObjectFiltering userFilter = in->getProtectHazardFiltering();

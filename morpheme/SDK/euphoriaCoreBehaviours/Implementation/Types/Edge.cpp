@@ -31,7 +31,7 @@ Edge::Edge()
   uprightNormal.set(0, 1, 0);
   otherNormal.set(0, 0, 1);
   quality = -1;
-  shapeID = -1;
+  bodyID = -1;
   gameEdgeID = -1;
 }
 
@@ -41,7 +41,7 @@ Edge::Edge()
 bool Edge::equals(const Edge& other) const
 {
   const float precision = 0.01f;
-  if (shapeID == -1)
+  if (bodyID == -1)
   {
     // Edge is not attached to a dynamic object
     return corner.compare(other.corner, precision) && edge.compare(other.edge, precision);
@@ -49,7 +49,7 @@ bool Edge::equals(const Edge& other) const
   else
   {
     // Edge is attached to a dynamic object
-    return (shapeID == other.shapeID) && edge.compare(other.edge, precision);
+    return (bodyID == other.bodyID) && edge.compare(other.edge, precision);
   }
 }
 
@@ -240,12 +240,12 @@ void EdgeBuffer::cullLowQuality(float minQuality)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void EdgeBuffer::cullShapeID(int64_t edgeShapeID)
+void EdgeBuffer::cullBodyID(int64_t edgeBodyID)
 {
   for (uint8_t i = 0; i < m_size; )
   {
     Edge* edge = get(i);
-    if (edge && (edge->shapeID == edgeShapeID))
+    if (edge && (edge->bodyID == edgeBodyID))
     {
       remove(i);  // Note that m_size is decremented.
     }

@@ -64,29 +64,24 @@ void HoldActionBehaviourInterface::update(float NMP_UNUSED(timeStep))
       gameEdge.uprightNormal.normalise();
 
       // -1 indicates a constraint with world rather than an actual dynamic or static object
-      gameEdge.shapeID = -1; 
+      gameEdge.bodyID = -1; 
       // indicates that we want grabbability to be calculated by grab, if > 0 we don't
       gameEdge.quality = params.getEdgeImportanceCP();
       gameEdge.isWall = params.getIsWallCP();
 
-      physx::PxRigidActor* physicsActor = (physx::PxRigidActor*) params.getPhysicsObjectIDCP();
-      if (physicsActor)
+      JPH::Body* physicsBody = (JPH::Body*) params.getPhysicsObjectIDCP();
+      if (physicsBody)
       {
         // This edge is attached to a dynamic object. The code to handle grabbing dynamic objects
-        // works with the shapeID, which is simply the shape pointer. It doesn't matter which shape
+        // works with the bodyID, which is simply the body pointer. It doesn't matter which body
         // is actually chosen, so we'll choose the first. However, note that the edge is still
         // specified in world space, so we need to convert our input which is relative to the object.
-        physx::PxShape* shape;
-        physx::PxU32 numShapes = physicsActor->getShapes(&shape, 1);
-        if (numShapes != 0)
-        {
-          gameEdge.shapeID = (int64_t)(size_t) shape;
-          NMP::Matrix34 actorTM = MR::nmPxTransformToNmMatrix34(physicsActor->getGlobalPose());
-          actorTM.transformVector(gameEdge.corner);
-          actorTM.rotateVector(gameEdge.edge);
-          actorTM.rotateVector(gameEdge.otherNormal);
-          actorTM.rotateVector(gameEdge.uprightNormal);
-        }
+        gameEdge.bodyID = (int64_t)(size_t) physicsBody;
+        NMP::Matrix34 actorTM = MR::nmJPHMat44ToNmMatrix34(physicsBody->GetWorldTransform());
+        actorTM.transformVector(gameEdge.corner);
+        actorTM.rotateVector(gameEdge.edge);
+        actorTM.rotateVector(gameEdge.otherNormal);
+        actorTM.rotateVector(gameEdge.uprightNormal);
       }
     }
   }

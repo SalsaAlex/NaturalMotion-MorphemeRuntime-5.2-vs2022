@@ -23,12 +23,12 @@ struct EndConstraintControl
   /// Set the desired orientation of the end-effector in world space.
   + void setDesiredOrientation(NMP::Matrix34& desTM);
   /// Provide a pointer (cast to int) to the object to constrain to.
-  + void setTargetShapeID(int64_t shapeID);
+  + void setTargetBodyID(int64_t bodyID);
   // Disable collisions between end-effector and constrainee.
   + void setDisableCollisions(bool disable);
 
   ER::HandFootTransform desiredTM; ///< Desired pose of the end-effector in world space.
-  int64_t targetShapeID;      ///< Cast from pointer to physics actor.
+  int64_t targetBodyID;      ///< Cast from pointer to physics body.
   uint16_t lockedLinearDofs;  ///< Bitmask specifying linear dofs locked by constraint.
   uint16_t lockedAngularDofs; ///< Bitmask specifying angular dofs locked by constraint.
   Length createDistance;      ///< Distance between endEff and target at which constraint is created.
@@ -151,7 +151,7 @@ struct Edge
   /// Do these two instances describe the same edge?
   + bool equals(const Edge& other) const;
 
-  int64_t shapeID;        ///< Cast from pointer.
+  int64_t bodyID;         ///< Cast from pointer.
   int16_t gameEdgeID;     ///< Index into the list of game specified edges, or -1 if it's not from there
   bool isWall;            ///< True: belongs to wall/box geometry. False: it's a pole or ledge.  
   Position corner;        ///< Start of the edge.
@@ -190,8 +190,8 @@ struct EdgeBuffer
   + int8_t find(const Edge& edge) const;
   /// Removes all the edges with quality ("grabbability") less than minQuality.
   + void cullLowQuality(float minQuality);
-  /// Removes all the edges that belong to the shape with specified ID.
-  + void cullShapeID(int64_t edgeShapeID);
+  /// Removes all the edges that belong to the body with specified ID.
+  + void cullBodyID(int64_t edgeBodyID);
   + void debugDraw(MR::InstanceDebugInterface* pDebugDrawInst) const;
 
   private:

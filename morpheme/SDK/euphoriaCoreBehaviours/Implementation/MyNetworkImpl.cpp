@@ -21,7 +21,7 @@
 #include "euphoria/erGravityCompensation.h"
 #include "euphoria/erEuphoriaUserData.h"
 
-#include "mrPhysicsScenePhysX3.h"
+#include "mrPhysicsSceneJoltPhys.h"
 
 #define SCALING_SOURCE data->dimensionalScaling
 #include "euphoria/erDimensionalScalingHelpers.h"
@@ -617,7 +617,7 @@ void MyNetwork::update(float timeStep)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-static NM_INLINE bool isPartInContactWithPatch(const MR::PhysicsRig::Part* const part, const int64_t patchShapeID)
+static NM_INLINE bool isPartInContactWithPatch(const MR::PhysicsRig::Part* const part, const int64_t patchBodyID)
 {
   bool inContact = false;
 
@@ -626,9 +626,9 @@ static NM_INLINE bool isPartInContactWithPatch(const MR::PhysicsRig::Part* const
   for (uint16_t contactIndex = 0; (contactIndex < numContacts) && !inContact; ++contactIndex)
   {
     const int64_t collisionShapeId = 
-      ER::EuphoriaRigPartUserData::getFromPart(part)->getContactedShapeID(contactIndex);
+      ER::EuphoriaRigPartUserData::getFromPart(part)->getContactedBodyID(contactIndex);
     // if the part contact id matches the patch id then the part is in contact with the patch
-    inContact = (collisionShapeId == patchShapeID);
+    inContact = (collisionShapeId == patchBodyID);
   }
 
   return inContact;
@@ -645,20 +645,20 @@ static void updateArmOrLeg(
   LimbModule* limbModule = (LimbModule*) limbBase;
 
   // Brace-specific: pass up whether the arm is colliding with the specified contact test ID
-  const int64_t patchShapeID = limbModule->brace->data->patchShapeID;
-  if (patchShapeID != 0)
+  const int64_t patchBodyID = limbModule->brace->data->patchBodyID;
+  if (patchBodyID != 0)
   {
     // Test for contact between limb root and test patch.
     const MR::PhysicsRig::Part* const rootPart = static_cast<const MR::PhysicsRig::Part*>(limb.getPart(0));
-    limbModule->brace->feedIn->setRootInContactWithPatchShapeID(isPartInContactWithPatch(rootPart, patchShapeID));
+    limbModule->brace->feedIn->setRootInContactWithPatchBodyID(isPartInContactWithPatch(rootPart, patchBodyID));
 
     // Test for contact between any part of limb (including root) and test patch.
     for (uint32_t i = 0; i < limb.getTotalNumParts(); ++i)
     {
       const MR::PhysicsRig::Part* const part = static_cast<const MR::PhysicsRig::Part*>(limb.getPart(i));
-      if (isPartInContactWithPatch(part, patchShapeID))
+      if (isPartInContactWithPatch(part, patchBodyID))
       {
-        limbModule->brace->feedIn->setLimbInContactWithPatchShapeID(true);
+        limbModule->brace->feedIn->setLimbInContactWithPatchBodyID(true);
         break;
       }
     }

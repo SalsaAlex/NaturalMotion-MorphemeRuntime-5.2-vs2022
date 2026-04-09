@@ -13,7 +13,7 @@
 */
 
 //----------------------------------------------------------------------------------------------------------------------
-#include "mrPhysicsScenePhysX3.h"
+#include "mrPhysicsSceneJoltPhys.h"
 #include "Grab.h"
 #include "MyNetwork.h"
 #include "GrabPackaging.h"
@@ -37,22 +37,18 @@ namespace NM_BEHAVIOUR_LIB_NAMESPACE
 static void convertEdgeToLocalSpace(Edge& grabbableEdge)
 {
   // world to local space
-  if (grabbableEdge.shapeID >= 0)
+  if (grabbableEdge.bodyID >= 0)
   {
-    physx::PxShape* shape = NULL;
-    shape = (physx::PxShape*) (size_t) grabbableEdge.shapeID;
-    if (shape != NULL && MR::PhysXPerShapeData::getFromShape(shape))
+    JPH::Body* body = NULL;
+    body = (JPH::Body*) (size_t) grabbableEdge.bodyID;
+    if (body && !body->IsStatic())
     {
-      physx::PxRigidActor* actor = shape->getActor();
-      if (actor && actor->is<physx::PxRigidDynamic>())
-      {
-        NMP::Matrix34 actorTM = MR::nmPxTransformToNmMatrix34(actor->getGlobalPose());
-        actorTM.inverseTransformVector(grabbableEdge.corner);
-        actorTM.inverseTransformVector(grabbableEdge.point);
-        actorTM.inverseRotateVector(grabbableEdge.edge);
-        actorTM.inverseRotateVector(grabbableEdge.uprightNormal);
-        actorTM.inverseRotateVector(grabbableEdge.otherNormal);
-      }
+      NMP::Matrix34 actorTM = MR::nmJPHMat44ToNmMatrix34(body->GetWorldTransform());
+      actorTM.inverseTransformVector(grabbableEdge.corner);
+      actorTM.inverseTransformVector(grabbableEdge.point);
+      actorTM.inverseRotateVector(grabbableEdge.edge);
+      actorTM.inverseRotateVector(grabbableEdge.uprightNormal);
+      actorTM.inverseRotateVector(grabbableEdge.otherNormal);
     }
   }
 }
@@ -61,23 +57,20 @@ static void convertEdgeToLocalSpace(Edge& grabbableEdge)
 //----------------------------------------------------------------------------------------------------------------------
 static void convertEdgeToWorldSpace(Edge& grabbableEdge)
 {
-  if (grabbableEdge.shapeID >= 0)
+  if (grabbableEdge.bodyID >= 0)
   {
-    physx::PxShape* shape = NULL;
-    shape = (physx::PxShape*) (size_t) grabbableEdge.shapeID;
-    if (shape != NULL && MR::PhysXPerShapeData::getFromShape(shape))
+    JPH::Body* body = NULL;
+    body = (JPH::Body*)(size_t)grabbableEdge.bodyID;
+    if (body && !body->IsStatic())
     {
-      physx::PxRigidActor* actor = shape->getActor();
-      if (actor && actor->is<physx::PxRigidDynamic>())
-      {
-        NMP::Matrix34 actorTM = MR::nmPxTransformToNmMatrix34(actor->getGlobalPose());
-        actorTM.transformVector(grabbableEdge.corner);
-        actorTM.transformVector(grabbableEdge.point);
-        actorTM.rotateVector(grabbableEdge.edge);
-        actorTM.rotateVector(grabbableEdge.uprightNormal);
-        actorTM.rotateVector(grabbableEdge.otherNormal);
-      }
+      NMP::Matrix34 actorTM = MR::nmJPHMat44ToNmMatrix34(body->GetWorldTransform());
+      actorTM.transformVector(grabbableEdge.corner);
+      actorTM.transformVector(grabbableEdge.point);
+      actorTM.rotateVector(grabbableEdge.edge);
+      actorTM.rotateVector(grabbableEdge.uprightNormal);
+      actorTM.rotateVector(grabbableEdge.otherNormal);
     }
+    
   }
 }
 
@@ -686,7 +679,7 @@ void Grab::update(float timeStep)
       return;
     }
 
-    if (grabbableEdge.shapeID >= 0)
+    if (grabbableEdge.bodyID >= 0)
     {
       // Either this edge is attached to a dynamic object, or edgeImportance is zero. In either
       // case, we can carry on trying to grab the cached edge, if only because erEndConstraint
@@ -700,7 +693,7 @@ void Grab::update(float timeStep)
       if (
         grabEdgeImportance > 0.0f && 
         grabbableEdge.gameEdgeID >= 0 &&
-        grabbableEdge.shapeID != data->cachedGrabbableEdgeLocal.shapeID
+        grabbableEdge.bodyID != data->cachedGrabbableEdgeLocal.bodyID
         )
       {
         return;
@@ -837,7 +830,7 @@ void Grab::update(float timeStep)
     NMP::Vector3 rotV;
     NMP::Vector3 lLookConeLimit; // Left look cone limit.
     NMP::Vector3 rLookConeLimit; // Right look cone limit.
-    const HoldTimer& holdTimer = (grabbableEdge.shapeID == -1) ? (in->getGrabActionControl().holdTimer) : (in->getGrabAbilityControl().holdTimer);
+    const HoldTimer& holdTimer = (grabbableEdge.bodyID == -1) ? (in->getGrabActionControl().holdTimer) : (in->getGrabAbilityControl().holdTimer);
 
     // Look downwards and to the sides along the plane spanned by chest-to-pelvis and character side directions
     // clamped to cone before letting go the edge.

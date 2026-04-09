@@ -56,7 +56,7 @@ void ArmBraceUpdatePackage::update(float NMP_UNUSED(timeStep), MR::InstanceDebug
     return;
   }
 
-  if(feedIn->getRootInContactWithPatchShapeID())
+  if(feedIn->getRootInContactWithPatchBodyID())
   {
     return;
   }
@@ -103,7 +103,7 @@ void ArmBraceUpdatePackage::update(float NMP_UNUSED(timeStep), MR::InstanceDebug
   // each arm now finds the closest point on this patch to aim for.
   NMP::Vector3 targetPos;
   const Environment::Patch& patch = in->getBraceHazard().patch;
-  data->patchShapeID = patch.state.shapeID;
+  data->patchBodyID = patch.state.shapeID;
 
   // Check if character is already inside the shape.
   const bool isCentreOfShouldersInsideShape =

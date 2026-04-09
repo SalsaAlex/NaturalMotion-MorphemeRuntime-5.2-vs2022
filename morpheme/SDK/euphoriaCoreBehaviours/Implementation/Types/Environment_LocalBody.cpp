@@ -12,7 +12,7 @@
  *
  */
 
-#include "Types/Environment_LocalShape.h"
+#include "Types/Environment_LocalBody.h"
 #include "Types/Environment_Patch.h"
 
 namespace NM_BEHAVIOUR_LIB_NAMESPACE
@@ -20,7 +20,7 @@ namespace NM_BEHAVIOUR_LIB_NAMESPACE
 
 int cNumberOfFacesOrCapsuleEdges[Environment::Patch::EO_Max] = { -1, 3, 2, 1, 1, 0 };
 
-void Environment::LocalShape::fromWorldSpace(const Patch& patch, const NMP::Matrix34& matrix)
+void Environment::LocalBody::fromWorldSpace(const Patch& patch, const NMP::Matrix34& matrix)
 {
   type = patch.type;
   matrix.inverseTransformVector(patch.knownContactPoint, knownContactPoint);
@@ -29,7 +29,7 @@ void Environment::LocalShape::fromWorldSpace(const Patch& patch, const NMP::Matr
     matrix.inverseRotateVector(patch.faceNormals[i], faceNormals[i]);
 }
 
-void Environment::LocalShape::toWorldSpace(Patch& patch, const NMP::Matrix34& matrix)
+void Environment::LocalBody::toWorldSpace(Patch& patch, const NMP::Matrix34& matrix)
 {
   patch.type = type;
   matrix.transformVector(knownContactPoint, patch.knownContactPoint);

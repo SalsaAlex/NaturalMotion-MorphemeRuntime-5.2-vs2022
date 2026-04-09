@@ -62,13 +62,13 @@ void LegBraceUpdatePackage::update(float NMP_UNUSED(timeStep), MR::InstanceDebug
     return;
   }
 
-  if(feedIn->getRootInContactWithPatchShapeID())
+  if(feedIn->getRootInContactWithPatchBodyID())
   {
     return;
   }
 
-  data->patchShapeID = patch.state.shapeID;
-  bool inContactWithHazard = feedIn->getLimbInContactWithPatchShapeID();
+  data->patchBodyID = patch.state.bodyID;
+  bool inContactWithHazard = feedIn->getLimbInContactWithPatchBodyID();
 
   if(!inContactWithHazard)
   {

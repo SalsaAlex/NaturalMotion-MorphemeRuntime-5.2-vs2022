@@ -120,7 +120,7 @@ protected:
   NMP::Vector3 m_up;                        // Opposite to gravity.
   ER::HandFootTransform m_desiredHandTM;    // Joint will enforce this hand orientation (assuming other body is "fixed").
 
-  int64_t m_targetShapeID;                  // A shape to try connecting to.
+  int64_t m_targetBodyID;                  // A shape to try connecting to.
   JPH::SixDOFConstraint* m_constraint;      // The actual underlying Jolt constraint.
 
   bool m_collisionsWereModified;            // For resetting the collisions if they were disabled at joint creation.

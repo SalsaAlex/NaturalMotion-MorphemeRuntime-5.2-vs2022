@@ -29,9 +29,9 @@ NM_INLINE int32_t SweepResult::getType() const
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-NM_INLINE int64_t SweepResult::getShapeID() const
+NM_INLINE int64_t SweepResult::getBodyID() const
 {
-  return m_shapeID;
+  return m_bodyID;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -153,9 +153,9 @@ NM_INLINE float SweepResult::getCCEdgeLength(uint32_t i) const
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-NM_INLINE void SweepResult::setShapeID(int64_t shapeID)
+NM_INLINE void SweepResult::setBodyID(int64_t bodyID)
 {
-  m_shapeID = shapeID;
+  m_bodyID = bodyID;
 }
 
 } // namespace ER

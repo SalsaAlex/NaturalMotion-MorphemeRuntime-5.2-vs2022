@@ -25,7 +25,7 @@
 #include "./Definition/Types/Environment.types"
 
 // known types
-#include "Types/Environment_LocalShape.h"
+#include "Types/Environment_LocalBody.h"
 
 // for combiners
 #include "euphoria/erJunction.h"
@@ -53,9 +53,9 @@ namespace NM_BEHAVIOUR_LIB_NAMESPACE
 struct PatchStore
 {
 
-  Environment::LocalShape localShapes[4];
+  Environment::LocalBody localBodies[4];
  // 384 Bytes 
-  int64_t lastObjectShapeID;
+  int64_t lastObjectBodyID;
 
   int32_t patchesHead;
 

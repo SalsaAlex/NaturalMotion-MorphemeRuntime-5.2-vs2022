@@ -21,7 +21,7 @@ namespace Environment
 {
   struct ObjectData
   {
-    int64_t shapeID; ///< Will be cast from a pointer to the PxShape
+    int64_t bodyID; ///< Will be cast from a pointer to the JPH::Body
     NMP::Vector3 lastVel;
     NMP::Vector3 secondLastVel;
     NMP::Vector3 smoothedAcc;
@@ -30,7 +30,7 @@ namespace Environment
     int32_t inViewFrameCount; ///< how many frames has it been in view
   };
 
-  __no_combiner__ struct LocalShape
+  __no_combiner__ struct LocalBody
   {
     Position corner; ///< this is local to the bound object
     Direction faceNormals[3]; 
@@ -39,7 +39,7 @@ namespace Environment
     
     + void fromWorldSpace(const Environment::Patch &patch, const NMP::Matrix34 &matrix);
     + void toWorldSpace(Environment::Patch &patch, const NMP::Matrix34 &matrix);
-    + bool isConnectedTo(const Environment::LocalShape &object, float epsilon) const;
+    + bool isConnectedTo(const Environment::LocalBody &object, float epsilon) const;
   };
   
   // This structure stores 3d points, to allow inside outside tests in various plane directions. For simplicity it
@@ -84,7 +84,7 @@ namespace Environment
     NMRU::GeomUtils::AABB aabb;
     Mass mass; ///< this can be the effective mass of that point on the object, but also can be scaled by its dangerousness
     bool isStatic;
-    int64_t shapeID; ///< Will be cast from a pointer to the PxShape
+    int64_t bodyID; ///< Will be cast from a pointer to the JPH::Body
     
     + NMP::Vector3 getInstantVelocityAtPoint(const NMP::Vector3 &point) const;
     + NMP::Vector3 getVelocityAtPoint(const NMP::Vector3 &point) const;
@@ -167,8 +167,8 @@ namespace Environment
     + bool getNearestPointInside(const NMP::Vector3& pointWorld, NMP::Vector3& nearestPoint, bool getSurfacePoint) const;
     // This function converts the sweep result into a format that allows for fast collision testing
     + void updateFromSweepResult(const ER::SweepResult &sweep, const ER::DimensionalScaling& dimensionalScaling);
-    // Returns true if this object is connected to the arguement object, ie if they share part of their shape
-    + bool isConnectedTo(const Environment::Patch &object, const Environment::LocalShape &shape, const Environment::LocalShape &objectShape, float epsilon = 0.08f); ///< epsilon in m for positions and radians for normals
+    // Returns true if this object is connected to the arguement object, ie if they share part of their body
+    + bool isConnectedTo(const Environment::Patch &object, const Environment::LocalBody &body, const Environment::LocalBody &objectBody, float epsilon = 0.08f); ///< epsilon in m for positions and radians for normals
     + void update(float timeStep); ///< This updates the position, velocity and orientation of the patch based on its known angular vel and acceleration
     + void debugDraw(float size, 
                      MR::InstanceDebugInterface* pDebugDrawInst,
@@ -178,9 +178,9 @@ namespace Environment
     + int32_t getNormal2Index(int32_t edgeIndex) const; ///< Returns the second normal touching this edge index
     + float getReliabilityOfPosition(const NMP::Vector3 &position, const NMP::Vector3 &pathPosition, bool clipped) const; ///< Returns a metric of how reliable a resulting position is 
 
-    // Selection of creation functions for manually generated patch shapes
-    + void createAsPlane(const NMP::Vector3 &position, const NMP::Vector3 &normal, float radius, const NMP::Vector3 &velocity, const NMP::Vector3 &angularVelocity, float mass, int64_t shapeID);
-    + void createAsSphere(const NMP::Vector3 &position, float radius, const NMP::Vector3 &velocity, float mass, int64_t shapeID);
+    // Selection of creation functions for manually generated patch bodies
+    + void createAsPlane(const NMP::Vector3 &position, const NMP::Vector3 &normal, float radius, const NMP::Vector3 &velocity, const NMP::Vector3 &angularVelocity, float mass, int64_t bodyID);
+    + void createAsSphere(const NMP::Vector3 &position, float radius, const NMP::Vector3 &velocity, float mass, int64_t bodyID);
     
   private:
     + bool getNearestPointInside(NMP::Vector3& nearestPoint, const NMP::Vector3& planeIntersectionPoint, const NMP::Vector3* edgeTangents, bool getSurfacePoint) const;
@@ -193,7 +193,7 @@ namespace Environment
     NMP::Matrix34   matrix;
     bool            isStill;
     bool            isACharacter;
-    int32_t         dataIndex; ///< This is ER::PhysXPerShapeData::dataIndex and is the index into the array of EA objects
+    int32_t         dataIndex; ///< This is ER::JoltPhysPerBodyData::dataIndex and is the index into the array of EA objects
   };  
 }
 
@@ -206,10 +206,10 @@ struct PatchSet
 
 __no_combiner__ struct PatchStore
 {
-  Environment::LocalShape localShapes[4];
+  Environment::LocalBody localBodies[4];
   int32_t patchesHead;
   int32_t lastObjectIndex;
-  int64_t lastObjectShapeID;
+  int64_t lastObjectBodyID;
   int32_t sweepSegment;
   int32_t staticSweepSegment;
 };

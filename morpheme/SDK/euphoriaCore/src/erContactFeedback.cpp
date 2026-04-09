@@ -10,38 +10,42 @@
 
 #include "euphoria/erContactFeedback.h"
 #include "euphoria/erEuphoriaUserData.h"
-#include "mrPhysX3.h"
-#include "mrPhysicsRigPhysX3.h"
-#include "mrPhysicsScenePhysX3.h"
+#include "mrJoltPhys.h"
+#include "mrPhysicsRigJoltPhys.h"
+#include "mrPhysicsSceneJoltPhys.h"
 #include "euphoria/erValueValidators.h"
 
 bool g_debugDrawDetailedContacts = false;
 bool g_debugDrawContacts = false;
 static ER::ContactFeedback s_contactFeedback;
-physx::PxClientID ER::ContactFeedback::m_ownerClientID = physx::PX_DEFAULT_CLIENT;
+
+//ugh.. the way naturalmotion did this with physx3 is just not compatible with jolt
+// without alot of changes..
+static JPH::PhysicsSystem *s_physicsSystem;
+
+static JPH::Body* bodyRefToPtr(const JPH::Body& body) { return s_physicsSystem->GetBodyLockInterface().TryGetBody(body.GetID()); }
+
 
 namespace ER
 {
 //----------------------------------------------------------------------------------------------------------------------
 // Add the callback if it isn't already added
-void ContactFeedback::initialise(MR::PhysicsScene* physicsScene, physx::PxClientID ownerClientID)
+void ContactFeedback::initialise(MR::PhysicsScene* physicsScene)
 {
-  m_ownerClientID = ownerClientID;
   // Setting an event callback is a global operation that only needs to be done once per scene
   // So we don't need to set it if it has already been set by a different character.
-  MR::PhysicsScenePhysX3* scene = (MR::PhysicsScenePhysX3*)physicsScene;
-  if (scene->getPhysXScene()->getSimulationEventCallback(ownerClientID) == NULL)
-  {
-    scene->getPhysXScene()->setSimulationEventCallback(&s_contactFeedback, ownerClientID);
-  }
+  MR::PhysicsSceneJoltPhys* scene = (MR::PhysicsSceneJoltPhys*)physicsScene;
+  scene->m_joltPhysScene->SetContactListener(&s_contactFeedback);
+  s_physicsSystem = scene->m_joltPhysScene;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 // Remove the callback
 void ContactFeedback::deinitialise(MR::PhysicsScene* physicsScene)
 {
-  MR::PhysicsScenePhysX3* scene = (MR::PhysicsScenePhysX3*)physicsScene;
-  scene->getPhysXScene()->setSimulationEventCallback(NULL, m_ownerClientID);
+  MR::PhysicsSceneJoltPhys* scene = (MR::PhysicsSceneJoltPhys*)physicsScene;
+  if (scene->m_joltPhysScene->GetContactListener() == &s_contactFeedback) //original code did not have this check.. hm
+      scene->m_joltPhysScene->SetContactListener(NULL);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -76,8 +80,7 @@ void ContactFeedback::setDrawContactsFlag(bool drawEnabled)
 
 //----------------------------------------------------------------------------------------------------------------------
 void ER::EuphoriaRigPartUserData::processData(
-  physx::PxActor* contactedActor, 
-  physx::PxShape* contactedShape, 
+  JPH::Body* contactedBody, 
   const NMP::Vector3& point, 
   const NMP::Vector3& normal, 
   float impulseMagnitude)
@@ -95,38 +98,36 @@ void ER::EuphoriaRigPartUserData::processData(
   m_lastTotalImpulse += impulse;
   m_lastTotalPositionScaled += point * impulseMagnitude; 
   m_lastTotalNormalScaled += normal * impulseMagnitude;
-  m_lastTotalVelocityScaled += MR::nmPxVec3ToVector3(MR::getLinearVelocity(*contactedActor)) * impulseMagnitude;
-  m_lastCollisionID = (int64_t)(size_t)contactedActor;
+  m_lastTotalVelocityScaled += MR::nmJPHVec3ToVector3(contactedBody->GetLinearVelocity()) * impulseMagnitude;
+  m_lastCollisionID = (int64_t)(size_t)contactedBody;
 
   if (m_numContacts == m_maxNumContacts)
   {
-    physx::PxShape** origShapes = m_contactedShapes;
+    JPH::Body** origBodies = m_contactedBodies;
     uint16_t origNum = m_maxNumContacts;
     m_maxNumContacts *= 2;
-    m_contactedShapes = 
-      (physx::PxShape**) NMP::Memory::memAlloc(sizeof(physx::PxShape*)*m_maxNumContacts NMP_MEMORY_TRACKING_ARGS);
-    memcpy(m_contactedShapes, origShapes, sizeof(physx::PxShape*)*origNum);
-    NMP::Memory::memFree(origShapes);
+    m_contactedBodies = 
+      (JPH::Body**) NMP::Memory::memAlloc(sizeof(JPH::Body*)*m_maxNumContacts NMP_MEMORY_TRACKING_ARGS);
+    memcpy(m_contactedBodies, origBodies, sizeof(JPH::Body*)*origNum);
+    NMP::Memory::memFree(origBodies);
   }
   NMP_ASSERT(m_numContacts < m_maxNumContacts);
 
-  m_contactedShapes[m_numContacts] = contactedShape;
+  m_contactedBodies[m_numContacts] = contactedBody;
   ++m_numContacts;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-static void setActorsInContact(physx::PxActor* actor0, 
-                               physx::PxActor* actor1, 
-                               physx::PxShape* shape0,
-                               physx::PxShape* shape1,
+static void setBodiesInContact(const JPH::Body& body0, 
+                               const JPH::Body& body1, 
                                const NMP::Vector3& point, 
                                const NMP::Vector3& normal, 
                                const float impulseMagnitude)
 {
   // Check that the actor has a dynamic body so we don't get confused with the kinematic shapes used
   // for HK.
-  MR::PhysicsRigPhysX3ActorData* act0 = MR::PhysicsRigPhysX3ActorData::getFromActor(actor0);
-  MR::PhysicsRigPhysX3ActorData* act1 = MR::PhysicsRigPhysX3ActorData::getFromActor(actor1);
+  MR::PhysicsRigJoltPhysBodyData* act0 = MR::PhysicsRigJoltPhysBodyData::getFromBody(body0);
+  MR::PhysicsRigJoltPhysBodyData* act1 = MR::PhysicsRigJoltPhysBodyData::getFromBody(body1);
   MR::PhysicsRig::Part* p0 = act0 ? act0->m_owningRigPart : 0;
   MR::PhysicsRig::Part* p1 = act1 ? act1->m_owningRigPart : 0;
 
@@ -145,28 +146,27 @@ static void setActorsInContact(physx::PxActor* actor0,
 #endif
 
 #if defined(MR_OUTPUT_DEBUGGING)
-  const float lengthMultiplier = PxGetPhysics().getTolerancesScale().length;
   NMP::Vector3 impulse = normal * impulseMagnitude;
 
   if (g_debugDrawContacts)
   {
     if (impulseMagnitude > 0.0f)
     {
-      MR_DEBUG_DRAW_POINT_GLOBAL(point, 0.01f * lengthMultiplier, NMP::Colour::WHITE);
+      MR_DEBUG_DRAW_POINT_GLOBAL(point, 1, NMP::Colour::WHITE);
     }
     else
     {
-      MR_DEBUG_DRAW_POINT_GLOBAL(point, 0.01f * lengthMultiplier, NMP::Colour::RED);
+      MR_DEBUG_DRAW_POINT_GLOBAL(point, 1, NMP::Colour::RED);
     }
   }
 
   if (g_debugDrawDetailedContacts && impulseMagnitude > 0.0f)
   {
-    MR_DEBUG_DRAW_VECTOR_GLOBAL(MR::VT_Normal, point, normal * 0.03f * lengthMultiplier, NMP::Colour::WHITE);
+    MR_DEBUG_DRAW_VECTOR_GLOBAL(MR::VT_Normal, point, normal, NMP::Colour::WHITE);
     MR_DEBUG_DRAW_VECTOR_GLOBAL(MR::VT_Normal, point, 
-      MR::nmPxVec3ToVector3(actor0->is<physx::PxRigidActor>()->getGlobalPose().p) - point, NMP::Colour::DARK_RED);
+      MR::nmJPHVec3ToVector3(body0.GetWorldTransform().GetTranslation()) - point, NMP::Colour::DARK_RED);
     MR_DEBUG_DRAW_VECTOR_GLOBAL(MR::VT_Normal, point, 
-      MR::nmPxVec3ToVector3(actor1->is<physx::PxRigidActor>()->getGlobalPose().p) - point, NMP::Colour::DARK_RED);
+      MR::nmJPHVec3ToVector3(body1.GetWorldTransform().GetTranslation()) - point, NMP::Colour::DARK_RED);
     MR_DEBUG_DRAW_VECTOR_GLOBAL(MR::VT_Impulse, point, impulse, NMP::Colour::BLUE);
   }
 
@@ -191,7 +191,7 @@ static void setActorsInContact(physx::PxActor* actor0,
     ER::EuphoriaRigPartUserData* data = ER::EuphoriaRigPartUserData::getFromPart(p0);
     if (data)
     {
-      data->processData(actor1, shape1, point, normal, impulseMagnitude);
+      data->processData(bodyRefToPtr(body1), point, normal, impulseMagnitude);
     }
   }
   if (p1)
@@ -199,83 +199,41 @@ static void setActorsInContact(physx::PxActor* actor0,
     ER::EuphoriaRigPartUserData* data = ER::EuphoriaRigPartUserData::getFromPart(p1);
     if (data)
     {
-      data->processData(actor0, shape0, point, -normal, impulseMagnitude);
+      data->processData(bodyRefToPtr(body1), point, -normal, impulseMagnitude);
     }
   }
 }
 
-static const physx::PxU32 MAX_CONTACT_PAIR_POINTS = 16;
-static physx::PxContactPairPoint contactPairPoints[MAX_CONTACT_PAIR_POINTS];
-
 //----------------------------------------------------------------------------------------------------------------------
-void ContactFeedback::onContact(
-  const physx::PxContactPairHeader& pairHeader, 
-  const physx::PxContactPair* pairs, 
-  physx::PxU32 nbPairs)
+JPH::ValidateResult ContactFeedback::OnContactValidate(const JPH::Body& inBody1, 
+    const JPH::Body& inBody2,
+    JPH::RVec3Arg inBaseOffset, 
+    const JPH::CollideShapeResult& inCollisionResult)
 {
   if (m_userContactHandler)
   {
-    m_userContactHandler->onContact(pairHeader, pairs, nbPairs);
+    m_userContactHandler->onContact(inBody1, inBody2);
   }
-
-  if (
-    pairHeader.flags & physx::PxContactPairHeaderFlag::eREMOVED_ACTOR_0 || 
-    pairHeader.flags & physx::PxContactPairHeaderFlag::eREMOVED_ACTOR_1
-    )
-  {
-    return;
-  }
-
-  physx::PxActor* actor0 = pairHeader.actors[0];
-  physx::PxActor* actor1 = pairHeader.actors[1];
 
   bool callSetActorsInContact = 
-    MR::PhysicsRigPhysX3ActorData::getFromActor(actor0) || MR::PhysicsRigPhysX3ActorData::getFromActor(actor1);
+    MR::PhysicsRigJoltPhysBodyData::getFromBody(inBody1) || MR::PhysicsRigJoltPhysBodyData::getFromBody(inBody2);
 
   // Don't do the loop unless we would do something
   if (!callSetActorsInContact && !m_userContactHandler)
     return;
 
-  for (physx::PxU32 iPair = 0 ; iPair != nbPairs ; ++iPair)
+  const NMP::Vector3 point = MR::nmJPHVec3ToVector3(inCollisionResult.mContactPointOn1);
+  const NMP::Vector3 normal = MR::nmJPHVec3ToVector3(-inCollisionResult.mPenetrationAxis.Normalized());
+  float impulseMagnitude = inCollisionResult.mPenetrationDepth; //this prob not right
+  // Don't just check if these are articulation links, as then we won't get hits on HK
+  // parts. We can get the per-actor data even from the HK parts, so use that instead.
+  // This is slightly more expensive, but shouldn't be too significant.
+  if (
+    MR::PhysicsRigJoltPhysBodyData::getFromBody(inBody1) || 
+    MR::PhysicsRigJoltPhysBodyData::getFromBody(inBody2)
+    )
   {
-    const physx::PxContactPair& pair = pairs[iPair];
-    // Skip deleted shapes
-    if (pair.flags & (physx::PxContactPairFlag::eREMOVED_SHAPE_0 | physx::PxContactPairFlag::eREMOVED_SHAPE_1))
-    {
-      continue;
-    }
-
-    physx::PxU32 numPairPoints = pair.extractContacts(contactPairPoints, MAX_CONTACT_PAIR_POINTS);
-
-
-    for (physx::PxU32 iContact = 0 ; iContact != numPairPoints ; ++iContact)
-    {
-      const physx::PxContactPairPoint& contactPairPoint = contactPairPoints[iContact];
-      const NMP::Vector3 normal = MR::nmPxVec3ToVector3(contactPairPoint.normal);
-      const float impulseMagnitude = contactPairPoint.impulse.magnitude();
-#if !defined(MR_OUTPUT_DEBUGGING)
-      // Zero-impulse contacts are only used for drawing, so avoid the function call overhead if
-      // debug draw is disabled.
-      if (impulseMagnitude == 0.0f)
-      {
-        continue;
-      }
-#endif
-      NMP_ASSERT(impulseMagnitude >= 0.0f); // PhysX used to report -ve sometimes
-      const NMP::Vector3 point = MR::nmPxVec3ToVector3(contactPairPoint.position);
-      physx::PxShape* shape0 = pair.shapes[0];
-      physx::PxShape* shape1 = pair.shapes[1];
-      // Don't just check if these are articulation links, as then we won't get hits on HK
-      // parts. We can get the per-actor data even from the HK parts, so use that instead.
-      // This is slightly more expensive, but shouldn't be too significant.
-      if (
-        MR::PhysicsRigPhysX3ActorData::getFromActor(actor0) || 
-        MR::PhysicsRigPhysX3ActorData::getFromActor(actor1)
-        )
-      {
-        setActorsInContact(actor0, actor1, shape0, shape1, point, normal, impulseMagnitude);
-      }
-    }
+    setBodiesInContact(inBody1, inBody2, point, normal, impulseMagnitude);
   }
 }
 

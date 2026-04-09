@@ -21,7 +21,7 @@ data:
   Weight importance;        ///< Importance of the resulting limb control
   Imminence imminence;      ///< 1/time to impact
   Position placePos;        ///< Position to place hands
-  int64_t patchShapeID;     ///< Used to tell whether the hand is in contact with the passed in hazard
+  int64_t patchBodyID;     ///< Used to tell whether the hand is in contact with the passed in hazard
   bool doingBrace;          ///< Used for hysteresis
 
 in:
@@ -39,8 +39,8 @@ feedOut:
   Position endCushionPoint;            ///< Passes up hand position to generate averaged cushionPoint as input
 
 feedIn:
-  bool limbInContactWithPatchShapeID; ///< Result of contact test, is any part of the limb in contact with the incoming hazard
-  bool rootInContactWithPatchShapeID; ///< Result of contact test, is the limb's root part in contact with the incoming hazard
+  bool limbInContactWithPatchBodyID; ///< Result of contact test, is any part of the limb in contact with the incoming hazard
+  bool rootInContactWithPatchBodyID; ///< Result of contact test, is the limb's root part in contact with the incoming hazard
 
 out:
   LimbControl control; ///< IK Control of arm

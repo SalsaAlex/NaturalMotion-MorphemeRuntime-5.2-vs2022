@@ -85,9 +85,9 @@ __no_combiner__ struct ObjectMetric
   Position charactersPosition;
   Velocity charactersVelocity;
   
-  /// A shape to focus on
-  int64_t focusShapeID;
-  float shapeAdvantage; ///< For value hysteresis
+  /// A body to focus on
+  int64_t focusBodyID;
+  float bodyAdvantage; ///< For value hysteresis
   Frequency interestReductionRate;
   
   + float getMetric(const Environment::State &state, float timeStep, float &lastMetric) const;

@@ -62,7 +62,7 @@ struct ObjectMetric
 
   NMP::Vector3 charactersVelocity;           ///< (Velocity)
 
-  int64_t focusShapeID;  /// A shape to focus on
+  int64_t focusBodyID;  /// A body to focus on
 
   float minMass;  /// absolute cutoffs  (Mass)
 
@@ -74,7 +74,7 @@ struct ObjectMetric
 
   float distanceSquaredCoefficient;          ///< (Multiplier)
 
-  float shapeAdvantage;  ///< For value hysteresis
+  float bodyAdvantage;  ///< For value hysteresis
 
   float interestReductionRate;               ///< (Frequency)
 
@@ -94,7 +94,7 @@ struct ObjectMetric
     NM_VALIDATOR(FloatValid(speedSquaredCoefficient), "speedSquaredCoefficient");
     NM_VALIDATOR(FloatValid(accelerationSquaredCoefficient), "accelerationSquaredCoefficient");
     NM_VALIDATOR(FloatValid(distanceSquaredCoefficient), "distanceSquaredCoefficient");
-    NM_VALIDATOR(FloatValid(shapeAdvantage), "shapeAdvantage");
+    NM_VALIDATOR(FloatValid(bodyAdvantage), "bodyAdvantage");
     NM_VALIDATOR(FloatNonNegative(interestReductionRate), "interestReductionRate");
 #endif // NM_CALL_VALIDATORS
   }

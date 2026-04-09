@@ -54,7 +54,7 @@ namespace NM_BEHAVIOUR_LIB_NAMESPACE
 struct SphereTrajectory; 
 namespace Environment { struct CollideResult; } 
 namespace Environment { struct Patch; } 
-namespace Environment { struct LocalShape; } 
+namespace Environment { struct LocalBody; } 
 
 namespace Environment { 
 
@@ -127,7 +127,7 @@ struct Patch
   // This function converts the sweep result into a format that allows for fast collision testing
   void updateFromSweepResult(const ER::SweepResult& sweep, const ER::DimensionalScaling& dimensionalScaling);
   /// epsilon in m for positions and radians for normals
-  bool isConnectedTo(const Environment::Patch& object, const Environment::LocalShape& shape, const Environment::LocalShape& objectShape, float epsilon=0.08f);
+  bool isConnectedTo(const Environment::Patch& object, const Environment::LocalBody& body, const Environment::LocalBody& objectBody, float epsilon=0.08f);
   /// This updates the position, velocity and orientation of the patch based on its known angular vel and acceleration
   void update(float timeStep);
   void debugDraw(float size, MR::InstanceDebugInterface* pDebugDrawInst, const ER::DimensionalScaling& dimensionalScaling) const;

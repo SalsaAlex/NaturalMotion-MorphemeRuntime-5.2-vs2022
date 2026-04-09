@@ -84,8 +84,8 @@ struct EdgeBuffer
   int8_t find(const Edge& edge) const;
   /// Removes all the edges with quality ("grabbability") less than minQuality.
   void cullLowQuality(float minQuality);
-  /// Removes all the edges that belong to the shape with specified ID.
-  void cullShapeID(int64_t edgeShapeID);
+  /// Removes all the edges that belong to the body with specified ID.
+  void cullBodyID(int64_t edgeBodyID);
   void debugDraw(MR::InstanceDebugInterface* pDebugDrawInst) const;
 
 private:

@@ -119,7 +119,7 @@ static float shieldHazardResponse(const HazardResponseUpdatePackage& pkg, NMP::V
           // Work out if we have to do a shield in urgency
           // Will continue to do a shield in urgency until he is hit by the object. These 3 conditions ensure that the
           // main hazard is still the same one than during the last frame.
-          bool newHazardID = pkg.data->lastHazardID != state.shapeID; // It means only the ID changed and not there is a new hazard.
+          bool newHazardID = pkg.data->lastHazardID != state.bodyID; // It means only the ID changed and not there is a new hazard.
           bool continueShieldInUrgency = !newHazardID && pkg.data->wasDoingShieldInUrgency
             && (timeToImpact < pkg.data->lastTimeToImpact);
 
@@ -267,11 +267,11 @@ void HazardResponseUpdatePackage::update(float NMP_UNUSED(timeStep), MR::Instanc
   }
 
   // Store data.
-  if (data->lastHazardID != state.shapeID) // It means only the ID changed and not there is a new hazard.
+  if (data->lastHazardID != state.bodyID) // It means only the ID changed and not there is a new hazard.
   {
     data->lastImpactPos = hazard.impactPosition;
   }
-  data->lastHazardID = state.shapeID; // 0 can be no hazard or any static object.
+  data->lastHazardID = state.bodyID; // 0 can be no hazard or any static object.
   data->lastHazardDanger = hazardDanger;
 }
 

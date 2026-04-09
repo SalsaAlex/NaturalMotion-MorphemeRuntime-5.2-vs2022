@@ -42,8 +42,8 @@ const uint32_t cMaxContactConstraints = 8192;
 namespace MR
 {
 
-JoltPhysPerShapeData::ShapeToDataMap* JoltPhysPerShapeData::s_shapeToDataMap = 0;
-NMP::HeapAllocator* JoltPhysPerShapeData::s_mapAllocator = 0;
+JoltPhysPerBodyData::BodyToDataMap* JoltPhysPerBodyData::s_bodyToDataMap = 0;
+NMP::HeapAllocator* JoltPhysPerBodyData::s_mapAllocator = 0;
 
 //----------------------------------------------------------------------------------------------------------------------
 PhysicsSceneJoltPhys::PhysicsSceneJoltPhys(JPH::TempAllocator* joltAllocator, 
@@ -273,6 +273,71 @@ NMP::Matrix34 getBodyInertiaWorld(const JPH::Body* body)
 
     // return world frame inertia
     return bodyTMInv * inertiaBody * bodyTM;
+}
+
+class NMCastShapeCollector : public JPH::CastShapeCollector
+{
+public:
+    NMCastShapeCollector(JPH::PhysicsSystem* scene) : m_pScene(scene) {}
+
+    void AddHit(const ResultType& inResult) NM_OVERRIDE
+    {
+        CastData::perbodydata entry;
+        entry.body = m_pScene->GetBodyLockInterface().TryGetBody(inResult.mBodyID2);
+        entry.normal = -inResult.mPenetrationAxis.Normalized();
+        entry.contactpoint = inResult.mContactPointOn1;
+        m_vCastResult.hits.push_back(entry);
+    }
+
+    CastData m_vCastResult;
+private:
+    JPH::PhysicsSystem* m_pScene;
+};
+
+
+//sweep axis aligned shape through world
+CastData SweepAAShapeVsWorld(JPH::PhysicsSystem* scene, JPH::Shape* shape, JPH::Vec3 pos, JPH::Vec3 dir, float dist)
+{
+    JPH::RShapeCast start(shape,
+        JPH::Vec3::sOne(),
+        JPH::Mat44::sRotationTranslation(JPH::Quat(0, 0, 0, 1), pos),
+        dir);
+    JPH::ShapeCastSettings sweepsettings;
+    NMCastShapeCollector collector(scene);
+
+    scene->GetNarrowPhaseQuery().CastShape(
+        start,
+        sweepsettings,
+        JPH::Vec3::sOne(),
+        collector
+    );
+
+    return collector.m_vCastResult;
+}
+
+//sweep axis aligned shape against body
+CastData SweepAAShapeVsBody(JPH::PhysicsSystem* scene, JPH::Shape* shape, JPH::Body* body, JPH::Vec3 pos, JPH::Vec3 dir, float dist)
+{
+    JPH::ShapeCast start(shape, 
+        JPH::Vec3::sOne(), 
+        JPH::Mat44::sRotationTranslation(JPH::Quat(0, 0, 0, 1), pos),
+        dir);
+    JPH::ShapeCastSettings sweepsettings;
+    NMCastShapeCollector collector(scene);
+
+    JPH::CollisionDispatch::sCastShapeVsShapeWorldSpace(
+        start,
+        sweepsettings,
+        body->GetShape(),
+        JPH::Vec3::sOne(),
+        JPH::ShapeFilter(),
+        body->GetWorldTransform(),
+        JPH::SubShapeIDCreator(),
+        JPH::SubShapeIDCreator(),
+        collector
+    );
+
+    return collector.m_vCastResult;
 }
 
 

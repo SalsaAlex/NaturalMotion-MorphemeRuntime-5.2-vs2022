@@ -27,7 +27,7 @@ namespace ER
 
 		/// This will be called when there is an active contact.
 		virtual void onContact(
-			const JPH::Body& inBody1, const JPH::Body& inBody2r) = 0;
+			const JPH::Body& inBody1, const JPH::Body& inBody2) = 0;
 	};
 
 	// This class allows euphoria to access contact forces resulting from character collisions
@@ -54,15 +54,15 @@ namespace ER
 			JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult& inCollisionResult)
 			NM_OVERRIDE;
 
-		void OnContactAdded(const JPH::Body& inBody1,
-			const JPH::Body& inBody2, const JPH::ContactManifold& inManifold,
-			JPH::ContactSettings& ioSettings) NM_OVERRIDE;
-
-		void OnContactPersisted(const JPH::Body& inBody1,
-			const JPH::Body& inBody2, const JPH::ContactManifold& inManifold,
-			JPH::ContactSettings& ioSettings) NM_OVERRIDE;
-
-		void OnContactRemoved(const JPH::SubShapeIDPair& inSubShapePair) NM_OVERRIDE;
+		//void OnContactAdded(const JPH::Body& inBody1,
+		//	const JPH::Body& inBody2, const JPH::ContactManifold& inManifold,
+		//	JPH::ContactSettings& ioSettings) NM_OVERRIDE;
+		//
+		//void OnContactPersisted(const JPH::Body& inBody1,
+		//	const JPH::Body& inBody2, const JPH::ContactManifold& inManifold,
+		//	JPH::ContactSettings& ioSettings) NM_OVERRIDE;
+		//
+		//void OnContactRemoved(const JPH::SubShapeIDPair& inSubShapePair) NM_OVERRIDE;
 	};
 
 }; // namespace ER

@@ -74,7 +74,7 @@ NMP_ALIGN_PREFIX(32) struct LegBraceData
   NMP::Vector3 reachDirection;  ///< Direction to brace in  (Direction)
   NMP::Vector3 placePos;  ///< Where exactly to place the feet  (Position)
   NMP::Vector3 protectPoint;  ///< The point to be protected, roughly the stomach, depending on protectChestAmount  (Position)
-  int64_t patchShapeID;  ///< The shape to test is contacted
+  int64_t patchBodyID;  ///< The body to test is contacted
   float importance;  ///< Importance of the resulting limb control  (Weight)
   float imminence;  ///< How soon the impact is  (Imminence)
   bool doingBrace;  ///< Used for hysteresis
@@ -348,35 +348,35 @@ NMP_ALIGN_PREFIX(32) struct LegBraceFeedbackInputs
     memset(this, 0, sizeof(LegBraceFeedbackInputs));
   }
 
-  NM_INLINE void setLimbInContactWithPatchShapeID(const bool& _limbInContactWithPatchShapeID, float limbInContactWithPatchShapeID_importance = 1.f)
+  NM_INLINE void setLimbInContactWithPatchBodyID(const bool& _limbInContactWithPatchBodyID, float limbInContactWithPatchBodyID_importance = 1.f)
   {
-    limbInContactWithPatchShapeID = _limbInContactWithPatchShapeID;
-    NMP_ASSERT(limbInContactWithPatchShapeID_importance >= 0.0f && limbInContactWithPatchShapeID_importance <= 1.0f);
-    m_limbInContactWithPatchShapeIDImportance = limbInContactWithPatchShapeID_importance;
+    limbInContactWithPatchBodyID = _limbInContactWithPatchBodyID;
+    NMP_ASSERT(limbInContactWithPatchBodyID_importance >= 0.0f && limbInContactWithPatchBodyID_importance <= 1.0f);
+    m_limbInContactWithPatchBodyIDImportance = limbInContactWithPatchBodyID_importance;
   }
-  NM_INLINE float getLimbInContactWithPatchShapeIDImportance() const { return m_limbInContactWithPatchShapeIDImportance; }
-  NM_INLINE const float& getLimbInContactWithPatchShapeIDImportanceRef() const { return m_limbInContactWithPatchShapeIDImportance; }
-  NM_INLINE const bool& getLimbInContactWithPatchShapeID() const { return limbInContactWithPatchShapeID; }
+  NM_INLINE float getLimbInContactWithPatchBodyIDImportance() const { return m_limbInContactWithPatchBodyIDImportance; }
+  NM_INLINE const float& getLimbInContactWithPatchBodyIDImportanceRef() const { return m_limbInContactWithPatchBodyIDImportance; }
+  NM_INLINE const bool& getLimbInContactWithPatchBodyID() const { return limbInContactWithPatchBodyID; }
 
-  NM_INLINE void setRootInContactWithPatchShapeID(const bool& _rootInContactWithPatchShapeID, float rootInContactWithPatchShapeID_importance = 1.f)
+  NM_INLINE void setRootInContactWithPatchBodyID(const bool& _rootInContactWithPatchBodyID, float rootInContactWithPatchBodyID_importance = 1.f)
   {
-    rootInContactWithPatchShapeID = _rootInContactWithPatchShapeID;
-    NMP_ASSERT(rootInContactWithPatchShapeID_importance >= 0.0f && rootInContactWithPatchShapeID_importance <= 1.0f);
-    m_rootInContactWithPatchShapeIDImportance = rootInContactWithPatchShapeID_importance;
+    rootInContactWithPatchBodyID = _rootInContactWithPatchBodyID;
+    NMP_ASSERT(rootInContactWithPatchBodyID_importance >= 0.0f && rootInContactWithPatchBodyID_importance <= 1.0f);
+    m_rootInContactWithPatchBodyIDImportance = rootInContactWithPatchBodyID_importance;
   }
-  NM_INLINE float getRootInContactWithPatchShapeIDImportance() const { return m_rootInContactWithPatchShapeIDImportance; }
-  NM_INLINE const float& getRootInContactWithPatchShapeIDImportanceRef() const { return m_rootInContactWithPatchShapeIDImportance; }
-  NM_INLINE const bool& getRootInContactWithPatchShapeID() const { return rootInContactWithPatchShapeID; }
+  NM_INLINE float getRootInContactWithPatchBodyIDImportance() const { return m_rootInContactWithPatchBodyIDImportance; }
+  NM_INLINE const float& getRootInContactWithPatchBodyIDImportanceRef() const { return m_rootInContactWithPatchBodyIDImportance; }
+  NM_INLINE const bool& getRootInContactWithPatchBodyID() const { return rootInContactWithPatchBodyID; }
 
 protected:
 
-  bool limbInContactWithPatchShapeID;  ///< Result of contact test, is any part of the limb in contact with the incoming hazard
-  bool rootInContactWithPatchShapeID;  ///< Result of contact test, is the limb's root part in contact with the incoming hazard
+  bool limbInContactWithPatchBodyID;  ///< Result of contact test, is any part of the limb in contact with the incoming hazard
+  bool rootInContactWithPatchBodyID;  ///< Result of contact test, is the limb's root part in contact with the incoming hazard
 
   // importance values
   float
-     m_limbInContactWithPatchShapeIDImportance, 
-     m_rootInContactWithPatchShapeIDImportance;
+     m_limbInContactWithPatchBodyIDImportance, 
+     m_rootInContactWithPatchBodyIDImportance;
 
   friend class LegBrace_Con;
 

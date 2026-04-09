@@ -71,7 +71,7 @@ struct Edge
 
   NMP::Vector3 point;  ///< A point on the edge. Used as average grab point for the end-effector.  (Position)
 
-  int64_t shapeID;  ///< Cast from pointer.
+  int64_t bodyID;  ///< Cast from pointer.
 
   float quality;  ///< "Grabbability" of this edge.
 

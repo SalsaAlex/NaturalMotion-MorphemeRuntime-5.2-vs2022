@@ -30,9 +30,9 @@
 #include "euphoria/erCharacter.h"
 #include "euphoria/erEuphoriaUserData.h"
 #include "euphoria/erDebugDraw.h"
-#include "mrPhysicsScenePhysX3.h"
+#include "mrPhysicsSceneJoltPhys.h"
 #include "physics/mrPhysicsRigDef.h"
-#include "mrPhysicsRigPhysX3Articulation.h"
+#include "mrPhysicsRigJoltPhysRagdoll.h"
 #include "EnvironmentAwareness.h"
 #include "Head.h"
 #include "HeadEyes.h"
@@ -48,24 +48,22 @@ namespace NM_BEHAVIOUR_LIB_NAMESPACE
 //----------------------------------------------------------------------------------------------------------------------
 static void updateEnvironmentObject(
   Environment::Object* object,
-  physx::PxShape* shape,
+  JPH::Body* body,
   int32_t objectDataIndex,
   MR::InstanceDebugInterface* MR_OUTPUT_DEBUG_ARG(pDebugDrawInst))
 {
-  physx::PxRigidActor& actor = *shape->getActor();
-  physx::PxBounds3 bounds = actor.getWorldBounds();
-  physx::PxVec3 extents = bounds.getExtents();
-  physx::PxVec3 centre = bounds.getCenter();
-  object->state.aabb.setCentreAndHalfExtents(MR::nmPxVec3ToVector3(centre), MR::nmPxVec3ToVector3(extents));
-  object->state.position = MR::nmPxVec3ToVector3(actor.getGlobalPose().p);
-  object->matrix = MR::nmPxTransformToNmMatrix34(actor.getGlobalPose());
+  JPH::AABox bounds = body->GetWorldSpaceBounds();
+  JPH::Vec3 extents = bounds.GetExtent();
+  JPH::Vec3 centre = bounds.GetCenter();
+  object->state.aabb.setCentreAndHalfExtents(MR::nmJPHVec3ToVector3(centre), MR::nmJPHVec3ToVector3(extents));
+  object->state.position = MR::nmJPHVec3ToVector3(body->GetWorldTransform().GetTranslation());
+  object->matrix = MR::nmJPHMat44ToNmMatrix34(body->GetWorldTransform());
 
-  physx::PxRigidBody* body = actor.is<physx::PxRigidBody>();
-  if (body)
+  if (!body->IsStatic())
   {
     // This is the vel of centre of mass
-    object->state.velocity = MR::nmPxVec3ToVector3(body->getLinearVelocity());
-    object->state.angularVelocity = MR::nmPxVec3ToVector3(body->getAngularVelocity());
+    object->state.velocity = MR::nmJPHVec3ToVector3(body->GetLinearVelocity());
+    object->state.angularVelocity = MR::nmJPHVec3ToVector3(body->GetAngularVelocity());
   }
 
   object->dataIndex = objectDataIndex;
@@ -80,11 +78,11 @@ static void updateEnvironmentObject(
 
       if (pDebugDrawInst->isModuleDebugEnabled(currentModuleIndex))
       {
-        MR::PhysXPerShapeData* perShapeData = MR::PhysXPerShapeData::getFromShape(shape);
-        if (perShapeData)
+        MR::JoltPhysPerBodyData* perBodyData = MR::JoltPhysPerBodyData::getFromBody(body);
+        if (perBodyData)
         {
-          perShapeData->m_debugColour = ER::getDefaultColourForControl(ER::objectSeenControl);
-          perShapeData->m_debugColour.w = ER::getDefaultColourForControl(ER::objectSeenControl).w;
+          perBodyData->m_debugColour = ER::getDefaultColourForControl(ER::objectSeenControl);
+          perBodyData->m_debugColour.w = ER::getDefaultColourForControl(ER::objectSeenControl).w;
         }
       }
     }
@@ -95,55 +93,51 @@ static void updateEnvironmentObject(
 //----------------------------------------------------------------------------------------------------------------------
 // This is called on potentially new environment objects, initialising them, such as their acceleration to 0,
 // and filling information that won't change, such as the mass.
-// then it calls updateEnvironmentObjects to update to the latest information from the physics shape
+// then it calls updateEnvironmentObjects to update to the latest information from the physics body
 //----------------------------------------------------------------------------------------------------------------------
-static bool setEnvironmentObjectFromShape(
+static bool setEnvironmentObjectFromBody(
   Environment::Object* object,
-  physx::PxShape* shape,
+  JPH::Body* body,
   int32_t objectDataIndex,
   const MyNetwork* owner,
   MR::InstanceDebugInterface* pDebugDrawInst)
 {
-  physx::PxRigidActor& rigidActor = *shape->getActor();
-
   // Early out: don't collide with own character controller
-  if (&rigidActor == ((MR::PhysicsRigPhysX3*)owner->getCharacter()->getBody().getPhysicsRig())->getCharacterControllerActor())
+  if (body->GetID() == ((MR::PhysicsRigJoltPhys*)owner->getCharacter()->getBody().getPhysicsRig())->getCharacterController()->GetBodyID())
   {
     return false;
   }
 
-  bool isMoveable = false;
-  physx::PxRigidDynamic* rigidDynamic = rigidActor.is<physx::PxRigidDynamic>();
-  physx::PxArticulationLink* articulationLink = rigidActor.is<physx::PxArticulationLink>();
-  if (rigidDynamic || articulationLink)
+  bool isMoveable = !body->IsStatic();
+  float bodymass = (1.0f / body->GetMotionProperties()->GetInverseMass());
+  if (isMoveable)
   {
-    isMoveable = true;
-    if (rigidActor.is<physx::PxRigidBody>()->getMass() < owner->data->minInterestingRelativeMass * owner->data->totalMass)
+    if (bodymass < owner->data->minInterestingRelativeMass * owner->data->totalMass)
     {
       // early out: too small to be dealing with
       return false;
     }
   }
 
-  // Only interact with shapes that have got per-shape data
-  MR::PhysXPerShapeData* perShapeData = MR::PhysXPerShapeData::getFromShape(shape);
-  if (!perShapeData)
+  // Only interact with bodies that have got per-body data
+  MR::JoltPhysPerBodyData* perBodyData = MR::JoltPhysPerBodyData::getFromBody(body);
+  if (!perBodyData)
     return false;
 
   // Otherwise it's an object we're actually interested in
-  updateEnvironmentObject(object, shape, objectDataIndex, pDebugDrawInst);
+  updateEnvironmentObject(object, body, objectDataIndex, pDebugDrawInst);
   object->state.acceleration.setToZero(); // this is calculated inside environment awareness
-  object->state.shapeID = (int64_t)(size_t)shape;
+  object->state.bodyID = (int64_t)(size_t)body;
   object->dataIndex = 0;
 
   if (isMoveable)
   {
     object->isStill = rigidDynamic ? rigidDynamic->isSleeping() : false;
     // if you're using a proxy character then the individual parts don't need to use a data index
-    if (perShapeData) 
+    if (perBodyData) 
     {
-      object->dataIndex = perShapeData->m_dataIndex;
-      perShapeData->m_dataIndex = objectDataIndex;
+      object->dataIndex = perBodyData->m_dataIndex;
+      perBodyData->m_dataIndex = objectDataIndex;
     }
     else
     {
@@ -151,7 +145,7 @@ static bool setEnvironmentObjectFromShape(
     }
     // Use the real mass even if kinematic so users can effectively flag some kinematic objects as
     // uninteresting, even though they are effectively infinitely massive.
-    object->state.mass = rigidActor.is<physx::PxRigidBody>()->getMass();
+    object->state.mass = bodymass;
     object->state.isStatic = false;
   }
   else
@@ -282,54 +276,54 @@ static void drawBox(const NMP::Vector3& MR_OUTPUT_DEBUG_ARG(focalCentre),
 
 // For collecting the closest objects
 //----------------------------------------------------------------------------------------------------------------------
-struct Shape
+struct BodyInfo
 {
-  physx::PxShape* physXShape;
+  JPH::Body* joltBody;
   float distance;
 };
 
 //----------------------------------------------------------------------------------------------------------------------
-static int calculateShapeDistances(
-  physx::PxShape** hitShapes, int numHits, Shape* shapes, const NMP::Vector3& focalRoot,
+static int calculateBodyDistances(
+  JPH::Body** hitBodies, int numHits, BodyInfo* bodies, const NMP::Vector3& focalRoot,
   const NMP::Vector3& focalCentre, float focalRadius)
 {
   NMP::Vector3 lookDir = NMP::vNormalise(focalCentre - focalRoot);
 
   // higher values result in being more interested in what's ahead rather than to the side.
   static float aheadScale = 3.0f; // non-dimensional
-  int nShapes = 0;
+  int nBodies = 0;
   for (int i = 0; i < numHits; i++)
   {
-    physx::PxShape* shape = hitShapes[i];
+    JPH::Body* body = hitBodies[i];
 
-    physx::PxBounds3 bounds = shape->getActor()->getWorldBounds();
-    physx::PxVec3 extents = bounds.getExtents();
-    physx::PxVec3 centre = bounds.getCenter();
-    NMP::Vector3 deltaToShape = MR::nmPxVec3ToVector3(centre) - focalCentre;
-    float distFromFocalCentre = NMP::fastSqrt(deltaToShape.magnitudeSquared());
-    float extentsMag = NMP::fastSqrt(extents.magnitudeSquared());
+    JPH::AABox bounds = body->GetWorldSpaceBounds();
+    JPH::Vec3 extents = bounds.GetExtent();
+    JPH::Vec3 centre = bounds.GetCenter();
+    NMP::Vector3 deltaToBody = MR::nmJPHVec3ToVector3(centre) - focalCentre;
+    float distFromFocalCentre = NMP::fastSqrt(deltaToBody.magnitudeSquared());
+    float extentsMag = NMP::fastSqrt(extents.LengthSq());
     float distanceScale = NMP::maximum(distFromFocalCentre - extentsMag, 0.0f) / distFromFocalCentre;
     distFromFocalCentre *= distanceScale;
     if (distFromFocalCentre < focalRadius)
     {
-      deltaToShape = MR::nmPxVec3ToVector3(centre) - focalRoot;
-      float aheadAmount = NMP::vDot(deltaToShape, lookDir);
-      float sideAmountSqr = deltaToShape.magnitudeSquared() - NMP::sqr(aheadAmount);
+      deltaToBody = MR::nmJPHVec3ToVector3(centre) - focalRoot;
+      float aheadAmount = NMP::vDot(deltaToBody, lookDir);
+      float sideAmountSqr = deltaToBody.magnitudeSquared() - NMP::sqr(aheadAmount);
       aheadAmount /= aheadScale;
       float distFromRoot = NMP::sqr(aheadAmount) + sideAmountSqr;
-      shapes->physXShape = shape;
-      shapes->distance = distFromRoot * distanceScale;
-      ++shapes;
-      ++nShapes;
+      bodies->joltBody = body;
+      bodies->distance = distFromRoot * distanceScale;
+      ++bodies;
+      ++nBodies;
     }
   }
-  return nShapes;
+  return nBodies;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-struct ShapeSorter
+struct BodySorter
 {
-  bool operator()(const Shape& first, const Shape& second) const
+  bool operator()(const BodyInfo& first, const BodyInfo& second) const
   {
     return first.distance < second.distance;
   }
@@ -351,8 +345,8 @@ void SceneProbes::feedback(float NMP_UNUSED(timeStep))
   MR_DEBUG_MODULE_ENTER(rootModule->getDebugInterface(), getClassName());
   ER::Character* character = owner->getCharacter();
   EnvironmentAwareness* EA = owner->environmentAwareness;
-  MR::PhysicsScenePhysX3* scene = (MR::PhysicsScenePhysX3*)(character->getBody().m_physicsScene);
-  MR::PhysicsRigPhysX3* pRig = ((MR::PhysicsRigPhysX3*)character->getBody().getPhysicsRig());
+  MR::PhysicsSceneJoltPhys* scene = (MR::PhysicsSceneJoltPhys*)(character->getBody().m_physicsScene);
+  MR::PhysicsRigJoltPhys* pRig = ((MR::PhysicsRigJoltPhys*)character->getBody().getPhysicsRig());
   if (s_characterIndex == 0)
   {
     s_framesFromStart++;
@@ -391,7 +385,7 @@ void SceneProbes::feedback(float NMP_UNUSED(timeStep))
   {
     resultDynamic.applySweep(
       EA->out->getSphereSweepDynamic(),
-      scene, pRig->getClientID(), character->m_collisionIgnoreGroups, 
+      scene, character->m_collisionIgnoreGroups, 
       true, SCALE_DIST(1.0f), rootModule->getDebugInterface());
   }
   // static and dynamic probes are also interleaved with each other
@@ -399,15 +393,15 @@ void SceneProbes::feedback(float NMP_UNUSED(timeStep))
   {
     resultStatic.applySweep(
       EA->out->getSphereSweepStatic(),
-      scene, pRig->getClientID(), character->m_collisionIgnoreGroups, 
+      scene, character->m_collisionIgnoreGroups, 
       false, SCALE_DIST(1.0f), rootModule->getDebugInterface());
   }
 
   Environment::Object* objects = EA->data->dynamicObjectsInRange;
-  const int maxShapes = 256;
-  Shape shapes[maxShapes];
-  int numShapes = 0;
-  const int maxClosestShapes = 16;
+  const int maxBodies = 256;
+  BodyInfo bodies[maxBodies];
+  int numBodies = 0;
+  const int maxClosestBodies = 16;
   if (requestProbe == true) // if we're going to request a probe then we should send up the latest information
   {
     physx::PxSphereGeometry sphere;
@@ -422,55 +416,55 @@ void SceneProbes::feedback(float NMP_UNUSED(timeStep))
       0, character->m_collisionIgnoreGroups, 0, 0), characterID);
 
     // It doesn't really cost to have a large number here, and ensures objects don't get ignored
-    physx::PxShape* hitShapes[maxShapes];
+    JPH::Body* hitbodies[maxBodies];
 
-    physx::PxOverlapHit overlaphits[maxShapes];
-    physx::PxOverlapBuffer overlapCallback(overlaphits, maxShapes);
+    physx::PxOverlapHit overlaphits[maxBodies];
+    physx::PxOverlapBuffer overlapCallback(overlaphits, maxBodies);
 
 
-    int numHit = scene->getPhysXScene()->overlap(
+    int numHit = scene->m_joltPhysScene->overlap(
       sphere, 
-      physx::PxTransform(MR::nmVector3ToPxVec3(focalCentre), physx::PxQuat(0, 0, 0, 1)),
+      JPH::Mat44::sRotationTranslation(JPH::Quat(0, 0, 0, 1), MR::nmVector3ToJPHVec3(focalCentre)),
       overlapCallback,
       filterData, 
       &morphemePhysX3QueryFilterCallback);
     if (numHit == -1)
     {
       // -1 means it overflowed, so the buffer is missing some objects in range, so we just work with these known objects
-      numHit = maxShapes;
+      numHit = maxBodies;
     }
 
     for (int i = 0; i < numHit; i++)
     {
-        hitShapes[i] = overlapCallback.getAnyHit(i).shape;
+        hitBodies[i] = overlapCallback.getAnyHit(i).shape;
     }
 
     // using the focal centre, find all objects in-range (basically, the things you are looking at) Perhaps the actual
     // check should be done before the physics, it wouldn't make a difference but may be faster for synchronisation
     // reasons? Need to check
     NMP::Vector3 extents(focalRadius, focalRadius, focalRadius);
-    physx::PxBounds3 bounds;
+    JPH::AABox bounds;
 #if defined(MR_OUTPUT_DEBUGGING)
     drawBox(focalCentre, focalRadius, NMP::Colour::GREEN, rootModule->getDebugInterface());
 #endif // defined(MR_OUTPUT_DEBUGGING)
-    bounds.boundsOfPoints(MR::nmVector3ToPxVec3(focalCentre - extents), MR::nmVector3ToPxVec3(focalCentre + extents));
+    bounds.boundsOfPoints(MR::nmVector3ToJPHVec3(focalCentre - extents), MR::nmVector3ToJPHVec3(focalCentre + extents));
 
-    // sort the shapes as we're just interested in the closest maxClosestShapes
+    // sort the shapes as we're just interested in the closest maxClosestBodies
     NMP::Vector3 headPos = owner->data->headLimbSharedStates[0].m_endTM.translation();
-    numShapes = calculateShapeDistances(hitShapes, numHit, shapes, headPos, focalCentre, focalRadius);
+    numBodies = calculateBodyDistances(hitBodies, numHit, bodies, headPos, focalCentre, focalRadius);
 
-    if (numShapes > maxClosestShapes) // only sort if there are too many
+    if (numBodies > maxClosestBodies) // only sort if there are too many
     {
-      std::sort(&shapes[0], &shapes[numShapes], ShapeSorter());
-      numShapes = maxClosestShapes;
+      std::sort(&bodies[0], &bodies[numBodies], BodySorter());
+      numBodies = maxClosestBodies;
     }
 
     // now add the sorted objects into the objects structure for sending up to EA
     int numObs = 0;
-    for (int shapeCount = 0; shapeCount != numShapes; ++shapeCount)
+    for (int bodyCount = 0; bodyCount != numBodies; ++bodyCount)
     {
-      if (setEnvironmentObjectFromShape(
-        &objects[numObs], shapes[shapeCount].physXShape, numObs, owner, rootModule->getDebugInterface()))
+      if (setEnvironmentObjectFromBody(
+        &objects[numObs], bodies[bodyCount].joltBody, numObs, owner, rootModule->getDebugInterface()))
       {
         numObs++;
       }
@@ -490,10 +484,10 @@ void SceneProbes::feedback(float NMP_UNUSED(timeStep))
       // If currently contacting
       if (endData->getNumContacts())
       {
-        physx::PxShape& shape = endData->getContactedShape(0);
-        // Only interact with shapes that have got per-shape data
-        MR::PhysXPerShapeData* perShapeData = MR::PhysXPerShapeData::getFromShape(&shape);
-        if (!perShapeData)
+        JPH::Body* body = endData->getContactedBody(0);
+        // Only interact with bodies that have got per-body data
+        MR::JoltPhysPerBodyData* perBodyData = MR::JoltPhysPerBodyData::getFromBody(body);
+        if (!perBodyData)
         {
           continue;
         }
@@ -503,12 +497,12 @@ void SceneProbes::feedback(float NMP_UNUSED(timeStep))
         result.setFromContact(
           endData->getLastAveragePosition(),
           endData->getLastAverageNormal(),
-          (int64_t) (size_t) &shape);
+          (int64_t) (size_t) &body);
         EA->feedIn->setContactResult(result);
-        if (shape.getActor()->is<physx::PxRigidBody>() == NULL) // if static
+        if (body->IsStatic())
         {
           Environment::Object* object = &EA->data->staticContactObject;
-          setEnvironmentObjectFromShape(object, &shape, 1, owner, rootModule->getDebugInterface());
+          setEnvironmentObjectFromBody(object, body, 1, owner, rootModule->getDebugInterface());
         }
         else
         {
@@ -518,17 +512,17 @@ void SceneProbes::feedback(float NMP_UNUSED(timeStep))
           int& numObjs = EA->data->numDynamicObjectsInRange;
           for (int i = 0; i < numObjs; i++)
           {
-            if (&shape == (physx::PxShape*) (size_t) EA->data->dynamicObjectsInRange[i].state.shapeID)
+            if (body == (JPH::Body*) (size_t) EA->data->dynamicObjectsInRange[i].state.bodyID)
             {
               found = true;
               break;
             }
           }
-          if (!found && numObjs < maxClosestShapes)
+          if (!found && numObjs < maxClosestBodies)
           {
             // If it isn't in the list and we have room for this extra object then add it in
             Environment::Object* object = &EA->data->dynamicObjectsInRange[numObjs];
-            if (setEnvironmentObjectFromShape(object, &shape, numObjs, owner, rootModule->getDebugInterface()))
+            if (setEnvironmentObjectFromBody(object, body, numObjs, owner, rootModule->getDebugInterface()))
             {
               numObjs++;
             }
@@ -547,10 +541,10 @@ void SceneProbes::feedback(float NMP_UNUSED(timeStep))
     for (int i = 0; i < numObs; i++)
     {
       // Check that this object hasn't been deleted
-      physx::PxShape* shape = (physx::PxShape*) (size_t) objects[i].state.shapeID;
-      if (MR::PhysXPerShapeData::getFromShape(shape))
+      JPH::Body* body = (JPH::Body*) (size_t) objects[i].state.bodyID;
+      if (MR::JoltPhysPerBodyData::getFromBody(body))
       {
-        updateEnvironmentObject(&objects[i], shape, i, rootModule->getDebugInterface());
+        updateEnvironmentObject(&objects[i], body, i, rootModule->getDebugInterface());
       }
     }
   }
@@ -562,9 +556,9 @@ void SceneProbes::feedback(float NMP_UNUSED(timeStep))
     // Draw the object that has just been seen light pink
     if (rootModule->getDebugInterface() && rootModule->getDebugInterface()->isDrawEnabled())
     {
-      physx::PxShape* shape = (physx::PxShape*) (size_t) resultDynamic.getShapeID();
+      JPH::Body* body = (JPH::Body*) (size_t) resultDynamic.getBodyID();
       NMP_ASSERT(shape);
-      MR::PhysXPerShapeData* shapeData = MR::PhysXPerShapeData::getFromShape(shape);
+      MR::JoltPhysPerBodyData* shapeData = MR::JoltPhysPerBodyData::getFromBody(body);
       if (shapeData)
       {
         shapeData->m_debugColour = ER::getDefaultColourForControl(ER::objectSweepSucceededControl);
@@ -577,8 +571,8 @@ void SceneProbes::feedback(float NMP_UNUSED(timeStep))
   if (resultStatic.getType() != ER::SweepResult::SR_NoContact)
   {
     Environment::Object* object = &EA->data->staticSweepResultObject;
-    bool res = setEnvironmentObjectFromShape(
-      object, (physx::PxShape*) (size_t) resultStatic.getShapeID(), -1, owner, rootModule->getDebugInterface());
+    bool res = setEnvironmentObjectFromBody(
+      object, (JPH::Body*) (size_t) resultStatic.getBodyID(), -1, owner, rootModule->getDebugInterface());
     NMP_ASSERT(res); // Should always be true
     (void)res;
     EA->feedIn->setSweepResultStatic(resultStatic);

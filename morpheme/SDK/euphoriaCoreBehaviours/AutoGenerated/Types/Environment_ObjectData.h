@@ -61,7 +61,7 @@ struct ObjectData
 
   NMP::Vector3 smoothedAngVel;
 
-  int64_t shapeID;  ///< Will be cast from a pointer to the PxShape
+  int64_t bodyID;  ///< Will be cast from a pointer to the JPH::Body
 
   float smoothedAccSqr;
 

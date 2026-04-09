@@ -13,13 +13,13 @@
 */
 
 //----------------------------------------------------------------------------------------------------------------------
-#include "mrPhysX3.h"
+#include "mrJoltPhys.h"
 #include "GrabDetectionPackaging.h"
 #include "GrabDetection.h"
 #include "MyNetworkPackaging.h"
 #include "MyNetwork.h"
 #include "Helpers/Helpers.h"
-#include "mrPhysicsScenePhysX3.h"
+#include "mrPhysicsSceneJoltPhys.h"
 #include "euphoria/erBody.h"
 #include "euphoria/erDebugDraw.h"
 #include "Types/Environment_CollideResult.h"
@@ -241,7 +241,7 @@ static bool processPatchEdges(
   patch.getEdgeDirections(&patchEdges[0]);
 
   Edge edge;
-  edge.shapeID = patch.state.shapeID;
+  edge.shapeID = patch.state.bodyID;
   edge.corner = patch.corner;
 
   // Pre-processing: we need to know whether we're dealing with a pole object or a large surface
@@ -638,14 +638,14 @@ void GrabDetection::update(float timeStep)
   // Return best edge
   if (bestEdge.quality > 0.0f &&
     (bestEdge.quality > in->getParams().minEdgeQuality ||
-     bestEdge.shapeID == -1) // This ensures we carry on passing out user edges when we're already holding them
+     bestEdge.bodyID == -1) // This ensures we carry on passing out user edges when we're already holding them
      )
   {
     // Set edge
     out->setGrabbableEdge(bestEdge, 1.0f);
 
     // Save shapeID.
-    data->bestEdgeShapeID = bestEdge.shapeID;
+    data->bestEdgeShapeID = bestEdge.bodyID;
 
     // Set look target
     TargetRequest lookTarget;

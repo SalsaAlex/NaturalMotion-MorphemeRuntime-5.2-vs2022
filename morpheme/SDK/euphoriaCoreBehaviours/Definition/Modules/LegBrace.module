@@ -20,7 +20,7 @@ data:
   bool doingBrace;            ///< Used for hysteresis
   Direction reachDirection;   ///< Direction to brace in
   Position placePos;          ///< Where exactly to place the feet
-  int64_t patchShapeID;       ///< The shape to test is contacted
+  int64_t patchBodyID;       ///< The shape to test is contacted
   Position protectPoint;      ///< The point to be protected, roughly the stomach, depending on protectChestAmount
   Weight importance;          ///< Importance of the resulting limb control
   Imminence imminence;        ///< How soon the impact is
@@ -38,8 +38,8 @@ feedOut:
   RotationRequest rootRotationRequest; ///< To help with bracing, a rotation of the pelvis is requested
   Position endCushionPoint;   ///< Individual foot position, used to calculated averaged cushion point (centre of support)
 feedIn:
-  bool limbInContactWithPatchShapeID; ///< Result of contact test, is any part of the limb in contact with the incoming hazard
-  bool rootInContactWithPatchShapeID; ///< Result of contact test, is the limb's root part in contact with the incoming hazard
+  bool limbInContactWithPatchBodyID; ///< Result of contact test, is any part of the limb in contact with the incoming hazard
+  bool rootInContactWithPatchBodyID; ///< Result of contact test, is the limb's root part in contact with the incoming hazard
 
 out:
   LimbControl control; ///< IK control of the leg

@@ -71,7 +71,7 @@ struct State
 
   NMP::Vector3 acceleration;                 ///< (Acceleration)
 
-  int64_t shapeID;  ///< Will be cast from a pointer to the PxShape
+  int64_t bodyID;  ///< Will be cast from a pointer to the PxShape
 
   float accSqr;
 

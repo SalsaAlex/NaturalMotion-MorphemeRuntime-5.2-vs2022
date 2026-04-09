@@ -15,7 +15,7 @@
 #include "euphoria/erDebugDraw.h"
 #include "Types/Environment_State.h"
 #include "Types/Environment_Patch.h"
-#include "Types/Environment_LocalShape.h"
+#include "Types/Environment_LocalBody.h"
 #include "Types/Environment_CollideResult.h"
 #include "Types/SphereTrajectory.h"
 #include "Types/ObjectMetric.h"
@@ -37,7 +37,7 @@ Environment::State::State()
   velocity.setToZero();
   angularVelocity.setToZero();
   acceleration.setToZero();
-  shapeID = -1;
+  bodyID = -1;
   isStatic = false;
 }
 
@@ -327,11 +327,11 @@ float ObjectMetric::getMetric(const Environment::State& state, float timeStep, f
   float metric = velocityMetric + accelerationMetric - distanceMetric;
 
   // Hysteresis- currently most important object is given extra advantage, to prevent flipping
-  if (state.shapeID == focusShapeID)
+  if (state.bodyID == focusBodyID)
   {
     // Implicit exponential decay, linear decay is too susceptible to large value outliers
     float oldMetricReduced = lastMetric / (1.0f + interestReductionRate * timeStep);
-    metric = NMP::maximum(metric + shapeAdvantage, oldMetricReduced);
+    metric = NMP::maximum(metric + bodyAdvantage, oldMetricReduced);
     lastMetric = metric;
   }
   return metric;

@@ -60,7 +60,7 @@ struct Object
  // 128 Bytes 
   NMP::Matrix34 matrix;
 
-  int32_t dataIndex;  ///< This is ER::PhysXPerShapeData::dataIndex and is the index into the array of EA objects
+  int32_t dataIndex;  ///< This is ER::JoltPhysPerBodyData::dataIndex and is the index into the array of EA objects
 
   bool isStill;
 

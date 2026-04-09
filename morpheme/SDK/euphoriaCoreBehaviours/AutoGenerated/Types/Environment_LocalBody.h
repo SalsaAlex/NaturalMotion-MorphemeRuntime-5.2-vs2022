@@ -18,8 +18,8 @@
 //                                  This file is auto-generated
 //----------------------------------------------------------------------------------------------------------------------
 
-#ifndef NM_MDF_TYPE_ENVIRONMENT_LOCALSHAPE_H
-#define NM_MDF_TYPE_ENVIRONMENT_LOCALSHAPE_H
+#ifndef NM_MDF_TYPE_ENVIRONMENT_LOCALBODY_H
+#define NM_MDF_TYPE_ENVIRONMENT_LOCALBODY_H
 
 // include definition file to create project dependency
 #include "./Definition/Types/Environment.types"
@@ -46,7 +46,7 @@ namespace NM_BEHAVIOUR_LIB_NAMESPACE
 {
 
 namespace Environment { struct Patch; } 
-namespace Environment { struct LocalShape; } 
+namespace Environment { struct LocalBody; } 
 
 namespace Environment { 
 
@@ -55,7 +55,7 @@ namespace Environment {
 // Data Payload: 96 Bytes
 // Alignment: 16
 // Modifiers: __no_combiner__  
-struct LocalShape
+struct LocalBody
 {
 
   NMP::Vector3 corner;  ///< this is local to the bound object  (Position)
@@ -71,7 +71,7 @@ struct LocalShape
 
   void fromWorldSpace(const Environment::Patch& patch, const NMP::Matrix34& matrix);
   void toWorldSpace(Environment::Patch& patch, const NMP::Matrix34& matrix);
-  bool isConnectedTo(const Environment::LocalShape& object, float epsilon) const;
+  bool isConnectedTo(const Environment::LocalBody& object, float epsilon) const;
 
 
   NM_INLINE void validate() const
@@ -93,11 +93,11 @@ struct LocalShape
     validate();
   }
 
-}; // struct LocalShape
+}; // struct LocalBody
 
 } // namespace Environment
 
 } // namespace NM_BEHAVIOUR_LIB_NAMESPACE
 
-#endif // NM_MDF_TYPE_ENVIRONMENT_LOCALSHAPE_H
+#endif // NM_MDF_TYPE_ENVIRONMENT_LOCALBODY_H
 

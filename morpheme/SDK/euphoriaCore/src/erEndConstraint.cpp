@@ -17,8 +17,8 @@
 #include "euphoria/erEuphoriaUserData.h"
 #include "euphoria/erEuphoriaLogger.h"
 #include "euphoria/erLimbTransforms.h"
-#include "mrPhysX3Includes.h"
-#include "mrPhysicsScenePhysX3.h"
+#include "mrJoltPhysIncludes.h"
+#include "mrPhysicsSceneJoltPhys.h"
 
 #define SCALING_SOURCE Body::getFromPhysicsRig(m_limb->m_physicsRig)->getDimensionalScaling()
 #include "euphoria/erDimensionalScalingHelpers.h"
@@ -32,35 +32,29 @@ namespace ER
 #define NM_END_CONSTRAINT_DEBUG_DRAW_FORCES 0
 
 //----------------------------------------------------------------------------------------------------------------------
-static NMP::Matrix34 getActorTransform(physx::PxRigidActor* actor)
+static NMP::Matrix34 getBodyTransform(JPH::Body* body)
 {
-  NMP_ASSERT(actor);
-  return MR::nmPxTransformToNmMatrix34(actor->getGlobalPose());
+  NMP_ASSERT(body);
+  return MR::nmJPHMat44ToNmMatrix34(body->GetWorldTransform());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-static physx::PxRigidActor* getActorFromShapeId(int64_t shapeID)
+static JPH::Body* getBodyFromBodyId(int64_t bodyID)
 {
-  physx::PxShape* shape = (physx::PxShape*) (size_t) shapeID;
-  if (shapeID > 0 && MR::PhysXPerShapeData::getFromShape(shape))
-    return shape->getActor();
+  JPH::Body* body = (JPH::Body*) (size_t) bodyID;
+  if (bodyID > 0 && MR::JoltPhysPerBodyData::getFromBody(body))
+      return body;
 
   return NULL;
 };
 
-//----------------------------------------------------------------------------------------------------------------------
-static bool actorIsDynamic(physx::PxRigidActor* actor)
-{
-  return actor && actor->is<physx::PxRigidDynamic>();
-};
-
 // Transform world space TM to local.
 //----------------------------------------------------------------------------------------------------------------------
-static ER::HandFootTransform getLocalTM(const NMP::Matrix34& wsTM, physx::PxRigidActor* actor)
+static ER::HandFootTransform getLocalTM(const NMP::Matrix34& wsTM, JPH::Body* body)
 {
-  if (actor)
+  if (body)
   {
-    NMP::Matrix34 actorInvTM = getActorTransform(actor);
+    NMP::Matrix34 actorInvTM = getBodyTransform(body);
     actorInvTM.invert();
     return wsTM * actorInvTM;
   }
@@ -77,8 +71,8 @@ void EndConstraint::initialize(ER::Limb* limb)
   m_limb = limb;
   m_up = -NMP::vNormalise(m_limb->m_body->m_physicsScene->getGravity());
   m_constraint = NULL;
-  m_constrainedActor = NULL;
-  m_targetShapeID = 0;
+  m_constrainedBody = NULL;
+  m_targetBodyID = 0;
   m_doConstrain = false;
   m_constrainOnContact = false;
   m_desiredHandTM = NMP::Matrix34Identity();
@@ -114,14 +108,14 @@ MR::PhysicsRig::Part* EndConstraint::getEndPart()
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void EndConstraint::setDesiredTransformWs(const ER::HandFootTransform& desiredTM, int64_t shapeID)
+void EndConstraint::setDesiredTransformWs(const ER::HandFootTransform& desiredTM, int64_t bodyID)
 {
-  m_targetShapeID = shapeID;
+  m_targetBodyID = bodyID;
 
-  // Check if desired TM is local to an explicitly specified actor. If the actor is a dynamic one,
+  // Check if desired TM is local to an explicitly specified body. If the body is a dynamic one,
   // make TM local, so that constraint is on the body rather than in world space
-  physx::PxRigidActor* objectActor = getActorFromShapeId(m_targetShapeID);
-  if (actorIsDynamic(objectActor))
+  JPH::Body* objectBody = getBodyFromBodyId(m_targetBodyID);
+  if (objectBody->IsDynamic())
   {
     // We don't allow changing position if already constrained. Hence overwrite with previous
     // position. TODO Understand what is going on here - however, without it, the constraint can't
@@ -136,7 +130,7 @@ void EndConstraint::setDesiredTransformWs(const ER::HandFootTransform& desiredTM
       prevPos = m_desiredHandTM.translation();
     }
 
-    m_desiredHandTM = getLocalTM(desiredTM, objectActor);
+    m_desiredHandTM = getLocalTM(desiredTM, objectBody);
 
     if (m_constraint)
     {
@@ -188,21 +182,21 @@ void EndConstraint::resetCollisions()
 }
 
 // Wrapper for hiding dynamic/static objects and PhysX versions from update function.
-// PhysX is more stable when static Actor is the first Actor passed to joint creation function.
+// PhysX is more stable when static Body is the first Body passed to joint creation function.
 //----------------------------------------------------------------------------------------------------------------------
 void EndConstraint::createConstraint(
-  physx::PxRigidActor* endPartActor,
+  JPH::Body* endPartBody,
   const NMP::Matrix34& constraintInEndPartFrame,
-  physx::PxRigidActor* objectActor,
+  JPH::Body* objectBody,
   const NMP::Matrix34& constraintInObjectFrame)
 {
   // For static objects, constrain with world.
-  physx::PxRigidActor* constraineeActor = actorIsDynamic(objectActor) ? objectActor : NULL;
-  m_constraint = createJoint(constraineeActor, endPartActor, constraintInObjectFrame, constraintInEndPartFrame,
+  JPH::Body* constraineeBody = objectBody->IsDynamic() ? objectBody : NULL;
+  m_constraint = createJoint(constraineeBody, endPartBody, constraintInObjectFrame, constraintInEndPartFrame,
     m_lockedLinearDofs, m_lockedAngularDofs);
 
   // Store pointer to constrainee.
-  m_constrainedActor = objectActor;
+  m_constrainedBody = objectBody;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -217,7 +211,7 @@ void EndConstraint::removeConstraint()
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-physx::PxRigidActor* EndConstraint::getContactedActor()
+JPH::Body* EndConstraint::getContactedBody()
 {
   MR::PhysicsRig::Part* endPart = getEndPart();
   ER::EuphoriaRigPartUserData* endPartUserData = ER::EuphoriaRigPartUserData::getFromPart(endPart);
@@ -226,7 +220,7 @@ physx::PxRigidActor* EndConstraint::getContactedActor()
   if (inContact)
   {
     // Just return the first contact
-    return endPartUserData->getContactedShape(0).getActor();
+    return endPartUserData->getContactedBody(0);
   }
   return NULL;
 }
@@ -238,7 +232,7 @@ physx::PxRigidActor* EndConstraint::getContactedActor()
 void EndConstraint::getConstraintDistance(
   float& positionErr,
   float& rotationErr,
-  bool   objectActorIsDynamic,
+  bool   objectBodyIsDynamic,
   float  timeDelta,
   NMP::Vector3& closestPointOffset)
 {
@@ -246,14 +240,14 @@ void EndConstraint::getConstraintDistance(
   NMP::Matrix34 desInv = m_desiredHandTM;
   NMP::Vector3 positionDelta = m_limb->getPart(m_limb->getDefinition()->m_numPartsInChain - 1)->getVel() * timeDelta;
   // If dynamic object, convert to world space first. Note that if this flag is true there really
-  // will be an actor. There will already have been a check to see if it's a deleted shape, so can
-  // safely assume that if dynamic, we can get the actor.
-  if (objectActorIsDynamic)
+  // will be a body. There will already have been a check to see if it's a deleted shape, so can
+  // safely assume that if dynamic, we can get the body.
+  if (objectBodyIsDynamic)
   {
-    physx::PxRigidActor *actor = getActorFromShapeId(m_targetShapeID);
-    NMP_ASSERT(actor);
-    desInv *= getActorTransform(actor);
-    positionDelta -= MR::nmPxVec3ToVector3(MR::getPointVelocity(*actor, MR::nmVector3ToPxVec3(desInv.translation()))) * timeDelta;
+    JPH::Body *body = getBodyFromBodyId(m_targetBodyID);
+    NMP_ASSERT(body);
+    desInv *= getBodyTransform(body);
+    positionDelta -= MR::nmJPHVec3ToVector3(MR::getPointVelocity(body, MR::nmVector3ToJPHVec3(desInv.translation()))) * timeDelta;
   }
   const NMP::Vector3 toEnd = m_limb->getEndTransform().translation() - desInv.translation();
 
@@ -279,7 +273,7 @@ void EndConstraint::getConstraintDistance(
 // Applies a force that helps the limb end part reach the desired position and orientation.
 // Applies a torque that helps orienting limb root part towards the edge.
 void EndConstraint::applyHelperForce(
-  bool isInActorSpace,
+  bool isInBodySpace,
   float angErr,
   MR::InstanceDebugInterface* pDebugDrawInst)
 {
@@ -347,10 +341,10 @@ void EndConstraint::applyHelperForce(
       const float P = SCALE_STRENGTH(4.1f);
       const float D = SCALE_DAMPING(0.02f);
       ER::HandFootTransform desInv = m_desiredHandTM;
-      if (isInActorSpace)
+      if (isInBodySpace)
       {
         // If dynamic object, convert to world space first.
-        desInv *= getActorTransform(getActorFromShapeId(m_targetShapeID));
+        desInv *= getBodyTransform(getBodyFromBodyId(m_targetBodyID));
       }
       desInv.invert();
       NMP::Matrix34 endInDesTM = desInv * m_limb->getEndTransform();
@@ -417,7 +411,7 @@ void EndConstraint::blendToDesiredOrientation(float dt, NMP::Matrix34& blendTM)
   blendWeight = NMP::minimum(blendWeight, 1.0f);
 
   // 2nd: do the actual blend. At this point both m_desiredHandTM and objectJointFrame are either both in world space (for
-  // static objects or world space constraints) or both in the local space of the other actor.
+  // static objects or world space constraints) or both in the local space of the other body.
   // We don't need to check whether blendWeight == 1 for efficiency, interpolate does that inernally.
   blendTM.interpolate(m_desiredHandTM, blendWeight);
 }
@@ -466,17 +460,17 @@ void EndConstraint::update(float dt, MR::InstanceDebugInterface* pDebugDrawInst)
   }
 
   // Decide who to try constraining to:
-  // targetShape id >=  0: specific dynamic or static actor
+  // targetShape id >=  0: specific dynamic or static body
   // targetShape id == -1: constrain with "virtual" edge, i.e. world. 
-  // First see if specified target (actor) is constrainable (in reach).
+  // First see if specified target (body) is constrainable (in reach).
   // NULL if m_targetShape < 0.
-  physx::PxRigidActor* objectActor = getActorFromShapeId(m_targetShapeID);
+  JPH::Body* objectBody = getBodyFromBodyId(m_targetBodyID);
 
   // The following will be false if objectActor == NULL or static object.
-  bool objectActorIsDynamic = actorIsDynamic(objectActor);
+  bool objectBodyIsDynamic = objectBody->IsDynamic();
 
   // Check for a deleted shape
-  if (objectActorIsDynamic && !getActorFromShapeId(m_targetShapeID))
+  if (objectBodyIsDynamic && !getBodyFromBodyId(m_targetBodyID))
   {
     if (constrained)
     {
@@ -486,15 +480,15 @@ void EndConstraint::update(float dt, MR::InstanceDebugInterface* pDebugDrawInst)
     return;
   }
 
-  // Check whether chosen actor is within range.
+  // Check whether chosen body is within range.
   float posErr = FLT_MAX;
   float rotErr = FLT_MAX; // in radians
   NMP::Vector3 closestPointOffset(0,0,0);
-  getConstraintDistance(posErr, rotErr, objectActorIsDynamic, dt, closestPointOffset);
+  getConstraintDistance(posErr, rotErr, objectBodyIsDynamic, dt, closestPointOffset);
   bool constrainable = checkConstrainability(posErr);
 
   // If we can't constrain to the target, check if we can constrain to any contacted object.
-  // Needs to be world constraint, as contacts currently don't return static actor IDs.
+  // Needs to be world constraint, as contacts currently don't return static body IDs.
   if (!constrainable && m_constrainOnContact)
   {
     ER::EuphoriaRigPartUserData* data = ER::EuphoriaRigPartUserData::getFromPart(getEndPart());
@@ -509,7 +503,7 @@ void EndConstraint::update(float dt, MR::InstanceDebugInterface* pDebugDrawInst)
   }
 
   // Cheat forces to help limb end reach targets and limb root to orient appropriately.
-  applyHelperForce(objectActorIsDynamic, rotErr, pDebugDrawInst);
+  applyHelperForce(objectBodyIsDynamic, rotErr, pDebugDrawInst);
 
   // Break joint when separation reaches a threshold.
   if (constrained && (!constrainable))
@@ -526,29 +520,29 @@ void EndConstraint::update(float dt, MR::InstanceDebugInterface* pDebugDrawInst)
     // Build up necessary matrices for constraint: parent frame first. The constraint needs the parent joint frame in
     // the end part's local space. We want to control the end transform, therefore we calculate the end transform in the
     // endPart's local space.
-    physx::PxRigidActor* endPartActor = ((MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation*)getEndPart())->getArticulationLink();
+    JPH::Body* endPartBody = ((MR::PhysicsRigJoltPhys::PartJoltPhys*)getEndPart())->getRigidBody();
 
     NMP::Matrix34 constraintTM = m_limb->getEndTransform();
     if (m_moveToJointPosFraction > 0.0f)
     {
       // For stability reasons, move the attachment point towards the joint position by a certain fraction.
       // see MORPH-14060
-      NMP::Vector3 jointPos = getActorTransform(endPartActor).translation(); // By convention same as joint position.
+      NMP::Vector3 jointPos = getBodyTransform(endPartBody).translation(); // By convention same as joint position.
       constraintTM.translation() += m_moveToJointPosFraction * (jointPos - constraintTM.translation());
     }
 
     // To local space.
-    NMP::Matrix34 endPartJointFrameInv = getActorTransform(endPartActor);
+    NMP::Matrix34 endPartJointFrameInv = getBodyTransform(endPartBody);
     endPartJointFrameInv.invert();
     NMP::Matrix34 constraintInEndPartFrame = constraintTM * endPartJointFrameInv;
 
     // Now the object frame (desired): we always start from current and may later blend to desired.
     // Move constraintTM to the closestPoint first.
     constraintTM.translation() += closestPointOffset;
-    NMP::Matrix34 constraintInObjectFrame = objectActorIsDynamic ? getLocalTM(constraintTM, objectActor) : constraintTM;
+    NMP::Matrix34 constraintInObjectFrame = objectBodyIsDynamic ? getLocalTM(constraintTM, objectBody) : constraintTM;
 
     // Remove existing constraint first when switching from one grabbed object to another.
-    if (constrained && (objectActor != m_constrainedActor))
+    if (constrained && (objectBody != m_constrainedBody))
     {
       removeConstraint();
       constrained = false;
@@ -561,7 +555,7 @@ void EndConstraint::update(float dt, MR::InstanceDebugInterface* pDebugDrawInst)
       // No blending needed at first frame of constraint. We start constraining at initial pose.
       constraintInEndPartFrame.orthonormalise();
       constraintInObjectFrame.orthonormalise();
-      createConstraint(endPartActor, constraintInEndPartFrame, objectActor, constraintInObjectFrame);
+      createConstraint(endPartBody, constraintInEndPartFrame, objectBody, constraintInObjectFrame);
     }
     // ... or update an already existing constraint.
     //---------------------------------------------------
@@ -620,7 +614,7 @@ void EndConstraint::update(float dt, MR::InstanceDebugInterface* pDebugDrawInst)
       debugDraw(
         constraintTM, 
         constraintInObjectFrame, 
-        objectActorIsDynamic ? objectActor : NULL, 
+        objectBodyIsDynamic ? objectBody : NULL, 
         pDebugDrawInst, 
         Body::getFromPhysicsRig(m_limb->m_physicsRig)->getDimensionalScaling());
     }
@@ -633,7 +627,7 @@ void EndConstraint::update(float dt, MR::InstanceDebugInterface* pDebugDrawInst)
 void EndConstraint::debugDraw(
   const NMP::Matrix34& constraintTM, 
   const NMP::Matrix34& objectJointFrame, 
-  physx::PxRigidActor* objectActor, 
+  JPH::Body* objectBody, 
   MR::InstanceDebugInterface* pDebugDrawInst,
   const DimensionalScaling& MR_OUTPUT_DEBUG_ARG(dimensionalScaling)
   )
@@ -644,10 +638,10 @@ void EndConstraint::debugDraw(
     return;
   }
   MR_DEBUG_DRAW_MATRIX(pDebugDrawInst, constraintTM, dimensionalScaling.scaleDist(0.1f));
-  if (objectActor)
+  if (objectBody)
   {
     // Transform desired back to world for drawing.
-    NMP::Matrix34 otherTM = getActorTransform(objectActor);
+    NMP::Matrix34 otherTM = getBodyTransform(objectBody);
     NMP::Matrix34 currentDesiredWs = objectJointFrame * otherTM;
     NMP::Matrix34 desiredWs = m_desiredHandTM * otherTM;
     MR_DEBUG_DRAW_MATRIX(pDebugDrawInst, currentDesiredWs, dimensionalScaling.scaleDist(0.5f));
@@ -662,16 +656,16 @@ void EndConstraint::debugDraw(
 #endif
 
 //----------------------------------------------------------------------------------------------------------------------
-physx::PxD6Joint* EndConstraint::createJoint(
-  physx::PxRigidActor* actor1,
-  physx::PxRigidActor* actor2,
+JPH::SixDOFConstraint* EndConstraint::createJoint(
+  JPH::Body* body1,
+  JPH::Body* body2,
   const NMP::Matrix34& pose1,
   const NMP::Matrix34& pose2,
   uint16_t lockedLinearDofs,
   uint16_t lockedAngularDofs)
 {
   // PhysX is more stable when static Actor is the first Actor passed to joint creation function.
-  physx::PxD6Joint* joint = (physx::PxD6Joint*)PxD6JointCreate(
+  JPH::SixDOFConstraint* joint = (physx::PxD6Joint*)JPHSixDofJointCreate(
     PxGetPhysics(),
     actor1,
     MR::nmMatrix34ToPxTransform(pose1),

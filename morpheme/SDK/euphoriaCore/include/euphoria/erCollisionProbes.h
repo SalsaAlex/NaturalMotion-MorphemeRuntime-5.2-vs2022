@@ -22,7 +22,7 @@ namespace MR
 
 namespace ER
 {
-  JPH::Shape* getJPHShapeFromShapeID(int64_t shapeID);
+  JPH::Body* getJPHBodyFromBodyID(int64_t bodyID);
 
 /// The sphere sweep request structure. Usable inside behaviour modules and physics engine independent
 struct SphereSweep
@@ -71,7 +71,7 @@ public:
   // accessors
   NMP::Vector3 getContactPoint() const;
   int32_t getType() const;
-  int64_t getShapeID() const;
+  int64_t getBodyID() const;
   int32_t getProbeID() const;
   NMP::Vector3 getTriangleNormal() const;
   NMP::Vector3 getVertex(uint32_t n) const;
@@ -91,18 +91,18 @@ public:
   float getCCEdgeLength(uint32_t i) const;
 
   // modifiers
-  void setShapeID(int64_t shapeID);
+  void setBodyID(int64_t bodyID);
   void setType(Type type) { m_type = type; }
 
   void setFromContact(
     const NMP::Vector3& position,
     const NMP::Vector3& normal,
-    int64_t shapeID);
+    int64_t bodyID);
 
   void setFromPlane(
     const NMP::Vector3& position,
     const NMP::Vector3& normal,
-    int64_t shapeID,
+    int64_t bodyID,
     int32_t probeID);
 
   void setFromCapsule(
@@ -110,7 +110,7 @@ public:
     const NMP::Vector3& end,
     float radius,
     float halfHeight,
-    int64_t shapeID,
+    int64_t bodyID,
     int32_t probeID);
 
 private:
@@ -152,7 +152,7 @@ private:
   uint32_t pad[3]; // pad bytes
 
   NMP::Vector3 m_contactPoint;
-  int64_t m_shapeID; // gets cast to/from pointer
+  int64_t m_bodyID; // gets cast to/from pointer
   int32_t m_type;
   int32_t m_probeID;
 };

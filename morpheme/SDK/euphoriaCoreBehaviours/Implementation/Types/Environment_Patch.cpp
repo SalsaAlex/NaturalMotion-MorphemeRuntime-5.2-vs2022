@@ -15,7 +15,7 @@
 #include "euphoria/erDebugDraw.h"
 #include "euphoria/erDimensionalScaling.h"
 #include "Types/Environment_Patch.h"
-#include "Types/Environment_LocalShape.h"
+#include "Types/Environment_LocalBody.h"
 #include "Types/Environment_CollideResult.h"
 #include "Types/SphereTrajectory.h"
 #include "euphoria/erCollisionProbes.h"
@@ -639,9 +639,9 @@ void Environment::Patch::updateFromSweepResult(
 
 //----------------------------------------------------------------------------------------------------------------------
 // returns true if this object is connected to the argument object
-bool Environment::Patch::isConnectedTo(const Patch& object, const Environment::LocalShape& shape, const Environment::LocalShape& objectShape, float epsilon)
+bool Environment::Patch::isConnectedTo(const Patch& object, const Environment::LocalBody& body, const Environment::LocalBody& objectBody, float epsilon)
 {
-  if (state.shapeID != object.state.shapeID)
+  if (state.bodyID != object.state.bodyID)
   {
     // they're not the same object at all
     return false;
@@ -654,12 +654,12 @@ bool Environment::Patch::isConnectedTo(const Patch& object, const Environment::L
   if (type > 3 || object.type > 3)
     return true;
 
-  return shape.isConnectedTo(objectShape, epsilon);
+  return body.isConnectedTo(objectBody, epsilon);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 // returns true if this object is connected to the argument object, ie if they share part of their shape
-bool Environment::LocalShape::isConnectedTo(const Environment::LocalShape& object, float epsilon) const
+bool Environment::LocalBody::isConnectedTo(const Environment::LocalBody& object, float epsilon) const
 {
   // if corner points are close enough then shapes are connected
   float epsilonSqr = NMP::sqr(epsilon);
@@ -723,7 +723,7 @@ void Environment::Patch::createAsPlane(
 {
   // note, state constructor covers acceleration and spinAverageTimeLength
   // initialise state
-  state.shapeID = shapeID;
+  state.bodyID = shapeID;
   state.position = position;
   state.aabb.setCentreAndHalfExtents(position, NMP::Vector3(r, r, r));
   state.velocity = velocity;
@@ -750,7 +750,7 @@ void Environment::Patch::createAsSphere(
 {
   // note, state constructor covers acceleration and spinAverageTimeLength
   // initialise state
-  state.shapeID = shapeID;
+  state.bodyID = shapeID;
   state.position = position;
   state.aabb.setCentreAndHalfExtents(position, NMP::Vector3(r, r, r));
   state.velocity = velocity;

@@ -134,7 +134,7 @@ static ER::SphereSweep createSweep(
   }
   // Convert into position values for linear segment
   sweep.radius = path.radius;
-  sweep.targetShapeID = state.shapeID;
+  sweep.targetBodyID = state.bodyID;
   sweep.probeID = probeID;
 #else
   // since the trajectory is a quadratic curve, we need to divide it into sections
@@ -172,13 +172,13 @@ static ER::SphereSweep createSweep(
 static const Environment::Object* findObject(
   int numObjects,
   const Environment::Object* dynamicObjectsInRange,
-  int64_t shapeID,
+  int64_t bodyID,
   int* index = NULL)
 {
   // linear lookup
   for (int j = 0; j < numObjects; j++)
   {
-    if (dynamicObjectsInRange[j].state.shapeID == shapeID)
+    if (dynamicObjectsInRange[j].state.bodyID == bodyID)
     {
       if (index)
       {
@@ -288,7 +288,7 @@ void EnvironmentAwarenessUpdatePackage::update(float timeStep, MR::InstanceDebug
           int k = 0;
           for (; k < set.numPatches; k++)
           {
-            if (set.patches[k].state.shapeID == state.shapeID)
+            if (set.patches[k].state.bodyID == state.bodyID)
             {
               // 2. is known contact point far away?
               knownContactIsFar = (set.patches[k].knownContactPoint - path.position).magnitudeSquared() >
@@ -314,8 +314,8 @@ void EnvironmentAwarenessUpdatePackage::update(float timeStep, MR::InstanceDebug
         }
 
         // little adjustment to make it not always choose the closest object
-        float tempT1 = (state.shapeID == store.lastObjectShapeID) ? t1 * 1.5f : t1;
-        float tempBestT1 = (bestState.shapeID == store.lastObjectShapeID) ? bestT1 * 1.5f : bestT1;
+        float tempT1 = (state.bodyID == store.lastObjectBodyID) ? t1 * 1.5f : t1;
+        float tempBestT1 = (bestState.bodyID == store.lastObjectBodyID) ? bestT1 * 1.5f : bestT1;
         if (tempT1 < tempBestT1)
         {
           foundPotentialDynamic = true;
@@ -328,7 +328,7 @@ void EnvironmentAwarenessUpdatePackage::update(float timeStep, MR::InstanceDebug
 
       if (foundPotentialDynamic)
       {
-        store.lastObjectShapeID = bestState.shapeID;
+        store.lastObjectBodyID = bestState.bodyID;
         // object is within range of the trajectory, so create the sphere sweep structure for it
         data->foundPotentialDynamicLastFrame = foundPotentialDynamic;
         // The current setup means the sweep will occur after the next physics step, this means the
@@ -405,14 +405,14 @@ static void updatePatchesFromObject(
   patch.state = object->state;
   patch.updateFromSweepResult(sweepResult, dimensionalScaling);
 
-  Environment::LocalShape localShape;
-  localShape.fromWorldSpace(patch, object->matrix);
+  Environment::LocalBody localBody;
+  localBody.fromWorldSpace(patch, object->matrix);
   int i;
   for (i = 0; i < set.numPatches; i++)
   {
-    // compares the local space shapes to see if the patches are connected
+    // compares the local space bodies to see if the patches are connected
     // if they are then one can be removed... this prevents build up of lots of nearby patches
-    if (patch.isConnectedTo(set.patches[i], localShape, store.localShapes[i]))
+    if (patch.isConnectedTo(set.patches[i], localBody, store.localBodies[i]))
     {
       if (overridePatch || set.patches[i].type == Environment::Patch::EO_ContactPlane)
       {
@@ -424,7 +424,7 @@ static void updatePatchesFromObject(
         patch.state.accSqr = set.patches[i].state.accSqr;
         // if there is a neighbour patch then just replace this
         set.patches[i] = patch;
-        store.localShapes[i] = localShape;
+        store.localBodies[i] = localBody;
       }
       break;
     }
@@ -436,7 +436,7 @@ static void updatePatchesFromObject(
     if (set.numPatches < PatchSet::MAX_NUM_PATCHES)
       store.patchesHead = set.numPatches++;
     // otherwise write over the oldest potential hazard
-    store.localShapes[store.patchesHead] = localShape;
+    store.localBodies[store.patchesHead] = localBody;
     // otherwise write over the oldest potential hazard
     set.patches[store.patchesHead++] = patch;
     // this implements the rolling queue of collision results
@@ -475,7 +475,7 @@ void EnvironmentAwarenessFeedbackPackage::feedback(float timeStep, MR::InstanceD
       // if we find the data in last frame's list
       Environment::ObjectData& objData = data->objectData[object.dataIndex];
       if (object.dataIndex >= 0 && object.dataIndex < EnvironmentAwarenessData::maxObjectsInRange &&
-          objData.shapeID == object.state.shapeID)
+          objData.bodyID == object.state.bodyID)
       {
         NMP_ASSERT(objData.inViewFrameCount >= 0);
         // if last acceleration was 0 then it has only just arrived in view so we give it the
@@ -539,7 +539,7 @@ void EnvironmentAwarenessFeedbackPackage::feedback(float timeStep, MR::InstanceD
         tempData[i].inViewFrameCount = 0;
       }
       tempData[i].lastVel = object.state.velocity;
-      tempData[i].shapeID = object.state.shapeID;
+      tempData[i].bodyID = object.state.bodyID;
       MR_DEBUG_DRAW_VECTOR(pDebugDrawInst, MR::VT_Acceleration, object.state.position, tempData[i].smoothedAcc, NMP::Colour::LIGHT_YELLOW);
     }
     // necessary to copy at the end
@@ -611,7 +611,7 @@ void EnvironmentAwarenessFeedbackPackage::feedback(float timeStep, MR::InstanceD
         feedIn->getSweepResultDynamic().getType() != ER::SweepResult::SR_NoContact)
     {
       const Environment::Object* object =
-        findObject(numObjects, data->dynamicObjectsInRange, feedIn->getSweepResultDynamic().getShapeID());
+        findObject(numObjects, data->dynamicObjectsInRange, feedIn->getSweepResultDynamic().getBodyID());
       if (object)
       {
         updatePatchesFromObject(object, set, store, feedIn->getSweepResultDynamic(), SCALING_SOURCE);
@@ -637,7 +637,7 @@ void EnvironmentAwarenessFeedbackPackage::feedback(float timeStep, MR::InstanceD
     {
       // if we have registered a static contact that matches the ID, then use this
       // note, id will be 0 (so the condition false) if there is no staticContactObject
-      if (data->staticContactObject.state.shapeID == feedIn->getContactResult().getShapeID())
+      if (data->staticContactObject.state.bodyID == feedIn->getContactResult().getBodyID())
       {
         // this doesn't overwrite the higher precedence sight patch if it finds one
         updatePatchesFromObject(&data->staticContactObject, set, store, feedIn->getContactResult(), SCALING_SOURCE, false);
@@ -645,7 +645,7 @@ void EnvironmentAwarenessFeedbackPackage::feedback(float timeStep, MR::InstanceD
       else // otherwise, search for the dynamic object that matches the ID.
       {
         const Environment::Object* object =
-          findObject(numObjects, data->dynamicObjectsInRange, feedIn->getContactResult().getShapeID());
+          findObject(numObjects, data->dynamicObjectsInRange, feedIn->getContactResult().getBodyID());
         if (object)
         {
           // this doesn't overwrite the higher precedence sight patch if it finds one
@@ -660,7 +660,7 @@ void EnvironmentAwarenessFeedbackPackage::feedback(float timeStep, MR::InstanceD
       {
         int32_t objectIndex = -1;
         const Environment::Object* object =
-          findObject(numObjects, data->dynamicObjectsInRange, set.patches[i].state.shapeID, &objectIndex);
+          findObject(numObjects, data->dynamicObjectsInRange, set.patches[i].state.bodyID, &objectIndex);
         // if object exists, then simply update from the local space patch
         if (object)
         {
@@ -670,7 +670,7 @@ void EnvironmentAwarenessFeedbackPackage::feedback(float timeStep, MR::InstanceD
           set.patches[i].state.accSqr = data->objectData[objectIndex].smoothedAccSqr;
           set.patches[i].isPredicted = false;
           if (!object->isStill)
-            store.localShapes[i].toWorldSpace(set.patches[i], object->matrix);
+            store.localBodies[i].toWorldSpace(set.patches[i], object->matrix);
         }
         // otherwise we have to extrapolate from the last velocity values known
         else
@@ -682,7 +682,7 @@ void EnvironmentAwarenessFeedbackPackage::feedback(float timeStep, MR::InstanceD
           float distSqr = set.patches[i].state.position.distanceSquaredTo(feedIn->getFocalCentre());
           if (distSqr < NMP::sqr(feedIn->getFocalRadius())) // object should be in view, but isn't
           {
-            store.localShapes[i] = store.localShapes[--set.numPatches];
+            store.localBodies[i] = store.localBodies[--set.numPatches];
             set.patches[i] = set.patches[set.numPatches];
           }
         }
