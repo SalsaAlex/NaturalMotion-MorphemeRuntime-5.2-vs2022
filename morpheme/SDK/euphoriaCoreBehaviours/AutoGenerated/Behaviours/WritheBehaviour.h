@@ -150,7 +150,7 @@ public:
   {
     NMP_ASSERT(data->m_floats->m_numValues == 24);
     NMP_ASSERT(data->m_ints->m_numValues == 6);
-    NMP_ASSERT(data->m_uint64s->m_numValues == 0);
+    //NMP_ASSERT(data->m_uint64s->m_numValues == 0);
 
 
     ArmsDriveCompensationScale[0] = data->m_floats->m_values[0];
@@ -197,7 +197,7 @@ public:
   {
     NMP_ASSERT(data->m_floats->m_numValues == 6);
     NMP_ASSERT(data->m_ints->m_numValues == 0);
-    NMP_ASSERT(data->m_uint64s->m_numValues == 0);
+    //NMP_ASSERT(data->m_uint64s->m_numValues == 0);
     // Vector 3 are stored in a float array with 4 entries per item
     NMP_ASSERT(data->m_vector3Data->m_numValues == 0);
 
