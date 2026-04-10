@@ -132,7 +132,7 @@ static bool setEnvironmentObjectFromBody(
 
   if (isMoveable)
   {
-    object->isStill = rigidDynamic ? rigidDynamic->isSleeping() : false;
+    object->isStill = body->IsDynamic() ? body->IsActive() : false;
     // if you're using a proxy character then the individual parts don't need to use a data index
     if (perBodyData) 
     {
@@ -199,7 +199,7 @@ void SceneProbes::feedback(float timeStep)
   Environment::State state;
   state.extents.set(100.0f, 100.0f, 100.0f);
   state.mass = 1e8f; // flags as static - Special number - see Environment_State.cpp MORPH-16212
-  state.shapeID = 0;
+  state.bodyID = 0;
   EnvironmentAwareness* EA = owner->environmentAwareness;
   Environment::Object* object = &EA->data->staticSweepResultObject;
   object->state = state;
@@ -219,7 +219,7 @@ void SceneProbes::feedback(float timeStep)
     objects[i].state.velocity.setToZero();
     objects[i].state.angularVelocity.setToZero();
     objects[i].state.acceleration.setToZero();
-    objects[i].state.shapeID = i + 1; // unique ID
+    objects[i].state.bodyID = i + 1; // unique ID
 
     objects[i].isStill = true;
     objects[i].matrix = NMP::Matrix34(NMP::Quat(0, 0, 0, 1), objects[i].state.position);
@@ -402,6 +402,7 @@ void SceneProbes::feedback(float NMP_UNUSED(timeStep))
   BodyInfo bodies[maxBodies];
   int numBodies = 0;
   const int maxClosestBodies = 16;
+  /*
   if (requestProbe == true) // if we're going to request a probe then we should send up the latest information
   {
     physx::PxSphereGeometry sphere;
@@ -533,6 +534,7 @@ void SceneProbes::feedback(float NMP_UNUSED(timeStep))
     }
   }
   else // Otherwise we can just assume the sort order is about right and the set of objects is about right
+  */
   {
     // TODO We need to dirty the bounds cache so getCachedBounds updates properly, on the two
     // intermediate frames now add the sorted objects into the objects structure for sending up to
@@ -557,12 +559,12 @@ void SceneProbes::feedback(float NMP_UNUSED(timeStep))
     if (rootModule->getDebugInterface() && rootModule->getDebugInterface()->isDrawEnabled())
     {
       JPH::Body* body = (JPH::Body*) (size_t) resultDynamic.getBodyID();
-      NMP_ASSERT(shape);
-      MR::JoltPhysPerBodyData* shapeData = MR::JoltPhysPerBodyData::getFromBody(body);
-      if (shapeData)
+      NMP_ASSERT(body);
+      MR::JoltPhysPerBodyData* bodyData = MR::JoltPhysPerBodyData::getFromBody(body);
+      if (bodyData)
       {
-        shapeData->m_debugColour = ER::getDefaultColourForControl(ER::objectSweepSucceededControl);
-        shapeData->m_debugColour.w = ER::getDefaultColourForControl(ER::objectSweepSucceededControl).w;
+        bodyData->m_debugColour = ER::getDefaultColourForControl(ER::objectSweepSucceededControl);
+        bodyData->m_debugColour.w = ER::getDefaultColourForControl(ER::objectSweepSucceededControl).w;
       }
     }
 #endif

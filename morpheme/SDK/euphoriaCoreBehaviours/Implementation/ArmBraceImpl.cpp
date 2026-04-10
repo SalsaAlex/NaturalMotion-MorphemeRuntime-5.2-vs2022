@@ -103,7 +103,7 @@ void ArmBraceUpdatePackage::update(float NMP_UNUSED(timeStep), MR::InstanceDebug
   // each arm now finds the closest point on this patch to aim for.
   NMP::Vector3 targetPos;
   const Environment::Patch& patch = in->getBraceHazard().patch;
-  data->patchBodyID = patch.state.shapeID;
+  data->patchBodyID = patch.state.bodyID;
 
   // Check if character is already inside the shape.
   const bool isCentreOfShouldersInsideShape =
@@ -140,7 +140,7 @@ void ArmBraceUpdatePackage::update(float NMP_UNUSED(timeStep), MR::InstanceDebug
   // As a function it fills in the LimbControl structure
   applyBraceDynamic(dynamic, owner, in, data, owner->owner->data->armLimbSharedStates[owner->data->childIndex],
     out, in->getProtectState().position, targetPos, true,
-    feedIn->getLimbInContactWithPatchShapeID(), armClampLength, pDebugDrawInst);
+    feedIn->getLimbInContactWithPatchBodyID(), armClampLength, pDebugDrawInst);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

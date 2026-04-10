@@ -62,7 +62,7 @@ struct EndConstraintControl
 
   ER::HandFootTransform desiredTM;  ///< Desired pose of the end-effector in world space.
 
-  int64_t targetShapeID;  ///< Cast from pointer to physics actor.
+  int64_t targetBodyID;  ///< Cast from pointer to physics body.
 
   float createDistance;  ///< Distance between endEff and target at which constraint is created.  (Length)
 
@@ -91,7 +91,7 @@ struct EndConstraintControl
   /// Set the desired orientation of the end-effector in world space.
   void setDesiredOrientation(NMP::Matrix34& desTM);
   /// Provide a pointer (cast to int) to the object to constrain to.
-  void setTargetShapeID(int64_t shapeID);
+  void setTargetBodyID(int64_t bodyID);
   // Disable collisions between end-effector and constrainee.
   void setDisableCollisions(bool disable);
 

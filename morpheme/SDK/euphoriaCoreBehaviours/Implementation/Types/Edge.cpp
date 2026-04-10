@@ -134,7 +134,7 @@ bool EdgeBuffer::push(Edge& edge, bool avoidDuplicates)
       m_popIndex = m_pushIndex;
     }
 #if EDGEBUFFER_PRINT_LOG
-    printf("Pushed Buffer: back %i | front %i | size %i [patch: %i]\n", m_popIndex, m_pushIndex, m_size, edge.shapeID);
+    printf("Pushed Buffer: back %i | front %i | size %i [patch: %i]\n", m_popIndex, m_pushIndex, m_size, edge.bodyID);
 #endif
     return true;
   }

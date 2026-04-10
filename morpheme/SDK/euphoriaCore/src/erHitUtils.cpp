@@ -23,7 +23,7 @@ namespace ER
 
 void HitSelectionInfo::invalidate()
 {
-  selectedActor = (PhysXActor*)0;
+  selectedBody = nullptr;
   limbIndex = partIndex = -1;
   limbType = ER::LimbTypeEnum::L_unknown; // no type
   partType = ER::BodyPartTypeEnum::NumPartTypes; ; // no type
@@ -35,7 +35,7 @@ bool HitSelectionInfo::isNotBodyHit()
 }
 bool HitSelectionInfo::isInvalid()
 {
-  return selectedActor == (void*)0;
+  return selectedBody == nullptr;
 }
 bool HitSelectionInfo::isBodyHit()
 {
@@ -44,7 +44,7 @@ bool HitSelectionInfo::isBodyHit()
 
 void HitSelectionInfo::endianSwap()
 {
-  NMP::endianSwap(selectedActor);
+  NMP::endianSwap(selectedBody);
   NMP::endianSwap(limbIndex);
   NMP::endianSwap(partIndex);
   NMP::endianSwap(rigPartIndex);

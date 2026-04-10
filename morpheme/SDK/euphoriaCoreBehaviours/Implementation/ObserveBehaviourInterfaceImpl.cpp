@@ -47,7 +47,7 @@ void ObserveBehaviourInterface::update(float NMP_UNUSED(timeStep))
   data->findObject.minMass = SCALE_MASS(params.getMinMass());
   data->findObject.charactersPosition = owner->data->bodyLimbSharedState.m_dynamicState.getPosition();
   data->findObject.charactersVelocity = owner->data->bodyLimbSharedState.m_dynamicState.getVelocity();
-  data->findObject.shapeAdvantage = params.getWinnersAdvantage();
+  data->findObject.bodyAdvantage = params.getWinnersAdvantage();
   data->findObject.interestReductionRate = SCALE_FREQUENCY(params.getInterestReductionRate());
 
   // now set look target for seen object
@@ -55,7 +55,7 @@ void ObserveBehaviourInterface::update(float NMP_UNUSED(timeStep))
   float metric = feedIn->getFoundObjectMetric();
   if (metric > 1.0f)
   {
-    data->findObject.focusShapeID = foundObject.shapeID;
+    data->findObject.focusBodyID = foundObject.bodyID;
     TargetRequest lookRequest(foundObject.position, SCALING_SOURCE);
     lookRequest.passOnAmount = 0.25;
     MR_DEBUG_DRAW_POINT(rootModule->getDebugInterface(), foundObject.position, SCALE_DIST(0.5f), NMP::Colour::RED);
@@ -63,7 +63,7 @@ void ObserveBehaviourInterface::update(float NMP_UNUSED(timeStep))
   }
   else
   {
-    data->findObject.focusShapeID = -1;
+    data->findObject.focusBodyID = -1;
   }
   out->setFindObject(data->findObject);
 }

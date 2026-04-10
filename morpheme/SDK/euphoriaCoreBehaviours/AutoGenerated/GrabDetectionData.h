@@ -74,7 +74,7 @@ NMP_ALIGN_PREFIX(32) struct GrabDetectionData
 
   EdgeBuffer edgeBuffer;  ///< Keep local memory of encountered edges (ring buffer).
   NMP::Vector3 smoothedChestVel;  ///< Makes chest predictions less erratic.  (Velocity)
-  int64_t bestEdgeShapeID;
+  int64_t bestEdgeBodyID;
   float maxArmLength;  ///< Length of longest arm, calculated in entry.  (Length)
   bool isFirstUpdate;  ///< True only right at the start of the update (and then cleared).
 

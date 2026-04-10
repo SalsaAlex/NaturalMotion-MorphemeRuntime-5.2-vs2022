@@ -282,6 +282,9 @@ public:
     float        m_damping;
     float        m_driveStrengthScale;
 
+    float       m_lastInternalCompliance;
+    float       m_lastExternalCompliance;
+
     JPH::TwoBodyConstraint* m_jointInternal;
   public:
     bool          m_rotationDirty;

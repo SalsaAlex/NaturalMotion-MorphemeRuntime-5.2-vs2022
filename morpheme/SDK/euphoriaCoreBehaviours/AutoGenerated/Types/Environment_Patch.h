@@ -140,8 +140,8 @@ struct Patch
   /// Returns a metric of how reliable a resulting position is 
   float getReliabilityOfPosition(const NMP::Vector3& position, const NMP::Vector3& pathPosition, bool clipped) const;
   // Selection of creation functions for manually generated patch shapes
-  void createAsPlane(const NMP::Vector3& position, const NMP::Vector3& normal, float radius, const NMP::Vector3& velocity, const NMP::Vector3& angularVelocity, float mass, int64_t shapeID);
-  void createAsSphere(const NMP::Vector3& position, float radius, const NMP::Vector3& velocity, float mass, int64_t shapeID);
+  void createAsPlane(const NMP::Vector3& position, const NMP::Vector3& normal, float radius, const NMP::Vector3& velocity, const NMP::Vector3& angularVelocity, float mass, int64_t bodyID);
+  void createAsSphere(const NMP::Vector3& position, float radius, const NMP::Vector3& velocity, float mass, int64_t bodyID);
 
 private:
 

@@ -241,7 +241,7 @@ static bool processPatchEdges(
   patch.getEdgeDirections(&patchEdges[0]);
 
   Edge edge;
-  edge.shapeID = patch.state.bodyID;
+  edge.bodyID = patch.state.bodyID;
   edge.corner = patch.corner;
 
   // Pre-processing: we need to know whether we're dealing with a pole object or a large surface
@@ -430,23 +430,23 @@ static void processAllPatches(
   {
     // only consider these types of patches
     const Environment::Patch& patch = potentialGrabPatches.patches[i];
-    NMP_ASSERT(patch.state.shapeID >= 0);
+    NMP_ASSERT(patch.state.bodyID >= 0);
     bool isAllowedType = (patch.type == Environment::Patch::EO_Corner) || (patch.type == Environment::Patch::EO_Edge) ||
                          (patch.type == Environment::Patch::EO_Capsule);
 
-    if (grabDetection.in->getGrabFilteringImportance() != 0.0f)
-    {
-      const ObjectFiltering userFilter = grabDetection.in->getGrabFiltering();
-      const physx::PxFilterData userFilterData(userFilter.word0, userFilter.word1, userFilter.word2, userFilter.word3);
-
-      // If there is a shape associated with a patch verify whether shape is grabbable.
-      const physx::PxShape* const shape = ER::getPxShapeFromShapeID(patch.state.shapeID);
-      if (shape)
-      {
-        const bool shapeGrabbable = MR::applyFilterShader(shape, &userFilterData);
-        isAllowedType = isAllowedType && shapeGrabbable;
-      }
-    }
+    //if (grabDetection.in->getGrabFilteringImportance() != 0.0f)
+    //{
+    //  const ObjectFiltering userFilter = grabDetection.in->getGrabFiltering();
+    //  const physx::PxFilterData userFilterData(userFilter.word0, userFilter.word1, userFilter.word2, userFilter.word3);
+    //
+    //  // If there is a shape associated with a patch verify whether shape is grabbable.
+    //  const JPH::Body* body = ER::getJPHBodyFromBodyID(patch.state.bodyID);
+    //  if (body)
+    //  {
+    //    const bool shapeGrabbable = MR::applyFilterShader(shape, &userFilterData);
+    //    isAllowedType = isAllowedType && shapeGrabbable;
+    //  }
+    //}
 
     if (!isAllowedType)
     {
@@ -555,40 +555,40 @@ void GrabDetection::update(float timeStep)
 
   // Make Grab stop updating for a single frame to release the edge because shape that is associated
   // with this edge either was deleted or was filtered out.
-  if (feedIn->getIsHanging() && (data->bestEdgeShapeID > 0))
+  if (feedIn->getIsHanging() && (data->bestEdgeBodyID > 0))
   {
-    // Note that data->bestEdgeShapeID is the best edge that was sent to Grab.
-    physx::PxShape* const shape = ER::getPxShapeFromShapeID(data->bestEdgeShapeID);
-    if (shape)
-    {
-      if (in->getGrabFilteringImportance() != 0.0f)
-      {
-        const ObjectFiltering& userFilter = in->getGrabFiltering();
-        const physx::PxFilterData userFilterData(userFilter.word0, userFilter.word1, userFilter.word2, userFilter.word3);
-
-        const bool shapeGrabbable = MR::applyFilterShader(shape, &userFilterData);
-        if (!shapeGrabbable)
-        {
-          // Make Grab stop updating for a single frame to release.
-          out->setLetGoEdge(true);
-
-#if USE_EDGE_BUFFER
-          // Cull all edges that belong to the filtered out shape inside the edge buffer.
-          data->edgeBuffer.cullShapeID(data->bestEdgeShapeID);
-#endif //USE_EDGE_BUFFER
-        }
-      }
-    }
-    else // There is no shape associated with the edge that was last sent to Grab i.e. shape was deleted.
-    {
+    // Note that data->bestEdgeBodyID is the best edge that was sent to Grab.
+    const JPH::Body* body = ER::getJPHBodyFromBodyID(data->bestEdgeBodyID);
+//    if (body)
+//    {
+//      if (in->getGrabFilteringImportance() != 0.0f)
+//      {
+//        const ObjectFiltering& userFilter = in->getGrabFiltering();
+//        const physx::PxFilterData userFilterData(userFilter.word0, userFilter.word1, userFilter.word2, userFilter.word3);
+//
+//        const bool shapeGrabbable = MR::applyFilterShader(shape, &userFilterData);
+//        if (!shapeGrabbable)
+//        {
+//          // Make Grab stop updating for a single frame to release.
+//          out->setLetGoEdge(true);
+//
+//#if USE_EDGE_BUFFER
+//          // Cull all edges that belong to the filtered out shape inside the edge buffer.
+//          data->edgeBuffer.cullBodyID(data->bestEdgeBodyID);
+//#endif //USE_EDGE_BUFFER
+//        }
+//      }
+//    }
+//    else // There is no shape associated with the edge that was last sent to Grab i.e. shape was deleted.
+//    {
       // Make Grab stop updating for a single frame to release.
       out->setLetGoEdge(true);
 
 #if USE_EDGE_BUFFER
       // Cull all edges that belong to the deleted shape inside the edge buffer.
-      data->edgeBuffer.cullShapeID(data->bestEdgeShapeID);
+      data->edgeBuffer.cullBodyID(data->bestEdgeBodyID);
 #endif //USE_EDGE_BUFFER
-    }
+    //}
   }
 
   // Early out when module hasn't received any patch/edge data
@@ -644,8 +644,8 @@ void GrabDetection::update(float timeStep)
     // Set edge
     out->setGrabbableEdge(bestEdge, 1.0f);
 
-    // Save shapeID.
-    data->bestEdgeShapeID = bestEdge.bodyID;
+    // Save bodyID.
+    data->bestEdgeBodyID = bestEdge.bodyID;
 
     // Set look target
     TargetRequest lookTarget;

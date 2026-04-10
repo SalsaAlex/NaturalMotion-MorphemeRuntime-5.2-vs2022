@@ -469,7 +469,7 @@ void MyNetwork::update(float timeStep)
     if ((i != armBreakageIndex) /*&& !endConstraint.isConstrained()*/ && arms[i]->out->getEndConstraintImportance() > 0.0f)
     {
       endConstraint.doConstrain(true);
-      endConstraint.setDesiredTransformWs(holdParams.desiredTM, holdParams.targetShapeID);
+      endConstraint.setDesiredTransformWs(holdParams.desiredTM, holdParams.targetBodyID);
       endConstraint.setLockedDofs(holdParams.lockedLinearDofs, holdParams.lockedAngularDofs);
       endConstraint.disableCollisions(holdParams.disableCollisions);
       endConstraint.constrainOnContact(holdParams.constrainOnContact);
@@ -625,10 +625,10 @@ static NM_INLINE bool isPartInContactWithPatch(const MR::PhysicsRig::Part* const
     ER::EuphoriaRigPartUserData::getFromPart(part)->getNumContacts();
   for (uint16_t contactIndex = 0; (contactIndex < numContacts) && !inContact; ++contactIndex)
   {
-    const int64_t collisionShapeId = 
+    const int64_t collisionBodyId = 
       ER::EuphoriaRigPartUserData::getFromPart(part)->getContactedBodyID(contactIndex);
     // if the part contact id matches the patch id then the part is in contact with the patch
-    inContact = (collisionShapeId == patchBodyID);
+    inContact = (collisionBodyId == patchBodyID);
   }
 
   return inContact;

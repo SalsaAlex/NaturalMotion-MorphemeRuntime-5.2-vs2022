@@ -10,9 +10,9 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 #include "physics/mrPhysics.h"
-#include "mrPhysicsRigPhysX3Articulation.h"
-#include "mrPhysicsScenePhysX3.h"
-#include "mrPhysX3.h"
+#include "mrPhysicsRigJoltPhysRagdoll.h"
+#include "mrPhysicsSceneJoltPhys.h"
+#include "mrJoltPhys.h"
 #include "euphoria/erCharacter.h"
 #include "euphoria/erBody.h"
 #include "euphoria/erLimb.h"
@@ -244,14 +244,18 @@ struct ContactReport
 // Calls the physx filter shader callback to determine if the contact is of interest
 
 static bool isCollisionOfInterest(
-  MR::PhysicsScenePhysX3* physicsScene,
-  physx::PxShape* shapeContacted,
-  physx::PxFilterData filterDataForPart)
+  MR::PhysicsSceneJoltPhys* physicsScene,
+  JPH::Body* bodyContacted//,
+  //physx::PxFilterData filterDataForPart
+  )
 {
+    //FIXME
+  /*
+
   // Filter attribs for the rig part (no need to query for these - it's a part on the character's physics rig)
   physx::PxFilterObjectAttributes filterAttribsForPart = physx::PxFilterObjectType::eARTICULATION;
 
-  // Query fliter info on the shape we're contacting
+  // Query fliter info on the body we're contacting
   physx::PxFilterObjectAttributes filterAttribsContacted = 0;
   physx::PxFilterData             filterDataContacted;
   MR::getFilterInfo(shapeContacted, filterAttribsContacted, filterDataContacted);
@@ -280,6 +284,8 @@ static bool isCollisionOfInterest(
 
   bool ignoreCollisionPair = (filterFlags == physx::PxFilterFlag::eKILL || filterFlags == physx::PxFilterFlag::eSUPPRESS);
   return !ignoreCollisionPair;
+  */
+  return false;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -290,8 +296,9 @@ static bool isCollisionOfInterest(
 static void retrieveContactInfo(
   MR::Network* net,
   const AttribDataOperatorContactReporterDef* defData,
-  ContactReport &contactReport, 
-  const physx::PxFilterData& contactFilterMask)
+  ContactReport &contactReport//, 
+  //const physx::PxFilterData& contactFilterMask
+  )
 {
   // Retrieve the physics rig def where the per-part contact data resides
   ER::Character* character = ER::networkGetCharacter(net);
@@ -376,14 +383,14 @@ static void retrieveContactInfo(
       // Retrieve the contact data for the part
       ER::EuphoriaRigPartUserData* contactData = ER::EuphoriaRigPartUserData::getFromPart(limb.getPart(j));
 
-      // For each contact listed see if there is one that occurred with a shape that we are interested in
+      // For each contact listed see if there is one that occurred with a body that we are interested in
       // if so break immediately and store the (summary) contact data
       uint16_t contactIndex = 0;
       for (contactIndex = 0; contactIndex < contactData->getNumContacts(); ++contactIndex)
       {
-        physx::PxShape* shapeContacted = &(contactData->getContactedShape(contactIndex));
-        MR::PhysXPerShapeData* perShapeData = MR::PhysXPerShapeData::getFromShape(shapeContacted);
-        if (perShapeData && isCollisionOfInterest((MR::PhysicsScenePhysX3 *)physicsScene, shapeContacted, contactFilterMask))
+        JPH::Body* bodyContacted = contactData->getContactedBody(contactIndex);
+        MR::JoltPhysPerBodyData* perShapeData = MR::JoltPhysPerBodyData::getFromBody(bodyContacted);
+        if (perShapeData && isCollisionOfInterest((MR::PhysicsSceneJoltPhys *)physicsScene, bodyContacted/*, contactFilterMask*/))
         {
           break;
         }
@@ -479,22 +486,22 @@ MR::AttribData* nodeOperatorContactReporterOutputCPUpdate(
 
   // PhysX specific contact filter mask from the morpheme attrib data if we have it.
   //
-  physx::PxFilterData contactFilterMask(0, 0, 0, 0);
-  MR::CollisionFilterMask* cfmCurrent = MR::getCollisionFilterMask(nodeDef, net);
-  NMP_ASSERT(cfmCurrent);
-  if (cfmCurrent)
-  {
-    contactFilterMask.word0 = cfmCurrent->m_word0;
-    contactFilterMask.word1 = cfmCurrent->m_word1;
-    contactFilterMask.word2 = cfmCurrent->m_word2;
-    contactFilterMask.word3 = cfmCurrent->m_word3;
-  }
+  //physx::PxFilterData contactFilterMask(0, 0, 0, 0);
+  //MR::CollisionFilterMask* cfmCurrent = MR::getCollisionFilterMask(nodeDef, net);
+  //NMP_ASSERT(cfmCurrent);
+  //if (cfmCurrent)
+  //{
+  //  contactFilterMask.word0 = cfmCurrent->m_word0;
+  //  contactFilterMask.word1 = cfmCurrent->m_word1;
+  //  contactFilterMask.word2 = cfmCurrent->m_word2;
+  //  contactFilterMask.word3 = cfmCurrent->m_word3;
+  //}
 
   // Perform the actual function of this node - to retrieve some contact data of interest
   AttribDataOperatorContactReporterDef* defData = nodeDef->getAttribData<AttribDataOperatorContactReporterDef>(MR::ATTRIB_SEMANTIC_NODE_SPECIFIC_DEF);
   NMP_ASSERT(defData);
   ContactReport contactData;
-  retrieveContactInfo(net, defData, contactData, contactFilterMask);
+  retrieveContactInfo(net, defData, contactData/*, contactFilterMask*/);
 
   // Update all the pins in one go..
   updateOutputs(nodeDef, net, contactData);

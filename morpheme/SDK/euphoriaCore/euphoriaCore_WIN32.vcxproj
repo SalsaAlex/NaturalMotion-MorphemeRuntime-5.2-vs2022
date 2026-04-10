@@ -90,24 +90,24 @@
     <_ProjectFileVersion>17.0.36414.14</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\..\lib\win32\vs9.0\</OutDir>
-    <IntDir>..\..\..\obj\win32\vs9.0\euphoriaCore\debug\</IntDir>
+    <OutDir>..\..\..\lib\win32\vs17.0\</OutDir>
+    <IntDir>..\..\..\obj\win32\vs17.0\euphoriaCore\debug\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\..\lib\win32\vs9.0\</OutDir>
-    <IntDir>..\..\..\obj\win32\vs9.0\euphoriaCore\release\</IntDir>
+    <OutDir>..\..\..\lib\win32\vs17.0\</OutDir>
+    <IntDir>..\..\..\obj\win32\vs17.0\euphoriaCore\release\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target LE32 Debug|Win32'">
-    <OutDir>..\..\..\lib\win32\vs9.0\</OutDir>
-    <IntDir>..\..\..\obj\win32\vs9.0\euphoriaCore\target_le32_debug\</IntDir>
+    <OutDir>..\..\..\lib\win32\vs17.0\</OutDir>
+    <IntDir>..\..\..\obj\win32\vs17.0\euphoriaCore\target_le32_debug\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target LE32 Release|Win32'">
-    <OutDir>..\..\..\lib\win32\vs9.0\</OutDir>
-    <IntDir>..\..\..\obj\win32\vs9.0\euphoriaCore\target_le32_release\</IntDir>
+    <OutDir>..\..\..\lib\win32\vs17.0\</OutDir>
+    <IntDir>..\..\..\obj\win32\vs17.0\euphoriaCore\target_le32_release\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target BE32 Debug|Win32'">
-    <OutDir>..\..\..\lib\win32\vs9.0\</OutDir>
-    <IntDir>..\..\..\obj\win32\vs9.0\euphoriaCore\target_be32_debug\</IntDir>
+    <OutDir>..\..\..\lib\win32\vs17.0\</OutDir>
+    <IntDir>..\..\..\obj\win32\vs17.0\euphoriaCore\target_be32_debug\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target BE32 Release|Win32'">
     <OutDir>..\..\..\lib\win32\vs9.0\</OutDir>
@@ -117,7 +117,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\JoltPhys;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NM_PHYSX3;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;WIN32;_DEBUG;_LIB;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_USE_CPU_COMPUTE;JPH_DEBUG_RENDERER;JPH_PROFILE_ENABLED;JPH_OBJECT_STREAM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -141,7 +141,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>include;..\..\..\common\NMRuntimeUtils\include;..\physics\include\Physics\JoltPhys;..\physics\include;..\core\include;..;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;NM_PHYSX3;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;NOMINMAX;WIN32;_LIB;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_USE_CPU_COMPUTE;JPH_DEBUG_RENDERER;JPH_PROFILE_ENABLED;JPH_OBJECT_STREAM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>

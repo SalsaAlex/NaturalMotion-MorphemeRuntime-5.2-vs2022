@@ -81,7 +81,7 @@ bool SweepResult::applySweep(
   if (dynamic)
   {
     // Do the dynamic test
-    NMP_ASSERT(sweep.targetShapeID);
+    NMP_ASSERT(sweep.targetBodyID);
 
     MR_DEBUG_DRAW_VECTOR(pDebugDrawInst, MR::VT_Normal, sweep.position, sweep.motion, NMP::Colour::LIGHT_RED);
 
@@ -141,7 +141,7 @@ bool SweepResult::applySweep(
         continue;
       }
 
-      MR::CastData castdata = MR::SweepAAShapeVsBody(sphere, targetBody, pos[i], motionDir[i], distance[i]);
+      MR::CastData castdata = MR::SweepAAShapeVsBody(scene->m_joltPhysScene, sphere, targetBody, pos[i], motionDir[i], distance[i]);
 
       if (!castdata.hits.empty())
       {
@@ -160,69 +160,70 @@ bool SweepResult::applySweep(
       MR_DEBUG_DRAW_LINE(pDebugDrawInst, MR::nmJPHVec3ToVector3(pos[i] + motionDir[i]*distance[i]), MR::nmJPHVec3ToVector3(bodyTM.GetTranslation()), NMP::Colour::RED);
     }
   }
-  else
-  {
-    // Do the static test
-    // Use default PxFilterData here to bypass the internal filtering, and we pass the real flags
-    // into the callback.
-    physx::PxSceneQueryFilterData filterData(
-      physx::PxQueryFlag::eSTATIC | physx::PxQueryFlag::ePREFILTER);
-    EuphoriaPhysX3QueryFilterCallback euphoriaPhysX3QueryFilterCallback(physx::PxFilterData(
-      0, 
-      ignoreGroups, 
-      0, 
-      0));
-    NMP_ASSERT(distance[0] > distScale * 0.00001f);
-    for (; i < 2; i++)
-    {
-      if (distance[i] == 0.0f)
-      {
-        // See comment above for distance = 0 in the dynamic case
-        continue;
-      }
-
-      physx::PxSweepBuffer sweepBuffer;
-      if (scene->getPhysXScene()->sweep(
-        sphere,
-        physx::PxTransform(pos[i], physx::PxQuat(0, 0, 0, 1)),
-        motionDir[i],
-        distance[i],
-        sweepBuffer,
-        queryFlags,
-        filterData, &euphoriaPhysX3QueryFilterCallback, NULL, clientID))
-      {
-#if defined(BACKUP_RAYCAST)
-        // Initial overlap so do a ray cast instead
-        if (!(sweepHit.flags & physx::PxSceneQueryFlag::eASSUME_NO_INITIAL_OVERLAP))
-        {
-          physx::PxRaycastBuffer raycastBuffer;
-          if (scene->getPhysXScene()->raycast(
-            pos[i],
-            motionDir[i],
-            distance[i] + sphere.radius,
-            raycastBuffer,
-            queryFlags,
-            filterData,
-            &euphoriaPhysX3QueryFilterCallback,
-            NULL))
-          {
-            rayHit = raycastBuffer.block;
-            probeHit = &rayHit;
-            contacted = true;
-            break;
-          }
-        }
-        else
-#endif
-        {
-          sweepHit = sweepBuffer.block;
-          probeHit = &sweepHit;
-          contacted = true;
-          break;
-        }
-      }
-    }
-  }
+  // FIXME
+//  else
+//  {
+//    // Do the static test
+//    // Use default PxFilterData here to bypass the internal filtering, and we pass the real flags
+//    // into the callback.
+//    physx::PxSceneQueryFilterData filterData(
+//      physx::PxQueryFlag::eSTATIC | physx::PxQueryFlag::ePREFILTER);
+//    EuphoriaPhysX3QueryFilterCallback euphoriaPhysX3QueryFilterCallback(physx::PxFilterData(
+//      0, 
+//      ignoreGroups, 
+//      0, 
+//      0));
+//    NMP_ASSERT(distance[0] > distScale * 0.00001f);
+//    for (; i < 2; i++)
+//    {
+//      if (distance[i] == 0.0f)
+//      {
+//        // See comment above for distance = 0 in the dynamic case
+//        continue;
+//      }
+//
+//      physx::PxSweepBuffer sweepBuffer;
+//      if (scene->getPhysXScene()->sweep(
+//        sphere,
+//        physx::PxTransform(pos[i], physx::PxQuat(0, 0, 0, 1)),
+//        motionDir[i],
+//        distance[i],
+//        sweepBuffer,
+//        queryFlags,
+//        filterData, &euphoriaPhysX3QueryFilterCallback, NULL, clientID))
+//      {
+//#if defined(BACKUP_RAYCAST)
+//        // Initial overlap so do a ray cast instead
+//        if (!(sweepHit.flags & physx::PxSceneQueryFlag::eASSUME_NO_INITIAL_OVERLAP))
+//        {
+//          physx::PxRaycastBuffer raycastBuffer;
+//          if (scene->getPhysXScene()->raycast(
+//            pos[i],
+//            motionDir[i],
+//            distance[i] + sphere.radius,
+//            raycastBuffer,
+//            queryFlags,
+//            filterData,
+//            &euphoriaPhysX3QueryFilterCallback,
+//            NULL))
+//          {
+//            rayHit = raycastBuffer.block;
+//            probeHit = &rayHit;
+//            contacted = true;
+//            break;
+//          }
+//        }
+//        else
+//#endif
+//        {
+//          sweepHit = sweepBuffer.block;
+//          probeHit = &sweepHit;
+//          contacted = true;
+//          break;
+//        }
+//      }
+//    }
+//  }
 #if defined(MR_OUTPUT_DEBUGGING)
   // Draw original sweep
   sweep.debugDraw(NMP::Vector3(0.3f, 0, 0), pDebugDrawInst);
@@ -237,7 +238,7 @@ bool SweepResult::applySweep(
     m_type = SR_NoContact;
     return false; // No hit
   }
-  float distance_covered = distance[i] * castresult.hits[0].fraction;
+  float distance_covered = distance[i] * castresult.fraction;
 #if defined(MR_OUTPUT_DEBUGGING)
   SphereSweep tempSweep = sweep;
   if (i == 0)

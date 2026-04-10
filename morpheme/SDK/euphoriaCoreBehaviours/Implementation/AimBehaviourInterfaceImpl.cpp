@@ -87,9 +87,9 @@ static void maintainConstraint(
     else
     {
       // Make sure constrained limb has a higher dominance group than aiming limb
-      const physx::PxDominanceGroup aimingPartDominanceGroup =
-        aimingLimbEndPart->getArticulationLink()->getDominanceGroup();
-      constrainedLimbEndPart->getArticulationLink()->setDominanceGroup(aimingPartDominanceGroup + 1);
+      //const physx::PxDominanceGroup aimingPartDominanceGroup =
+      //  aimingLimbEndPart->getArticulationLink()->getDominanceGroup();
+      //constrainedLimbEndPart->getArticulationLink()->setDominanceGroup(aimingPartDominanceGroup + 1);
 
       NMP_ASSERT(body.getRigConstraintManager()->find(aimingLimbEndPartIndex, constrainedLimbEndPartIndex) == NULL);
       constraint = body.createRigConstraint(
@@ -115,37 +115,37 @@ static void maintainConstraint(
     NMP_ASSERT(constraint);
 
     // Increase inertia of aiming end part to reduce movement under influence of constraint
-    if (constraint &&
-      aimingLimbEndPart &&
-      constrainedLimbEndPart &&
-      (module.data->handSeparation > 0.0f))
-    {
-      aimingLimbEndPart->setMassSpaceInertia(
-        aimingLimbEndPart->getOriginalMassSpaceInertia() * params.getAimingLimbInertiaScale());
-      float forceLimit = SCALE_ACCEL(params.getConstraintAccelerationLimit()) *
-        constrainedLimbEndPart->getMass() * SCALE_AREA(1.0f) / NMP::sqr(module.data->handSeparation);
-      forceLimit *= module.data->supportingLimbStrengthScale;
-
-      const physx::PxD6JointDrive drive(SCALE_STRENGTH(1000.0f), SCALE_DAMPING(1.0f), forceLimit, true);
-      constraint->setDrive(physx::PxD6Drive::eX, drive);
-      constraint->setDrive(physx::PxD6Drive::eY, drive);
-      constraint->setDrive(physx::PxD6Drive::eZ, drive);
-
-      if (params.getEnableOrientationConstraint())
-      {
-        constraint->setDrive(physx::PxD6Drive::eSLERP, drive);
-      }
-      else
-      {
-        const physx::PxD6JointDrive noDrive(0.0f, 0.0f, PX_MAX_F32);
-        constraint->setDrive(physx::PxD6Drive::eSLERP, noDrive);
-        constraint->setDrive(physx::PxD6Drive::eSWING, noDrive);
-        constraint->setDrive(physx::PxD6Drive::eTWIST, noDrive);
-      }
-
-      constraint->setLocalPoseForPartB(constrainedEndPartRelAimingEndPartTM); // Note: part A TM is always the identity.
-      constraint->keep();
-    }
+    //if (constraint &&
+    //  aimingLimbEndPart &&
+    //  constrainedLimbEndPart &&
+    //  (module.data->handSeparation > 0.0f))
+    //{
+    //  aimingLimbEndPart->setMassSpaceInertia(
+    //    aimingLimbEndPart->getOriginalMassSpaceInertia() * params.getAimingLimbInertiaScale());
+    //  float forceLimit = SCALE_ACCEL(params.getConstraintAccelerationLimit()) *
+    //    constrainedLimbEndPart->getMass() * SCALE_AREA(1.0f) / NMP::sqr(module.data->handSeparation);
+    //  forceLimit *= module.data->supportingLimbStrengthScale;
+    //
+    //  const physx::PxD6JointDrive drive(SCALE_STRENGTH(1000.0f), SCALE_DAMPING(1.0f), forceLimit, true);
+    //  constraint->setDrive(physx::PxD6Drive::eX, drive);
+    //  constraint->setDrive(physx::PxD6Drive::eY, drive);
+    //  constraint->setDrive(physx::PxD6Drive::eZ, drive);
+    //
+    //  if (params.getEnableOrientationConstraint())
+    //  {
+    //    constraint->setDrive(physx::PxD6Drive::eSLERP, drive);
+    //  }
+    //  else
+    //  {
+    //    const physx::PxD6JointDrive noDrive(0.0f, 0.0f, PX_MAX_F32);
+    //    constraint->setDrive(physx::PxD6Drive::eSLERP, noDrive);
+    //    constraint->setDrive(physx::PxD6Drive::eSWING, noDrive);
+    //    constraint->setDrive(physx::PxD6Drive::eTWIST, noDrive);
+    //  }
+    //
+    //  constraint->setLocalPoseForPartB(constrainedEndPartRelAimingEndPartTM); // Note: part A TM is always the identity.
+    //  constraint->keep();
+    //}
     NMP_ASSERT(body.getRigConstraintManager()->find(aimingLimbEndPartIndex, constrainedLimbEndPartIndex) != NULL);
   }
 }

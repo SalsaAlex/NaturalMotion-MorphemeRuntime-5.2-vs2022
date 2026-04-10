@@ -72,7 +72,7 @@ void ArmHoldUpdatePackage::update(float NMP_UNUSED(timeStep), MR::InstanceDebugI
 
     // Check timers to see whether a constraint is allowed right now
     bool inNoHoldPeriod = (data->timeNotHeld > -1); // && (data->timeNotHeld < data->timer.noHoldPeriod);
-    bool isNewEdge = (endConstraint.targetShapeID != data->lastRequestedConstraint.targetShapeID);
+    bool isNewEdge = (endConstraint.targetBodyID != data->lastRequestedConstraint.targetBodyID);
     bool inAllowedPeriod = (data->timeHeld < data->timer.maxHoldPeriod) && (!inNoHoldPeriod || isNewEdge);
     //|| (in->getNumConstrainedArms() == 0);
     if (inAllowedPeriod)

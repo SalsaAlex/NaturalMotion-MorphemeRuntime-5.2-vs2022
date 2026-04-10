@@ -10,9 +10,9 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 #include "physics/mrPhysics.h"
-#include "mrPhysicsRigPhysX3Articulation.h"
-#include "mrPhysicsScenePhysX3.h"
-#include "mrPhysX3.h"
+#include "mrPhysicsRigJoltPhysRagdoll.h"
+#include "mrPhysicsSceneJoltPhys.h"
+#include "mrJoltPhys.h"
 #include "euphoria/erAttribData.h"
 #include "euphoria/erBody.h"
 #include "euphoria/erLimb.h"
@@ -157,7 +157,7 @@ AttribDataOperatorPhysicalConstraintState* AttribDataOperatorPhysicalConstraintS
   result->setType(ATTRIB_TYPE_OPERATOR_PHYSICALCONSTRAINT_STATE);
   result->setRefCount(refCount);
 
-  result->m_physxJoint = 0;
+  result->m_joltphysJoint = 0;
 
   return result;
 }
@@ -238,19 +238,19 @@ MR::AttribData* nodeOperatorPhysicalConstraintOutputCPUpdate(
   // bogus
   if (performanceOutputCPPin->m_lastUpdateFrame != net->getCurrentFrameNo() -1)
   {
-    stateData->m_physxJoint = 0;
+    stateData->m_joltphysJoint = 0;
   }
 
   // If there's no physics rig then there's very little to do except release any joint we'd created
   MR::PhysicsRig* physicsRig = MR::getPhysicsRig(net);
   if (!physicsRig)
   {
-    if (stateData->m_physxJoint)
-    {
-      stateData->m_physxJoint->release();
-      stateData->m_physxJoint = 0;
-      // We can't deregister it as there's no physics rig.
-    }
+    //if (stateData->m_joltphysJoint)
+    //{
+    //  stateData->m_joltphysJoint->release();
+    //  stateData->m_joltphysJoint = 0;
+    //  // We can't deregister it as there's no physics rig.
+    //}
     // Return the value of the requested output cp pin.
     return nodeBin->getOutputCPPin(outputCPPinIndex)->getAttribData();
   }
@@ -284,8 +284,8 @@ MR::AttribData* nodeOperatorPhysicalConstraintOutputCPUpdate(
   // Object data
   MR::AttribDataPhysicsObjectPointer* inputPhysicsObjectIDAttrib =
     net->updateOptionalInputCPConnection<MR::AttribDataPhysicsObjectPointer>(nodeDef->getInputCPConnection(4), animSet);
-  physx::PxRigidActor* inputPhysicsObject = 
-    (physx::PxRigidActor*) (inputPhysicsObjectIDAttrib ? inputPhysicsObjectIDAttrib->m_value : 0);
+  JPH::Body* inputPhysicsObject = 
+    (JPH::Body*) (inputPhysicsObjectIDAttrib ? inputPhysicsObjectIDAttrib->m_value : 0);
 
   MR::AttribDataVector3* inputPhysicsObjectPositionAttrib =
     net->updateOptionalInputCPConnection<MR::AttribDataVector3>(nodeDef->getInputCPConnection(5), animSet);
@@ -307,21 +307,21 @@ MR::AttribData* nodeOperatorPhysicalConstraintOutputCPUpdate(
     nodeDef->getAttribData<AttribDataOperatorPhysicalConstraintDef>(MR::ATTRIB_SEMANTIC_NODE_SPECIFIC_DEF);
 
   // Do the work
-  MR::PhysicsRigPhysX3* physicsRigPhysX3 = (MR::PhysicsRigPhysX3*) physicsRig;
+  MR::PhysicsRigJoltPhys* physicsRigJoltPhys = (MR::PhysicsRigJoltPhys*) physicsRig;
 
   // Four possibilities - do nothing, destroy, create or update the joint. However, 
   // if the part index changes the joint needs to be disabled in order to update it.
 
   // Release joint if we're not supposed to be active
   if (
-    inputPhysicsRigPartIndex >= (int) physicsRigPhysX3->getNumParts() ||
+    inputPhysicsRigPartIndex >= (int) physicsRigJoltPhys->getNumParts() ||
     inputPhysicsRigPartIndex < 0)
   {
     // Release if the part index is out of range
     inputActivate = false;
   }
 
-  if (stateData->m_physxJoint)
+  if (stateData->m_joltphysJoint)
   {
     bool releaseJoint = false;
 
@@ -329,18 +329,17 @@ MR::AttribData* nodeOperatorPhysicalConstraintOutputCPUpdate(
     {
       releaseJoint = true;
     }
-    else if (stateData->m_physxJoint && inputPhysicsRigPartIndex != stateData->m_prevPartIndex)
+    else if (stateData->m_joltphysJoint && inputPhysicsRigPartIndex != stateData->m_prevPartIndex)
     {
       // Release joint if the part index has changed
       releaseJoint = true;
     }
-    else if (stateData->m_physxJoint)
+    else if (stateData->m_joltphysJoint)
     {
       // Release joint if the object ID has changed
-      physx::PxRigidActor* objectActor = 0;
-      physx::PxRigidActor* partActor = 0;
-      stateData->m_physxJoint->getActors(objectActor, partActor);
-      if (objectActor != inputPhysicsObject)
+      JPH::Body* objectBody = stateData->m_joltphysJoint->GetBody1();
+      JPH::Body* partBody = stateData->m_joltphysJoint->GetBody2();
+      if (objectBody != inputPhysicsObject)
       {
         releaseJoint = true;
       }
@@ -349,95 +348,95 @@ MR::AttribData* nodeOperatorPhysicalConstraintOutputCPUpdate(
     if (releaseJoint)
     {
       // Actually release the joint and deregister it
-      stateData->m_physxJoint->release();
-      physicsRigPhysX3->deRegisterJointOnRig(stateData->m_physxJoint);
-      stateData->m_physxJoint = 0;
+      //stateData->m_joltphysJoint->release();
+      physicsRigJoltPhys->deRegisterJointOnRig(stateData->m_joltphysJoint);
+      stateData->m_joltphysJoint = 0;
     }
   }
 
   // Now (re)create the joint and/or update it
   if (inputActivate)
   {
-    MR::PhysicsRigPhysX3::PartPhysX3* partPhysX3 = 
-      physicsRigPhysX3->getPartPhysX3(inputPhysicsRigPartIndex);
+    MR::PhysicsRigJoltPhys::PartJoltPhys* partJoltPhys =
+      physicsRigJoltPhys->getPartJoltPhys(inputPhysicsRigPartIndex);
 
-    physx::PxRigidBody* inputPhysicsRigPartObject = partPhysX3->getRigidBody();
+    JPH::Body* inputPhysicsRigPartObject = partJoltPhys->getRigidBody();
 
-    physx::PxTransform physicsObjectFrame(
-      MR::nmVector3ToPxVec3(inputPhysicsObjectPosition),
-      MR::nmQuatToPxQuat(NMP::Quat(inputPhysicsObjectOrientation, false)));
+    JPH::Mat44 physicsObjectFrame = JPH::Mat44::sRotationTranslation(
+      MR::nmQuatToJPHQuat(NMP::Quat(inputPhysicsObjectOrientation, false)),
+      MR::nmVector3ToJPHVec3(inputPhysicsObjectPosition));
 
-    physx::PxTransform physicsRigPartFrame(
-      MR::nmVector3ToPxVec3(inputPhysicsRigPartPosition),
-      MR::nmQuatToPxQuat(NMP::Quat(inputPhysicsRigPartOrientation, false)));
+    JPH::Mat44 physicsRigPartFrame = JPH::Mat44::sRotationTranslation(
+      MR::nmQuatToJPHQuat(NMP::Quat(inputPhysicsRigPartOrientation, false)),
+      MR::nmVector3ToJPHVec3(inputPhysicsRigPartPosition));
 
     // Increase inertia to help stability
-    MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation* partPhysX3Articulation = 
-      (MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation*) partPhysX3;
+    MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll* partJoltPhysRagdoll =
+      (MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll*) partJoltPhys;
 
-    NMP::Vector3 originalInertia = partPhysX3Articulation->getOriginalMassSpaceInertia();
-    partPhysX3Articulation->setMassSpaceInertia(originalInertia * physicalConstraintDef->m_partInertiaMultiplier);
+    NMP::Vector3 originalInertia = partJoltPhysRagdoll->getOriginalMassSpaceInertia();
+    partJoltPhysRagdoll->setMassSpaceInertia(originalInertia * physicalConstraintDef->m_partInertiaMultiplier);
 
     // Inform the physics rig about the object it's holding
     if (inputPhysicsObjectMassFraction > 0.0f && 
-        inputPhysicsObject->is<physx::PxRigidDynamic>())
+        inputPhysicsObject->IsDynamic())
     {
-      float mass = inputPhysicsObject->is<physx::PxRigidDynamic>()->getMass();
-      NMP::Vector3 COMPosition = MR::nmPxVec3ToVector3(inputPhysicsObject->is<physx::PxRigidDynamic>()->getGlobalPose().p);
-      partPhysX3->setExtraMass(mass * inputPhysicsObjectMassFraction, COMPosition);
+      float mass = 1.0f / inputPhysicsObject->GetMotionProperties()->GetInverseMass();
+      NMP::Vector3 COMPosition = MR::nmJPHVec3ToVector3(inputPhysicsObject->GetCenterOfMassPosition());
+      partJoltPhys->setExtraMass(mass * inputPhysicsObjectMassFraction, COMPosition);
     }
 
-    if (!stateData->m_physxJoint)
+    if (!stateData->m_joltphysJoint)
     {
       // Create the joint
-      stateData->m_physxJoint = PxD6JointCreate(
-        PxGetPhysics(),
-        inputPhysicsObject,
-        physicsObjectFrame,
-        inputPhysicsRigPartObject,
-        physicsRigPartFrame);
-
-      if (!physicalConstraintDef->m_constrainPositionX)
-      {
-        stateData->m_physxJoint->setMotion(physx::PxD6Axis::eX, physx::PxD6Motion::eFREE);
-      }
-      if (!physicalConstraintDef->m_constrainPositionY)
-      {
-        stateData->m_physxJoint->setMotion(physx::PxD6Axis::eY, physx::PxD6Motion::eFREE);
-      }
-      if (!physicalConstraintDef->m_constrainPositionZ)
-      {
-        stateData->m_physxJoint->setMotion(physx::PxD6Axis::eZ, physx::PxD6Motion::eFREE);
-      }
-
-      if (!physicalConstraintDef->m_constrainOrientationTwist)
-      {
-        stateData->m_physxJoint->setMotion(physx::PxD6Axis::eTWIST, physx::PxD6Motion::eFREE);
-      }
-      if (!physicalConstraintDef->m_constrainOrientationSwing1)
-      {
-        stateData->m_physxJoint->setMotion(physx::PxD6Axis::eSWING1, physx::PxD6Motion::eFREE);
-      }
-      if (!physicalConstraintDef->m_constrainOrientationSwing2)
-      {
-        stateData->m_physxJoint->setMotion(physx::PxD6Axis::eSWING2, physx::PxD6Motion::eFREE);
-      }
+      //stateData->m_joltphysJoint = PxD6JointCreate(
+      //  PxGetPhysics(),
+      //  inputPhysicsObject,
+      //  physicsObjectFrame,
+      //  inputPhysicsRigPartObject,
+      //  physicsRigPartFrame);
+      //
+      //if (!physicalConstraintDef->m_constrainPositionX)
+      //{
+      //  stateData->m_joltphysJoint->setMotion(physx::PxD6Axis::eX, physx::PxD6Motion::eFREE);
+      //}
+      //if (!physicalConstraintDef->m_constrainPositionY)
+      //{
+      //  stateData->m_joltphysJoint->setMotion(physx::PxD6Axis::eY, physx::PxD6Motion::eFREE);
+      //}
+      //if (!physicalConstraintDef->m_constrainPositionZ)
+      //{
+      //  stateData->m_joltphysJoint->setMotion(physx::PxD6Axis::eZ, physx::PxD6Motion::eFREE);
+      //}
+      //
+      //if (!physicalConstraintDef->m_constrainOrientationTwist)
+      //{
+      //  stateData->m_joltphysJoint->setMotion(physx::PxD6Axis::eTWIST, physx::PxD6Motion::eFREE);
+      //}
+      //if (!physicalConstraintDef->m_constrainOrientationSwing1)
+      //{
+      //  stateData->m_joltphysJoint->setMotion(physx::PxD6Axis::eSWING1, physx::PxD6Motion::eFREE);
+      //}
+      //if (!physicalConstraintDef->m_constrainOrientationSwing2)
+      //{
+      //  stateData->m_joltphysJoint->setMotion(physx::PxD6Axis::eSWING2, physx::PxD6Motion::eFREE);
+      //}
 
       stateData->m_prevPartIndex = inputPhysicsRigPartIndex;
     }
     else
     {
       // Update the joint properties
-      stateData->m_physxJoint->setLocalPose(physx::PxJointActorIndex::eACTOR0, physicsObjectFrame);
-      stateData->m_physxJoint->setLocalPose(physx::PxJointActorIndex::eACTOR1, physicsRigPartFrame);
+      //stateData->m_joltphysJoint->setLocalPose(physx::PxJointActorIndex::eACTOR0, physicsObjectFrame);
+      //stateData->m_joltphysJoint->setLocalPose(physx::PxJointActorIndex::eACTOR1, physicsRigPartFrame);
     }
   }
 
 
-  if (stateData->m_physxJoint)
+  if (stateData->m_joltphysJoint)
   {
     // Register the joint in case we're deleted before we free it
-    physicsRigPhysX3->registerJointOnRig(stateData->m_physxJoint);
+    physicsRigJoltPhys->registerJointOnRig(stateData->m_joltphysJoint);
 
     // set any relevant euphoria limbs as externally supported
 
@@ -487,10 +486,10 @@ void nodeOperatorPhysicalConstraintOutputDeleteInstance(
 {
   AttribDataOperatorPhysicalConstraintState* stateData = getStateData(nodeDef, net, false); 
 
-  if (stateData && stateData->m_physxJoint)
+  if (stateData && stateData->m_joltphysJoint)
   {
-    stateData->m_physxJoint->release();
-    stateData->m_physxJoint = 0;
+    //stateData->m_joltphysJoint->release();
+    stateData->m_joltphysJoint = 0;
   }
 
   nodeShareDeleteInstanceNoChildren(nodeDef, net);

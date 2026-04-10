@@ -604,18 +604,45 @@ void PhysicsRigJoltPhys::addQueryFilterFlagToParts(uint32_t word0, uint32_t word
 {
 }
 
+PhysicsRigJoltPhysBodyData::BodyToPhysicsRigJoltPhysBodyData* PhysicsRigJoltPhysBodyData::m_bodyToMorphemeMap = 0;
+uint32_t PhysicsRigJoltPhysBodyData::m_bodyMapRefCount = 0;
+
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysBodyData::init()
 {
+    ++m_bodyMapRefCount;
+
+    if (m_bodyMapRefCount == 1)
+    {
+        NMP_ASSERT(!m_bodyToMorphemeMap);
+        if (!m_bodyToMorphemeMap)
+        {
+            m_bodyToMorphemeMap = (BodyToPhysicsRigJoltPhysBodyData*)
+                NMPMemoryAlloc(sizeof(BodyToPhysicsRigJoltPhysBodyData));
+            NMP_ASSERT(m_bodyToMorphemeMap);
+            new(m_bodyToMorphemeMap) BodyToPhysicsRigJoltPhysBodyData(32);
+        }
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysBodyData::term()
 {
+    --m_bodyMapRefCount;
+
+    if (m_bodyMapRefCount == 0)
+    {
+        if (m_bodyToMorphemeMap)
+        {
+            m_bodyToMorphemeMap->~BodyToPhysicsRigJoltPhysBodyData();
+            NMP::Memory::memFree(m_bodyToMorphemeMap);
+            m_bodyToMorphemeMap = 0;
+        }
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-PhysicsRigJoltPhysBodyData *PhysicsRigJoltPhysBodyData::create(JPH::Body& body,
+PhysicsRigJoltPhysBodyData *PhysicsRigJoltPhysBodyData::create(JPH::Body* body,
                                                              PhysicsRig::Part *owningRigPart,
                                                              PhysicsRig *owningRig)
 {
@@ -627,30 +654,40 @@ PhysicsRigJoltPhysBodyData *PhysicsRigJoltPhysBodyData::create(JPH::Body& body,
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void PhysicsRigJoltPhysBodyData::destroy(PhysicsRigJoltPhysBodyData *data, JPH::Body& body)
+void PhysicsRigJoltPhysBodyData::destroy(PhysicsRigJoltPhysBodyData *data, JPH::Body* body)
 {
-  if (!data)
-    return;
-
-  NMP::Memory::memFree(data);
+    if (!data)
+    {
+        return;
+    }
+    if (body)
+    {
+        PhysicsRigJoltPhysBodyData* element = 0;
+        m_bodyToMorphemeMap->find(body, &element);
+        NMP_ASSERT(m_bodyToMorphemeMap->getNumUsedSlots() > 0);
+        NMP_ASSERT(element == data);
+        m_bodyToMorphemeMap->erase(body);
+    }
+    NMP::Memory::memFree(data);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 PhysicsRigJoltPhysBodyData::PhysicsRigJoltPhysBodyData(
-  JPH::Body &body, 
+  JPH::Body *body, 
   PhysicsRig::Part *owningRigPart,
   PhysicsRig *owningRig) 
   : m_owningRigPart(owningRigPart), m_owningRig(owningRig), m_userData(0) 
 {
-  NMP_ASSERT(getFromBody(body) == 0);
-  body.SetUserData((JPH::uint64)this);
+    NMP_ASSERT(getFromBody(body) == 0);
+    m_bodyToMorphemeMap->insert(body, this); // ensures it definitely goes in, even if the old value exists!
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-PhysicsRigJoltPhysBodyData *PhysicsRigJoltPhysBodyData::getFromBody(const JPH::Body& body)
+PhysicsRigJoltPhysBodyData *PhysicsRigJoltPhysBodyData::getFromBody(JPH::Body* body)
 {
-  PhysicsRigJoltPhysBodyData* data = NULL;
-  return (PhysicsRigJoltPhysBodyData*)body.GetUserData();
+    PhysicsRigJoltPhysBodyData* data = NULL;
+    m_bodyToMorphemeMap->find(body, &data);
+    return data;
 }
 
 } // namespace MR

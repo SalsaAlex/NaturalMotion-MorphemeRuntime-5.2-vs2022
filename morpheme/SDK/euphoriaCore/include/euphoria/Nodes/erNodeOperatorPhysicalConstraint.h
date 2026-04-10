@@ -96,7 +96,7 @@ public:
 
   static MR::AttribDataHandle create(NMP::MemoryAllocator* allocator);
 
-  physx::PxD6Joint* m_physxJoint;
+  JPH::SixDOFConstraint* m_joltphysJoint;
 
   // Cache the previous values so we know when they've changed and we need to recreate the joint
   int m_prevPartIndex;

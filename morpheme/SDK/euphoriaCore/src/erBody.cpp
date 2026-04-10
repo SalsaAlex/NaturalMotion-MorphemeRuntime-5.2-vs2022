@@ -504,7 +504,7 @@ ER::LimbTypeEnum::Type Body::getBodyLimbPartIndex(
 
   // this is a harmless assert but possibly a sign that something has gone awry since
   // asking for the limb part index of no actor makes little sense
-  NMP_ASSERT(actor);
+  NMP_ASSERT(body);
 
   // if actor pointer is null release code should just return without searching
   if (!body)

@@ -20,7 +20,7 @@ data:
   Length maxArmLength;        ///< Length of longest arm, calculated in entry.
   Velocity smoothedChestVel;  ///< Makes chest predictions less erratic.
   EdgeBuffer edgeBuffer;      ///< Keep local memory of encountered edges (ring buffer).
-  int64_t bestEdgeShapeID;
+  int64_t bestEdgeBodyID;
   bool isFirstUpdate;         ///< True only right at the start of the update (and then cleared).
 
 in:

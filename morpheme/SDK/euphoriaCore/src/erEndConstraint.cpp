@@ -204,7 +204,7 @@ void EndConstraint::removeConstraint()
 {
   NMP_ASSERT(m_constraint != NULL);
 
-  m_constraint->release();
+  //m_constraint->release();
   m_constraint = NULL;
   m_posConstrainedDuration = 0.0f;
   m_rotConstrainedDuration = 0.0f;
@@ -247,7 +247,7 @@ void EndConstraint::getConstraintDistance(
     JPH::Body *body = getBodyFromBodyId(m_targetBodyID);
     NMP_ASSERT(body);
     desInv *= getBodyTransform(body);
-    positionDelta -= MR::nmJPHVec3ToVector3(MR::getPointVelocity(body, MR::nmVector3ToJPHVec3(desInv.translation()))) * timeDelta;
+    //positionDelta -= MR::nmJPHVec3ToVector3(MR::getPointVelocity(body, MR::nmVector3ToJPHVec3(desInv.translation()))) * timeDelta;
   }
   const NMP::Vector3 toEnd = m_limb->getEndTransform().translation() - desInv.translation();
 
@@ -591,20 +591,20 @@ void EndConstraint::update(float dt, MR::InstanceDebugInterface* pDebugDrawInst)
 
       // Update desired transform (i.e. the object we're constraining to).
       constraintInObjectFrame.orthonormalise();
-      m_constraint->setLocalPose(physx::PxJointActorIndex::eACTOR0, MR::nmMatrix34ToPxTransform(constraintInObjectFrame));
+      //m_constraint->setLocalPose(physx::PxJointActorIndex::eACTOR0, MR::nmMatrix34ToPxTransform(constraintInObjectFrame));
     }
 
     // Reduce jitter coming from joint limits by increasing inertia tensor of limb end part.
     // MORPH-12878: Identify what it is about the inertia distribution that causes instability and fix up the
     // inertia on all parts that are likely to exhibit instability. Note that this does
     // little more than just setting the data on the PhysX side, so should be pretty fast.
-    MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation* endPart = (MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation*)getEndPart();
+    MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll* endPart = (MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll*)getEndPart();
     endPart->setMassSpaceInertia(endPart->getOriginalMassSpaceInertia() * HOLD_INERTIA_MULTIPLIER);
     // If the limb has more than 1 part then also increase the inertia on the 2nd last part in the limb.
     if (m_limb->getNumPartsInChain() >= 2)
     {
-      MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation* secondLastPart = 
-        (MR::PhysicsRigPhysX3Articulation::PartPhysX3Articulation*)(m_limb->getPart(m_limb->getNumPartsInChain() - 2));
+      MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll* secondLastPart =
+        (MR::PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll*)(m_limb->getPart(m_limb->getNumPartsInChain() - 2));
       secondLastPart->setMassSpaceInertia(secondLastPart->getOriginalMassSpaceInertia() * HOLD_INERTIA_MULTIPLIER);
     }
 
@@ -664,31 +664,35 @@ JPH::SixDOFConstraint* EndConstraint::createJoint(
   uint16_t lockedLinearDofs,
   uint16_t lockedAngularDofs)
 {
-  // PhysX is more stable when static Actor is the first Actor passed to joint creation function.
-  JPH::SixDOFConstraint* joint = (physx::PxD6Joint*)JPHSixDofJointCreate(
-    PxGetPhysics(),
-    actor1,
-    MR::nmMatrix34ToPxTransform(pose1),
-    actor2,
-    MR::nmMatrix34ToPxTransform(pose2));
 
-  for (int i = 0; i < 3; i++)
-  {
-    // Translational and rotational dofs.
-    joint->setMotion((physx::PxD6Axis::Enum) (physx::PxD6Axis::eX + i), lockedLinearDofs & (1 << i) ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE);
-    joint->setMotion((physx::PxD6Axis::Enum) (physx::PxD6Axis::eTWIST + i), lockedAngularDofs & (1 << i) ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE);
-  }
+    //FIXME
 
-  return joint;
+  //JPH::SixDOFConstraint* joint = (physx::PxD6Joint*)JPHSixDofJointCreate(
+  //  PxGetPhysics(),
+  //  actor1,
+  //  MR::nmMatrix34ToPxTransform(pose1),
+  //  actor2,
+  //  MR::nmMatrix34ToPxTransform(pose2));
+  //
+  //for (int i = 0; i < 3; i++)
+  //{
+  //  // Translational and rotational dofs.
+  //  joint->setMotion((physx::PxD6Axis::Enum) (physx::PxD6Axis::eX + i), lockedLinearDofs & (1 << i) ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE);
+  //  joint->setMotion((physx::PxD6Axis::Enum) (physx::PxD6Axis::eTWIST + i), lockedAngularDofs & (1 << i) ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE);
+  //}
+  //
+  //return joint;
+    return nullptr;
 }
 
 // Set rotational dofs from bitmask (will have been unconstrained initially).
 //----------------------------------------------------------------------------------------------------------------------
 void EndConstraint::lockJointAngularDofs(uint16_t angDofs)
 {
-  m_constraint->setMotion(physx::PxD6Axis::eTWIST,  angDofs & (1 << 0) ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE);
-  m_constraint->setMotion(physx::PxD6Axis::eSWING1,  angDofs & (1 << 1) ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE);
-  m_constraint->setMotion(physx::PxD6Axis::eSWING2,  angDofs & (1 << 2) ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE);
+    //FIXME
+  //m_constraint->setMotion(physx::PxD6Axis::eTWIST,  angDofs & (1 << 0) ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE);
+  //m_constraint->setMotion(physx::PxD6Axis::eSWING1,  angDofs & (1 << 1) ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE);
+  //m_constraint->setMotion(physx::PxD6Axis::eSWING2,  angDofs & (1 << 2) ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE);
 }
 
 } // namespace ER

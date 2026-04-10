@@ -309,7 +309,7 @@ void ArmGrabUpdatePackage::update(float timeStep, MR::InstanceDebugInterface* pD
   {
     endConstraint = in->getEndConstraintOptions();
   }
-  endConstraint.setTargetShapeID(gEdge.shapeID);
+  endConstraint.setTargetBodyID(gEdge.bodyID);
 
   // Don't allow constraining orientation until hanging. So overwrite the default lockedAngularDofs.
   if (!in->getIsHanging())

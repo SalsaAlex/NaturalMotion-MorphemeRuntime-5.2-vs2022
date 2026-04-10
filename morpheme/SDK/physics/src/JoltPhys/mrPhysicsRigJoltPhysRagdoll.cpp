@@ -42,6 +42,19 @@ namespace MR
 // have a hinge joint type in PhysX. See MORPH-11273
 static const float s_minSwingLimit = NMP::degreesToRadians(3.0f);
 
+void SetJointCompliance(JPH::SwingTwistConstraint* constraint, float internal, float external)
+{
+    float curswingstiffness = constraint->GetSwingMotorSettings().mSpringSettings.mStiffness;
+    float curtwiststiffness = constraint->GetTwistMotorSettings().mSpringSettings.mStiffness;
+
+    // Weighted harmonic mean — series combination is physically correct
+    // for two compliance sources acting on the same DOF
+    float totalCompliance = internal + external;
+
+    constraint->GetSwingMotorSettings().mSpringSettings.mStiffness = curswingstiffness;
+    constraint->GetTwistMotorSettings().mSpringSettings.mStiffness = curtwiststiffness;
+}
+
 
 RagdollExplosionHandler* PhysicsRigJoltPhysRagdoll::s_explosionHandler = 0;
 
@@ -247,6 +260,7 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
       const PhysicsJointDriverDataJoltPhys* driverData = (const PhysicsJointDriverDataJoltPhys*)jointDef->m_driverData;
 
       jointJolt->m_strength = 0.0f;
+      jointJolt->m_lastInternalCompliance = jointJolt->m_lastExternalCompliance = 0.0f;
       jointJolt->m_damping = driverData->m_articulationDamping;
 
       jointJolt->m_maxStrength = driverData->m_articulationSpring;
@@ -267,6 +281,10 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
       PartJoltPhysRagdoll* part = (PartJoltPhysRagdoll*)result->m_parts[i];
       part->m_physicsRig = result;
       part->m_rigidBody = part->m_kinematicBody = lockinterface.TryGetBody(result->m_ragdoll->GetBodyID(i));
+      part->m_mass = (1.0f / part->m_rigidBody->GetMotionProperties()->GetInverseMass());
+      part->m_inertia = MR::nmJPHVec3ToVector3(MR::getBodyMassSpaceInertiaTensor(part->m_rigidBody));
+      PhysicsRigJoltPhysBodyData::create(part->m_rigidBody, part, result);
+
   }
 
   // Note that the parent joint index of a bone is guaranteed (in morpheme export) to always the
@@ -475,7 +493,9 @@ bool PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll::generateCachedValues(float 
 
   // Note that the local COM offset wouldn't normally change, but it might if the part shapes are modified.
   //NMP_ASSERT(m_rigidBody->getCMassLocalPose().isFinite());
-  //m_cache.cachedCOMOffset = nmJPHMat44ToNmMatrix34(m_rigidBody->getCMassLocalPose());
+  JPH::Mat44 worldtrans_inv = m_rigidBody->GetWorldTransform().InversedRotationTranslation();
+  JPH::Mat44 COMlocal = worldtrans_inv * m_rigidBody->GetCenterOfMassTransform();
+  m_cache.cachedCOMOffset = nmJPHMat44ToNmMatrix34(COMlocal);
 
   NMP::Vector3 currentComPos = currentTM.getTransformedVector(m_cache.cachedCOMOffset.translation());
 
@@ -1419,42 +1439,43 @@ float PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::getDamping() const
 //----------------------------------------------------------------------------------------------------------------------
 float PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::getDriveCompensation() const
 {
-  //NMP_ASSERT(m_jointInternal);
-  //float internalCompliance = m_jointInternal->getInternalCompliance();
-  //if (internalCompliance < MINIMUM_COMPLIANCE)
-  //  internalCompliance = MINIMUM_COMPLIANCE;
-  //return (1.0f / internalCompliance) - 1.0f;
-  return 0;
+  NMP_ASSERT(m_jointInternal);
+  float internalCompliance = m_lastInternalCompliance;
+  if (internalCompliance < MINIMUM_COMPLIANCE)
+    internalCompliance = MINIMUM_COMPLIANCE;
+  return (1.0f / internalCompliance) - 1.0f;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 float PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::getInternalCompliance() const
 {
-  //return m_jointInternal->getInternalCompliance();
-    return 0;
+    return m_lastInternalCompliance;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 float PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::getExternalCompliance() const
 {
-  //return m_jointInternal->getExternalCompliance();
-    return 0;
+    return m_lastExternalCompliance;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setExternalCompliance(float compliance) 
 {
-  //if (compliance < MINIMUM_COMPLIANCE)
-  //  compliance = MINIMUM_COMPLIANCE;
-  //m_jointInternal->setExternalCompliance(compliance);
+  if (compliance < MINIMUM_COMPLIANCE)
+    compliance = MINIMUM_COMPLIANCE;
+  m_lastExternalCompliance = compliance;
+
+  SetJointCompliance((JPH::SwingTwistConstraint*)m_jointInternal, m_lastInternalCompliance, m_lastExternalCompliance);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setInternalCompliance(float compliance) 
 {
-  //if (compliance < MINIMUM_COMPLIANCE)
-  //  compliance = MINIMUM_COMPLIANCE;
-  //m_jointInternal->setInternalCompliance(compliance);
+  if (compliance < MINIMUM_COMPLIANCE)
+    compliance = MINIMUM_COMPLIANCE;
+  m_lastInternalCompliance = compliance;
+
+  SetJointCompliance((JPH::SwingTwistConstraint*)m_jointInternal, m_lastInternalCompliance, m_lastExternalCompliance);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1479,7 +1500,7 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setTargetOrientation(const
   {
       JPH::SwingTwistConstraint* st_joint = dynamic_cast<JPH::SwingTwistConstraint*>(m_jointInternal);
       if (st_joint)
-          st_joint->SetTargetOrientationCS(nmQuatToJPHQuat(orientation));
+          st_joint->SetTargetOrientationCS(nmQuatToJPHQuat(orientation).Normalized());
   }
   m_lastTargetOrientation = orientation;
 }

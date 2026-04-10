@@ -362,20 +362,6 @@ static bool isEdgeObstructed(
     return false;
   }
 
-  // Use default PxFilterData here to bypass the internal filtering, and we pass the real flags into
-  // the callback. Make ray cast hit static and dynamic objects.
-  physx::PxSceneQueryFilterData filterData;
-
-  filterData.flags = physx::PxQueryFlags(
-    physx::PxQueryFlag::eSTATIC | 
-    physx::PxQueryFlag::eDYNAMIC | 
-    physx::PxQueryFlag::ePREFILTER);
-
-  physx::PxSceneQueryFlags flags(
-    //physx::PxSceneQueryFlag::eIMPACT |
-    physx::PxSceneQueryFlag::eNORMAL |
-    physx::PxSceneQueryFlag::eDISTANCE);
-
   // Skip self collisions and all other characters - that means we won't detect another
   // ragdoll etc. as the geometry below.
   uint32_t collisionIgnoreMask =
@@ -383,12 +369,6 @@ static bool isEdgeObstructed(
     1 << MR::GROUP_CHARACTER_CONTROLLER | 
     1 << MR::GROUP_INTERACTION_PROXY | 
     1 << MR::GROUP_NON_COLLIDABLE;
-
-  MR::MorphemePhysX3QueryFilterCallback morphemePhysX3QueryFilterCallback(physx::PxFilterData(
-    0,
-    collisionIgnoreMask, 
-    0, 
-    0));
 
   // Calculate raycast point using brace hazard predicted impact position to edge projection
   // or edge point.
@@ -410,26 +390,18 @@ static bool isEdgeObstructed(
 
   const float awayAlongEdgeOtherNormal = pkg.in->getGrabAbilityControl().edgeRaycastParams.raycastEdgeOffset;
   raycastPoint += (grabbableEdge.otherNormal * awayAlongEdgeOtherNormal);
-  const physx::PxVec3 pxRaycastPoint(raycastPoint.x, raycastPoint.y, raycastPoint.z);
-
-  // Stores raycast single result.
-  physx::PxRaycastHit raycastHit;
-  physx::PxRaycastBuffer raycastHitCallback;
+  const JPH::Vec3 pxRaycastPoint(raycastPoint.x, raycastPoint.y, raycastPoint.z);
 
   // Perform raycast returning a single result.
   MR::PhysicsScene* scene = pkg.getRootModule()->getCharacter()->getBody().getPhysicsRig()->getPhysicsScene();
-  physx::PxScene* physXScene = ((MR::PhysicsScenePhysX3*)scene)->getPhysXScene();
+  JPH::PhysicsSystem* joltScene = ((MR::PhysicsSceneJoltPhys*)scene)->m_joltPhysScene;
 
-  bool rayCollide = physXScene->raycast(
-    pxRaycastPoint,
-    MR::nmVector3ToPxVec3(pkg.owner->owner->data->down),
-    raycastLength,
-    raycastHitCallback,
-    flags,
-    filterData,
-    &morphemePhysX3QueryFilterCallback);
-
-  raycastHit = raycastHitCallback.block;
+  MR::CastData castresult = MR::SweepRayVsWorld(
+      joltScene,
+      pxRaycastPoint,
+      MR::nmVector3ToJPHVec3(pkg.owner->owner->data->down),
+      raycastLength,
+      collisionIgnoreMask);
 
   // Ray cast debug draw.
   MR_DEBUG_DRAW_POINT(pDebugDrawInst, raycastPoint, SCALE_DIST(0.1f), NMP::Colour::LIGHT_GREEN);
@@ -441,9 +413,11 @@ static bool isEdgeObstructed(
     NMP::Colour::LIGHT_ORANGE);
 
   // Measure slope.
-  if (rayCollide)
+  if (!castresult.hits.empty())
   {
-    const NMP::Vector3 rayHitNormal(raycastHit.normal.x ,raycastHit.normal.y ,raycastHit.normal.z);
+    NMP_ASSERT(castresult.hits.size() == 1);
+    MR::CastData::perbodydata raycastHit = castresult.hits[0];
+    const NMP::Vector3 rayHitNormal(raycastHit.normal.GetX(), raycastHit.normal.GetY(), raycastHit.normal.GetZ());
     const float upDotHitNormal = NMP::clampValue(rayHitNormal.dot(pkg.owner->owner->data->up), -1.0f, 1.0f);
     const float minSupportSlope = pkg.in->getEnableConditions().minSupportSlope;
     if (upDotHitNormal > cosf(minSupportSlope)) // When true edge is obstructed by relatively flat geometry just below it.
@@ -451,15 +425,15 @@ static bool isEdgeObstructed(
       // Ray cast results.
       MR_DEBUG_DRAW_POINT(
         pDebugDrawInst,
-        NMP::Vector3(raycastHit.position.x, raycastHit.position.y, raycastHit.position.z),
+        MR::nmJPHVec3ToVector3(raycastHit.contactpoint),
         SCALE_DIST(0.2f),
         NMP::Colour::RED);
 
       MR_DEBUG_DRAW_VECTOR(
         pDebugDrawInst,
         MR::VT_Normal,
-        NMP::Vector3(raycastHit.position.x, raycastHit.position.y, raycastHit.position.z),
-        SCALE_DIST(NMP::Vector3(raycastHit.normal.x ,raycastHit.normal.y ,raycastHit.normal.z)),
+        MR::nmJPHVec3ToVector3(raycastHit.contactpoint),
+        SCALE_DIST(MR::nmJPHVec3ToVector3(raycastHit.normal)),
         NMP::Colour::RED);
 
       return true;
@@ -469,15 +443,15 @@ static bool isEdgeObstructed(
       // Ray cast results.
       MR_DEBUG_DRAW_POINT(
         pDebugDrawInst,
-        NMP::Vector3(raycastHit.position.x, raycastHit.position.y, raycastHit.position.z),
+          MR::nmJPHVec3ToVector3(raycastHit.contactpoint),
         SCALE_DIST(0.2f),
         NMP::Colour::GREEN);
 
       MR_DEBUG_DRAW_VECTOR(
         pDebugDrawInst,
         MR::VT_Normal,
-        NMP::Vector3(raycastHit.position.x, raycastHit.position.y, raycastHit.position.z),
-        SCALE_DIST(NMP::Vector3(raycastHit.normal.x ,raycastHit.normal.y ,raycastHit.normal.z)),
+        MR::nmJPHVec3ToVector3(raycastHit.contactpoint),
+        SCALE_DIST(MR::nmJPHVec3ToVector3(raycastHit.normal)),
         NMP::Colour::GREEN);
 
       return false;

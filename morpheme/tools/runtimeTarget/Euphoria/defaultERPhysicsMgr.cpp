@@ -16,10 +16,10 @@
 #include "comms/packet.h"
 #include "iPhysicsMgr.h"
 #include "iControllerMgr.h"
-#include "mrPhysX3.h"
+#include "mrJoltPhys.h"
 #include "physics/mrPhysicsRigDef.h"
-#include "mrPhysicsRigPhysX3Articulation.h"
-#include "mrPhysicsScenePhysX3.h"
+#include "mrPhysicsRigJoltPhysRagdoll.h"
+#include "mrPhysicsSceneJoltPhys.h"
 #include "morpheme/mrCoreTaskIDs.h"
 #include "physics/mrPhysicsRig.h"
 #include "physics/mrPhysicsRigDef.h"
@@ -47,7 +47,7 @@
 DefaultERPhysicsMgr::~DefaultERPhysicsMgr()
 {
   ER::destroyEuphoria();
-  MR::PhysXPerShapeData::destroyMap();
+  MR::JoltPhysPerBodyData::destroyMap();
 }
 
 

@@ -47,9 +47,9 @@ public:
   void setAngularDof(const uint32_t axis, const bool locked);
   void setLocalPoseForPartA(const NMP::Matrix34& pose);
   void setLocalPoseForPartB(const NMP::Matrix34& pose);
-  void setDrive(const float spring, const float damping, const float forceLimit, const bool isAcceleration);
-  void setDrive(const JPH::MotorSettings& drive);
-  void setDrive(const JPH::SixDOFConstraintSettings::EAxis axis, const JPH::MotorSettings& drive);
+  void setMotor(const float spring, const float damping, const float forceLimit, const bool isAcceleration);
+  void setMotor(const JPH::MotorSettings& motor);
+  void setMotor(const JPH::SixDOFConstraintSettings::EAxis axis, const JPH::MotorSettings& motor);
 
   /// Returns true if the constraint involves the rig part with the supplied index.
   bool referencesPart(const uint32_t partIndex) const;

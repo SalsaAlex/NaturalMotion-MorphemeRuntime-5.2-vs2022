@@ -16,7 +16,7 @@
 #define ER_CHARACTER_QUERY_PROXY_H
 //----------------------------------------------------------------------------------------------------------------------
 #include "morpheme/mrNetwork.h"
-#include "physics/PhysX3/mrPhysicsScenePhysX3.h"
+#include "physics/JoltPhys/mrPhysicsSceneJoltPhys.h"
 //----------------------------------------------------------------------------------------------------------------------
 
 namespace ER
@@ -28,15 +28,12 @@ struct InteractionProxySetup
   /// This creates default setup parameters based on a physics rig. If there is a physics rig
   /// available when creating the interaction proxy it's the simplest way to create it. Otherwise
   /// the members can be initialised individually. 
-  InteractionProxySetup(const MR::PhysicsRigPhysX3* ownerPhysicsRig);
+  InteractionProxySetup(const MR::PhysicsRigJoltPhys* ownerPhysicsRig);
 
   InteractionProxySetup(
     float                   mass,
     const NMP::Matrix34&    initialTM,
-    physx::PxScene*         physicsScene,
-    physx::PxClientID       ownerClientID = physx::PX_DEFAULT_CLIENT,
-    physx::PxActorClientBehaviorFlags clientBehaviourFlags = physx::PxActorClientBehaviorFlag::eREPORT_TO_FOREIGN_CLIENTS_CONTACT_NOTIFY | 
-    physx::PxActorClientBehaviorFlag::eREPORT_TO_FOREIGN_CLIENTS_SCENE_QUERY);
+    JPH::PhysicsSystem*         physicsScene);
 
   /// This is the ID of the physics rig assigned to the character. It's used to prevent the
   /// interaction proxy from being detected by the character itself.
@@ -47,11 +44,7 @@ struct InteractionProxySetup
   /// Initial position/orientation
   NMP::Matrix34              m_initialTM;
   /// The scene to which this proxy should be added.
-  physx::PxScene*            m_physicsScene;
-  /// See PhysX documentation for information on the ownerClientID.
-  physx::PxClientID          m_ownerClientID;
-  /// See PhysX documentation for information on the clientBehaviourFlags.
-  physx::PxActorClientBehaviorFlags                   m_clientBehaviourFlags;
+  JPH::PhysicsSystem*            m_physicsScene;
 };
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -69,7 +62,7 @@ struct InteractionProxySetup
 class InteractionProxy
 {
 public:
-  InteractionProxy() : m_interactionProxyDef(0), m_actor(0) {}
+  InteractionProxy() : m_interactionProxyDef(0), m_body(0) {}
 
   /// Initialisation generates the interaction proxy capsule from the setup structure passed in.
   void init(
@@ -101,8 +94,8 @@ protected:
   NMP::Matrix34 m_prevTransform;
 
   const InteractionProxyDef* m_interactionProxyDef;
-  static physx::PxU32 s_clientBehaviourBits;
-  physx::PxRigidDynamic* m_actor;
+  JPH::PhysicsSystem* m_physicsScene;
+  JPH::Body* m_body;
 };
 
 } // namespace ER

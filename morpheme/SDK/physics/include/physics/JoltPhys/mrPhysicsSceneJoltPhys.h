@@ -39,7 +39,7 @@ class PhysicsRigJoltPhys;
 // Typically you at least want to have 1 layer for moving bodies and 1 layer for static bodies, but you can have more
 // layers if you want. E.g. you could have a layer for high detail collision (which is not used by the physics simulation
 // but only if you do collision testing).
-namespace NMPhysLayers
+namespace NMPhysLayers //must match GameGroup enum
 {
     static constexpr JPH::ObjectLayer NON_COLLIDABLE(0);            ///< 1 Object does not interact
     static constexpr JPH::ObjectLayer COLLIDABLE_NON_PUSHABLE(1);   ///< 2 Object is (effectively) static/kinematic and can be interacted with
@@ -58,14 +58,10 @@ namespace NMPhysLayers
 // your broadphase layers define JPH_TRACK_BROADPHASE_STATS and look at the stats reported on the TTY.
 namespace NMBroadPhaseLayers
 {
-    static constexpr JPH::BroadPhaseLayer NON_COLLIDABLE(0);            ///< 1 Object does not interact
-    static constexpr JPH::BroadPhaseLayer COLLIDABLE_NON_PUSHABLE(1);   ///< 2 Object is (effectively) static/kinematic and can be interacted with
-    static constexpr JPH::BroadPhaseLayer COLLIDABLE_PUSHABLE(2);       ///< 4 Object is dynamic and can be interacted with
-    static constexpr JPH::BroadPhaseLayer CHARACTER_CONTROLLER(3);      ///< 8 Object is used as a character controller
-    static constexpr JPH::BroadPhaseLayer CHARACTER_PART(4);            ///< 16 Object is part of a morpheme physics rig
-    static constexpr JPH::BroadPhaseLayer INTERACTION_PROXY(5);         ///< 32 Interaction proxy object for character probes.
-    static constexpr JPH::BroadPhaseLayer CHARACTER_PART_WITH_PROXY(6); ///< 64 Object is part of a physics rig that has an interaction proxy
-    static constexpr uint32_t NUM_LAYERS(7);
+    static constexpr JPH::BroadPhaseLayer STATIC(0);
+    static constexpr JPH::BroadPhaseLayer DYNAMIC(1);
+    static constexpr JPH::BroadPhaseLayer NO_COLLIDE(2);
+    static constexpr uint32_t NUM_LAYERS(3);
 };
 
 
@@ -102,13 +98,13 @@ public:
     NM_BPLayerInterfaceImpl()
     {
         // Create a mapping table from object to broad phase layer
-        mObjectToBroadPhase[NMPhysLayers::NON_COLLIDABLE] = NMBroadPhaseLayers::NON_COLLIDABLE;
-        mObjectToBroadPhase[NMPhysLayers::COLLIDABLE_NON_PUSHABLE] = NMBroadPhaseLayers::COLLIDABLE_NON_PUSHABLE;
-        mObjectToBroadPhase[NMPhysLayers::COLLIDABLE_PUSHABLE] = NMBroadPhaseLayers::COLLIDABLE_PUSHABLE;
-        mObjectToBroadPhase[NMPhysLayers::CHARACTER_CONTROLLER] = NMBroadPhaseLayers::CHARACTER_CONTROLLER;
-        mObjectToBroadPhase[NMPhysLayers::CHARACTER_PART] = NMBroadPhaseLayers::CHARACTER_PART;
-        mObjectToBroadPhase[NMPhysLayers::INTERACTION_PROXY] = NMBroadPhaseLayers::INTERACTION_PROXY;
-        mObjectToBroadPhase[NMPhysLayers::CHARACTER_PART_WITH_PROXY] = NMBroadPhaseLayers::CHARACTER_PART_WITH_PROXY;
+        mObjectToBroadPhase[NMPhysLayers::NON_COLLIDABLE] = NMBroadPhaseLayers::NO_COLLIDE;
+        mObjectToBroadPhase[NMPhysLayers::COLLIDABLE_NON_PUSHABLE] = NMBroadPhaseLayers::STATIC;
+        mObjectToBroadPhase[NMPhysLayers::COLLIDABLE_PUSHABLE] = NMBroadPhaseLayers::DYNAMIC;
+        mObjectToBroadPhase[NMPhysLayers::CHARACTER_CONTROLLER] = NMBroadPhaseLayers::DYNAMIC;
+        mObjectToBroadPhase[NMPhysLayers::CHARACTER_PART] = NMBroadPhaseLayers::DYNAMIC;
+        mObjectToBroadPhase[NMPhysLayers::INTERACTION_PROXY] = NMBroadPhaseLayers::DYNAMIC;
+        mObjectToBroadPhase[NMPhysLayers::CHARACTER_PART_WITH_PROXY] = NMBroadPhaseLayers::DYNAMIC;
     }
 
     virtual uint32_t					GetNumBroadPhaseLayers() const override
@@ -127,13 +123,9 @@ public:
     {
         switch ((JPH::BroadPhaseLayer::Type)inLayer)
         {
-        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::NON_COLLIDABLE:            return "NON_COLLIDABLE";
-        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::COLLIDABLE_NON_PUSHABLE:   return "COLLIDABLE_NON_PUSHABLE";
-        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::COLLIDABLE_PUSHABLE:       return "COLLIDABLE_PUSHABLE";
-        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::CHARACTER_CONTROLLER:      return "CHARACTER_CONTROLLER";
-        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::CHARACTER_PART:            return "CHARACTER_PART";
-        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::INTERACTION_PROXY:         return "INTERACTION_PROXY";
-        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::CHARACTER_PART_WITH_PROXY: return "CHARACTER_PART_WITH_PROXY";
+        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::STATIC:            return "STATIC";
+        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::DYNAMIC:           return "DYNAMIC";
+        case (JPH::BroadPhaseLayer::Type)NMBroadPhaseLayers::NO_COLLIDE:           return "NO_COLLIDE";
         default:													JPH_ASSERT(false);  return "INVALID";
         }
     }
@@ -159,7 +151,7 @@ public:
         case NMPhysLayers::CHARACTER_PART:
         case NMPhysLayers::INTERACTION_PROXY:
         case NMPhysLayers::CHARACTER_PART_WITH_PROXY:
-            return inLayer2 != NMBroadPhaseLayers::NON_COLLIDABLE;
+            return inLayer2 != NMBroadPhaseLayers::NO_COLLIDE;
         default:
             JPH_ASSERT(false);
             return false;
@@ -174,6 +166,7 @@ struct CastData
         JPH::Body* body;
         JPH::Vec3 normal;
         JPH::Vec3 contactpoint; //worldspace. on the surface of the shape being swept
+        JPH::SubShapeID subshapeid;
         float fraction; //fraction of the trace
     };
     std::vector<perbodydata> hits;
@@ -181,12 +174,13 @@ struct CastData
 
 
 //sweep axis aligned shape through world
-CastData SweepAAShapeVsWorld(JPH::PhysicsSystem* scene, JPH::Shape* shape, JPH::Vec3 pos, JPH::Vec3 dir, float dist);
+CastData SweepAAShapeVsWorld(JPH::PhysicsSystem* scene, JPH::Shape* shape, JPH::Vec3 pos, JPH::Vec3 dir, float dist, uint32_t ignoremask = 0);
 
 //sweep axis aligned shape against body
-CastData SweepAAShapeVsBody(JPH::Shape* shape, JPH::Body* body, JPH::Vec3 pos, JPH::Vec3 dir, float dist);
+CastData SweepAAShapeVsBody(JPH::PhysicsSystem* scene, JPH::Shape* shape, JPH::Body* body, JPH::Vec3 pos, JPH::Vec3 dir, float dist, uint32_t ignoremask = 0);
 
-
+//sweep ray through world
+CastData SweepRayVsWorld(JPH::PhysicsSystem* scene, JPH::Vec3 pos, JPH::Vec3 dir, float dist, uint32_t ignoremask = 0);
 
 
 //----------------------------------------------------------------------------------------------------------------------

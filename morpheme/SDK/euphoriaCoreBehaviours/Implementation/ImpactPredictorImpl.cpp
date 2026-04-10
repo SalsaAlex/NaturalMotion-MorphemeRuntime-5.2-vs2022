@@ -180,21 +180,21 @@ void ImpactPredictorFeedbackPackage::feedback(float timeStep, MR::InstanceDebugI
       if (in->getProtectHazardFilteringImportance() != 0.0f)
       {
         const JPH::Body* const body = ER::getJPHBodyFromBodyID(patch.state.bodyID);
-        if (body)
-        {
-          // Filter-out non-hazardous patches i.e. where their corresponding shapes have been masked as ignorable hazard.
-          const ObjectFiltering userFilter = in->getProtectHazardFiltering();
-          const physx::PxFilterData userFilterData(userFilter.word0, userFilter.word1, userFilter.word2, userFilter.word3);
-
-          // Only add hazardous patches i.e. if their corresponding shapes have not been masked as ignorable hazard.
-          const bool isHazardous = MR::applyFilterShader(shape, &userFilterData);
-
-          if (isHazardous)
-          {
-            potentialHazardPatches[numPotentialHazards++] = &patch;
-          }
-        }
-        else // No shape is associated with this patch, add as hazardous patch in this case.
+        //if (body)
+        //{
+        //  // Filter-out non-hazardous patches i.e. where their corresponding shapes have been masked as ignorable hazard.
+        //  const ObjectFiltering userFilter = in->getProtectHazardFiltering();
+        //  const physx::PxFilterData userFilterData(userFilter.word0, userFilter.word1, userFilter.word2, userFilter.word3);
+        //
+        //  // Only add hazardous patches i.e. if their corresponding shapes have not been masked as ignorable hazard.
+        //  const bool isHazardous = MR::applyFilterShader(shape, &userFilterData);
+        //
+        //  if (isHazardous)
+        //  {
+        //    potentialHazardPatches[numPotentialHazards++] = &patch;
+        //  }
+        //}
+        //else // No shape is associated with this patch, add as hazardous patch in this case.
         {
           potentialHazardPatches[numPotentialHazards++] = &patch;
         }

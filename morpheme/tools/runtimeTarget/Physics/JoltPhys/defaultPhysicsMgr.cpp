@@ -462,7 +462,7 @@ JPH::Body* DefaultPhysicsMgr::createBody(
   //{
   //  MR::PhysXPerShapeData::create(tempShapes[i]);
   //}
-  MR::JoltPhysPerShapeData::create(shape);
+  MR::JoltPhysPerBodyData::create(body);
 
   return body;
 }
@@ -679,13 +679,9 @@ void DefaultPhysicsMgr::destroyPhysicsBody(MCOMMS::SceneObjectID objectID)
   {
     unassignPhysicsID(foundBody);
 
-    // Destroy per-shape user data
-    if (foundBody->GetShape())
-    {
-      JPH::Shape* shape = const_cast<JPH::Shape*>(foundBody->GetShape());
-      MR::JoltPhysPerShapeData* data = MR::JoltPhysPerShapeData::getFromShape(shape);
-      MR::JoltPhysPerShapeData::destroy(data, shape);
-    }
+    // Destroy per-body user data
+    MR::JoltPhysPerBodyData* data = MR::JoltPhysPerBodyData::getFromBody(foundBody);
+    MR::JoltPhysPerBodyData::destroy(data, foundBody);
 
     // if the object is constrained, release the physical joint
     PhysicsUserData* userData = (PhysicsUserData*)foundBody->GetUserData();

@@ -162,7 +162,7 @@ static ER::SphereSweep createSweep(
   sweep.position = path.position + localVelocity * tStart + localAcceleration * 0.5f * NMP::sqr(tStart);
   sweep.motion = localVelocity * (tEnd - tStart) + localAcceleration * 0.5f * (NMP::sqr(tEnd) - NMP::sqr(tStart));
   sweep.radius = path.radius;
-  sweep.targetShapeID = state.shapeID;
+  sweep.targetBodyID = state.bodyID;
   sweep.probeID = probeID;
 #endif
   return sweep;
@@ -551,7 +551,7 @@ void EnvironmentAwarenessFeedbackPackage::feedback(float timeStep, MR::InstanceD
   // OK, object tracking done here, we just pass back the object with the greatest metric
   float largestMetric = -1.0f;
   int bestI = 0;
-  if (in->getFindObject().focusShapeID == -1)
+  if (in->getFindObject().focusBodyID == -1)
   {
     data->lastMetric = 0.0f; // Reset time hysteresis if no object of significance to set it on
   }

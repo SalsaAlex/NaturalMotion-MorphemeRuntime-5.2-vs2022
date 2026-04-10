@@ -85,7 +85,7 @@ void ER::EuphoriaRigPartUserData::processData(
   const NMP::Vector3& normal, 
   float impulseMagnitude)
 {
-  NMP_ASSERT(contactedActor);
+  NMP_ASSERT(contactedBody);
   if (!m_accumulating)
   {
     startNewContact();
@@ -118,8 +118,8 @@ void ER::EuphoriaRigPartUserData::processData(
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-static void setBodiesInContact(const JPH::Body& body0, 
-                               const JPH::Body& body1, 
+static void setBodiesInContact(JPH::Body* body0, 
+                               JPH::Body* body1, 
                                const NMP::Vector3& point, 
                                const NMP::Vector3& normal, 
                                const float impulseMagnitude)
@@ -164,9 +164,9 @@ static void setBodiesInContact(const JPH::Body& body0,
   {
     MR_DEBUG_DRAW_VECTOR_GLOBAL(MR::VT_Normal, point, normal, NMP::Colour::WHITE);
     MR_DEBUG_DRAW_VECTOR_GLOBAL(MR::VT_Normal, point, 
-      MR::nmJPHVec3ToVector3(body0.GetWorldTransform().GetTranslation()) - point, NMP::Colour::DARK_RED);
+      MR::nmJPHVec3ToVector3(body0->GetWorldTransform().GetTranslation()) - point, NMP::Colour::DARK_RED);
     MR_DEBUG_DRAW_VECTOR_GLOBAL(MR::VT_Normal, point, 
-      MR::nmJPHVec3ToVector3(body1.GetWorldTransform().GetTranslation()) - point, NMP::Colour::DARK_RED);
+      MR::nmJPHVec3ToVector3(body1->GetWorldTransform().GetTranslation()) - point, NMP::Colour::DARK_RED);
     MR_DEBUG_DRAW_VECTOR_GLOBAL(MR::VT_Impulse, point, impulse, NMP::Colour::BLUE);
   }
 
@@ -191,7 +191,7 @@ static void setBodiesInContact(const JPH::Body& body0,
     ER::EuphoriaRigPartUserData* data = ER::EuphoriaRigPartUserData::getFromPart(p0);
     if (data)
     {
-      data->processData(bodyRefToPtr(body1), point, normal, impulseMagnitude);
+      data->processData(body1, point, normal, impulseMagnitude);
     }
   }
   if (p1)
@@ -199,7 +199,7 @@ static void setBodiesInContact(const JPH::Body& body0,
     ER::EuphoriaRigPartUserData* data = ER::EuphoriaRigPartUserData::getFromPart(p1);
     if (data)
     {
-      data->processData(bodyRefToPtr(body1), point, -normal, impulseMagnitude);
+      data->processData(body1, point, -normal, impulseMagnitude);
     }
   }
 }
@@ -216,25 +216,27 @@ JPH::ValidateResult ContactFeedback::OnContactValidate(const JPH::Body& inBody1,
   }
 
   bool callSetActorsInContact = 
-    MR::PhysicsRigJoltPhysBodyData::getFromBody(inBody1) || MR::PhysicsRigJoltPhysBodyData::getFromBody(inBody2);
+    MR::PhysicsRigJoltPhysBodyData::getFromBody(bodyRefToPtr(inBody1)) || MR::PhysicsRigJoltPhysBodyData::getFromBody(bodyRefToPtr(inBody2));
 
   // Don't do the loop unless we would do something
-  if (!callSetActorsInContact && !m_userContactHandler)
-    return;
-
-  const NMP::Vector3 point = MR::nmJPHVec3ToVector3(inCollisionResult.mContactPointOn1);
-  const NMP::Vector3 normal = MR::nmJPHVec3ToVector3(-inCollisionResult.mPenetrationAxis.Normalized());
-  float impulseMagnitude = inCollisionResult.mPenetrationDepth; //this prob not right
-  // Don't just check if these are articulation links, as then we won't get hits on HK
-  // parts. We can get the per-actor data even from the HK parts, so use that instead.
-  // This is slightly more expensive, but shouldn't be too significant.
-  if (
-    MR::PhysicsRigJoltPhysBodyData::getFromBody(inBody1) || 
-    MR::PhysicsRigJoltPhysBodyData::getFromBody(inBody2)
-    )
+  if (callSetActorsInContact || m_userContactHandler)
   {
-    setBodiesInContact(inBody1, inBody2, point, normal, impulseMagnitude);
+      const NMP::Vector3 point = MR::nmJPHVec3ToVector3(inCollisionResult.mContactPointOn1);
+      const NMP::Vector3 normal = MR::nmJPHVec3ToVector3(-inCollisionResult.mPenetrationAxis.Normalized());
+      float impulseMagnitude = inCollisionResult.mPenetrationDepth; //this prob not right
+      // Don't just check if these are articulation links, as then we won't get hits on HK
+      // parts. We can get the per-actor data even from the HK parts, so use that instead.
+      // This is slightly more expensive, but shouldn't be too significant.
+      if (
+          MR::PhysicsRigJoltPhysBodyData::getFromBody(bodyRefToPtr(inBody1)) ||
+          MR::PhysicsRigJoltPhysBodyData::getFromBody(bodyRefToPtr(inBody2))
+          )
+      {
+          setBodiesInContact(bodyRefToPtr(inBody1), bodyRefToPtr(inBody2), point, normal, impulseMagnitude);
+      }
   }
+
+  return JPH::ValidateResult::AcceptContact;
 }
 
 } // namespace

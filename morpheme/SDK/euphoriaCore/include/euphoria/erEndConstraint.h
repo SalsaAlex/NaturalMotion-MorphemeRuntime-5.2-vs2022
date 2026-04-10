@@ -44,9 +44,9 @@ public:
   void disable();
 
   // Configuring the constraint.
-  // shape id >=  0: specific dynamic or static body
-  // shape id <= -1: constrain with "virtual" edge, i.e. world.
-  void setDesiredTransformWs(const ER::HandFootTransform& desTM, int64_t shapeID);
+  // body id >=  0: specific dynamic or static body
+  // body id <= -1: constrain with "virtual" edge, i.e. world.
+  void setDesiredTransformWs(const ER::HandFootTransform& desTM, int64_t bodyID);
   void setSeparationThresholds(float posMin, float posMax, float angMin, float angMax);
   void setLockedDofs(uint16_t linearDofs, uint16_t angularDofs) { m_lockedLinearDofs = linearDofs; m_lockedAngularDofs = angularDofs; };
   void disableCollisions(bool collide) { m_disableCollisions = collide; };

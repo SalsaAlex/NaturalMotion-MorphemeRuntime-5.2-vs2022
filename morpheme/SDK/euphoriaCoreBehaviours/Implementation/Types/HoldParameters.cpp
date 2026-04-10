@@ -27,7 +27,7 @@ namespace NM_BEHAVIOUR_LIB_NAMESPACE
 void EndConstraintControl::initialise(const ER::DimensionalScaling& scaling)
 {
   // defaults
-  targetShapeID = -1;       // if no actor has been selected (-1), then any actor close enough will be grabbed
+  targetBodyID = -1;       // if no body has been selected (-1), then any body close enough will be grabbed
   // first Bit is xAxis (normal), 2nd is yAxis (hand forward direction), and 3rd Bit the zAxis (hand left)
   lockedLinearDofs = (1 << 0) | (1 << 1) | (1 << 2); // all linear dofs are locked
   lockedAngularDofs = (1 << 0) | (1 << 1) | (1 << 2); // all angular dofs are locked
@@ -49,9 +49,9 @@ void EndConstraintControl::setDesiredOrientation(NMP::Matrix34& desTM)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void EndConstraintControl::setTargetShapeID(int64_t actorID)
+void EndConstraintControl::setTargetBodyID(int64_t bodyID)
 {
-  targetShapeID = actorID;
+  targetBodyID = bodyID;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

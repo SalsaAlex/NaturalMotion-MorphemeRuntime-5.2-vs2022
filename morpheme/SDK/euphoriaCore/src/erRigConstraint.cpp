@@ -50,7 +50,8 @@ RigConstraint::~RigConstraint()
 {
   if (m_constraint)
   {
-    m_constraint->release();
+      //FIXME
+    //m_constraint->release();
   }
 }
 
@@ -63,10 +64,21 @@ bool RigConstraint::referencesPart(const uint32_t partIndex) const
 //----------------------------------------------------------------------------------------------------------------------
 void RigConstraint::setLinearDof(const uint32_t axis, const bool locked)
 {
-  const JPH::SixDOFConstraint::EAxis jphAxis = static_cast<JPH::SixDOFConstraint::EAxis>(JPH::SixDOFConstraint::EAxis::TranslationX + axis);
-  const physx::PxD6Motion::Enum pxMotionType = locked ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE;
+  JPH::Vec3 minlimits = m_constraint->GetTranslationLimitsMin();
+  JPH::Vec3 maxlimits = m_constraint->GetTranslationLimitsMax();
 
-  m_constraint->setMotion(pxAxis, pxMotionType);
+  if (locked)
+  {
+      minlimits.SetComponent(axis, 0);
+      maxlimits.SetComponent(axis, 0);
+  }
+  else
+  {
+      minlimits.SetComponent(axis, -FLT_MAX);
+      maxlimits.SetComponent(axis, FLT_MAX);
+  }
+
+  m_constraint->SetTranslationLimits(minlimits, maxlimits);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -92,40 +104,46 @@ void RigConstraint::setAngularDof(const uint32_t axis, const bool locked)
 //----------------------------------------------------------------------------------------------------------------------
 void RigConstraint::setLocalPoseForPartA(const NMP::Matrix34& pose)
 {
-  m_constraint->setLocalPose(physx::PxJointActorIndex::eACTOR0, MR::nmMatrix34ToPxTransform(pose));
+    //no way to do this without recreating constraint
+  //m_constraint->setLocalPose(physx::PxJointActorIndex::eACTOR0, MR::nmMatrix34ToPxTransform(pose));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void RigConstraint::setLocalPoseForPartB(const NMP::Matrix34& pose)
 {
-  m_constraint->setLocalPose(physx::PxJointActorIndex::eACTOR1, MR::nmMatrix34ToPxTransform(pose));
+    //no way to do this without recreating constraint
+  //m_constraint->setLocalPose(physx::PxJointActorIndex::eACTOR1, MR::nmMatrix34ToPxTransform(pose));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void RigConstraint::setDrive(
+void RigConstraint::setMotor(
   const float spring, 
   const float damping, 
   const float forceLimit, 
   const bool isAcceleration)
 {
-  const physx::PxD6JointDrive drive(spring, damping, forceLimit, isAcceleration);
-
-  setDrive(drive);
+  JPH::MotorSettings motor;
+  motor.mSpringSettings.mStiffness = spring;
+  motor.mSpringSettings.mDamping = damping;
+  motor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
+  setMotor(motor);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void RigConstraint::setDrive(const physx::PxD6JointDrive& drive)
+void RigConstraint::setMotor(const JPH::MotorSettings& motor)
 {
-  m_constraint->setDrive(physx::PxD6Drive::eX, drive);
-  m_constraint->setDrive(physx::PxD6Drive::eY, drive);
-  m_constraint->setDrive(physx::PxD6Drive::eZ, drive);
-  m_constraint->setDrive(physx::PxD6Drive::eSLERP, drive);
+  setMotor(JPH::SixDOFConstraint::EAxis::TranslationX, motor);
+  setMotor(JPH::SixDOFConstraint::EAxis::TranslationY, motor);
+  setMotor(JPH::SixDOFConstraint::EAxis::TranslationZ, motor);
+  setMotor(JPH::SixDOFConstraint::EAxis::RotationX, motor);
+  setMotor(JPH::SixDOFConstraint::EAxis::RotationY, motor);
+  setMotor(JPH::SixDOFConstraint::EAxis::RotationZ, motor);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void RigConstraint::setDrive(const physx::PxD6Drive::Enum axis, const physx::PxD6JointDrive& drive)
+void RigConstraint::setMotor(const JPH::SixDOFConstraint::EAxis axis, const JPH::MotorSettings& motor)
 {
-  m_constraint->setDrive(axis, drive);
+  m_constraint->GetMotorSettings(axis) = motor;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -137,25 +155,52 @@ JPH::SixDOFConstraint* RigConstraint::createJoint(
   uint16_t lockedLinearDofs,
   uint16_t lockedAngularDofs)
 {
-  JPH::SixDOFConstraint* joint = JPHSixDOFJointCreate(
-    PxGetPhysics(),
-    body1,
-    MR::nmMatrix34ToJPHMat44(pose1),
-    body2,
-    MR::nmMatrix34ToJPHMat44(pose2));
-  NMP_ASSERT(joint);
-
-  if (joint)
-  {
-    for (int i = 0; i < 3; i++)
-    {
-      // Translational and rotational dofs.
-      joint->setMotion((physx::PxD6Axis::Enum) (physx::PxD6Axis::eX + i), lockedLinearDofs & (1 << i) ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE);
-      joint->setMotion((physx::PxD6Axis::Enum) (physx::PxD6Axis::eTWIST + i), lockedAngularDofs & (1 << i) ? physx::PxD6Motion::eLOCKED : physx::PxD6Motion::eFREE);
-    }
-  }
-
-  return joint;
+    // FIXME
+  //JPH::SixDOFConstraint* joint = JPHSixDOFJointCreate(
+  //  PxGetPhysics(),
+  //  body1,
+  //  MR::nmMatrix34ToJPHMat44(pose1),
+  //  body2,
+  //  MR::nmMatrix34ToJPHMat44(pose2));
+  //NMP_ASSERT(joint);
+  //
+  //if (joint)
+  //{
+  //  JPH::Vec3 linearminlimits;
+  //  JPH::Vec3 linearmaxlimits;
+  //  JPH::Vec3 angularminlimits;
+  //  JPH::Vec3 angularmaxlimits;
+  //  for (int i = 0; i < 3; i++)
+  //  {
+  //    // Translational and rotational dofs.
+  //    if (lockedLinearDofs & (1 << i))
+  //    {
+  //        linearminlimits.SetComponent(i, 0);
+  //        linearmaxlimits.SetComponent(i, 0);
+  //    }
+  //    else
+  //    {
+  //        linearminlimits.SetComponent(i, -FLT_MAX);
+  //        linearmaxlimits.SetComponent(i, FLT_MAX);
+  //    }
+  //
+  //    if (lockedAngularDofs & (1 << i))
+  //    {
+  //        angularminlimits.SetComponent(i, 0);
+  //        angularmaxlimits.SetComponent(i, 0);
+  //    }
+  //    else
+  //    {
+  //        angularminlimits.SetComponent(i, -NM_PI);
+  //        angularmaxlimits.SetComponent(i, NM_PI);
+  //    }
+  //  }
+  //  joint->SetTranslationLimits(linearminlimits, linearmaxlimits);
+  //  joint->SetRotationLimits(angularminlimits, angularmaxlimits);
+  //}
+  //
+  //return joint;
+    return nullptr;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

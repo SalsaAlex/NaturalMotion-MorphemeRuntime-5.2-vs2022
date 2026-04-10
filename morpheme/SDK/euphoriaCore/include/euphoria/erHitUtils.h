@@ -179,8 +179,8 @@ struct HitSelectionInfo
 #endif
   
   // eg. from raycast
-  NMP::Vector3 pointLocal;                 // hit pointLocal on body in actor local coords
-  NMP::Vector3 normalLocal;                // hit normalLocal on in actor local coords
+  NMP::Vector3 pointLocal;                 // hit pointLocal on body in body local coords
+  NMP::Vector3 normalLocal;                // hit normalLocal on in body local coords
   NMP::Vector3 hitDirLocal;                // direction of the hit (eg. line along which a hit impulse would be applied)
   NMP::Vector3 hitDirWorld;
   NMP::Vector3 sourcePointWorld;

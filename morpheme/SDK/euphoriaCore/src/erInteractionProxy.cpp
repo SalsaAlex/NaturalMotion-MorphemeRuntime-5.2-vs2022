@@ -13,38 +13,30 @@
 #include "euphoria/erInteractionProxy.h"
 #include "euphoria/erInteractionProxyDef.h"
 #include "physics/mrPhysics.h"
-#include "physics/PhysX3/mrPhysicsRigPhysX3.h"
-#include "physics/PhysX3/mrPhysX3Includes.h"
+#include "physics/JoltPhys/mrPhysicsRigJoltPhys.h"
+#include "physics/JoltPhys/mrJoltPhysIncludes.h"
 
 
 namespace ER
 {
 
-InteractionProxySetup::InteractionProxySetup(const MR::PhysicsRigPhysX3* ownerPhysicsRig)
+InteractionProxySetup::InteractionProxySetup(const MR::PhysicsRigJoltPhys* ownerPhysicsRig)
 {
   m_ownerPhysicsRigID = ownerPhysicsRig->getRigID();
   m_mass = ownerPhysicsRig->calculateMass();
   m_initialTM = ownerPhysicsRig->getRootPartTransform();
-  m_physicsScene = ownerPhysicsRig->getPhysicsScenePhysX()->getPhysXScene();
-  m_ownerClientID = physx::PX_DEFAULT_CLIENT;
-  m_clientBehaviourFlags = 
-    physx::PxActorClientBehaviorFlag::eREPORT_TO_FOREIGN_CLIENTS_CONTACT_NOTIFY | 
-    physx::PxActorClientBehaviorFlag::eREPORT_TO_FOREIGN_CLIENTS_SCENE_QUERY;
+  m_physicsScene = ownerPhysicsRig->getPhysicsSceneJoltPhys()->m_joltPhysScene;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 InteractionProxySetup::InteractionProxySetup(
   float                   mass,
   const NMP::Matrix34&    initialTM,
-  physx::PxScene*         physicsScene,
-  physx::PxClientID       ownerClientID,
-  physx::PxActorClientBehaviorFlags                clientBehaviourFlags)
+  JPH::PhysicsSystem*         physicsScene)
 {
   m_mass = mass;
   m_initialTM = initialTM;
   m_physicsScene = physicsScene;
-  m_ownerClientID = ownerClientID;
-  m_clientBehaviourFlags = clientBehaviourFlags;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -52,45 +44,42 @@ void InteractionProxy::init(
   const InteractionProxyDef* interactionProxyDef,
   const InteractionProxySetup& interactionProxySetup)
 {
-  NMP_ASSERT(m_actor == NULL);
+  NMP_ASSERT(m_body == NULL);
 
   m_interactionProxyDef = interactionProxyDef;
+  m_physicsScene = interactionProxySetup.m_physicsScene;
 
   // Create the shape
-  PxShapeDesc shapeDesc(PxGetPhysics().getTolerancesScale());
+  JPH::Shape* shape = nullptr;
 
   // Create a basic material for the capsule
-  physx::PxMaterial* material = PxGetPhysics().createMaterial(1.0f, 1.0f, 0.0f);
-  material->setFrictionCombineMode(physx::PxCombineMode::eMULTIPLY);
-  material->setRestitutionCombineMode(physx::PxCombineMode::eMULTIPLY);
+  //physx::PxMaterial* material = PxGetPhysics().createMaterial(1.0f, 1.0f, 0.0f);
+  //material->setFrictionCombineMode(physx::PxCombineMode::eMULTIPLY);
+  //material->setRestitutionCombineMode(physx::PxCombineMode::eMULTIPLY);
 
   NMP::Matrix34 m(NMP::Matrix34::kIdentity);
-
-  physx::PxCapsuleGeometry capsuleGeom(m_interactionProxyDef->getRadius(), m_interactionProxyDef->getHeight() * 0.5f);
-  physx::PxSphereGeometry sphereGeom(m_interactionProxyDef->getRadius());
-  physx::PxBoxGeometry boxGeom(
-    m_interactionProxyDef->getWidth() * 0.5f, 
-    m_interactionProxyDef->getHeight() * 0.5f, 
-    m_interactionProxyDef->getDepth() * 0.5f);
 
   switch (m_interactionProxyDef->getShapeType())
   {
   case InteractionProxyDef::CapsuleShape:
     {
-      shapeDesc.geometry = &capsuleGeom;
+      shape = new JPH::CapsuleShape(m_interactionProxyDef->getHeight() * 0.5f, m_interactionProxyDef->getRadius());
       m.fromEulerXYZ(NMP::Vector3(0.0f, NM_PI/2.f, 0.0f));
     }
     break;
 
   case InteractionProxyDef::SphereShape:
     {
-      shapeDesc.geometry = &sphereGeom;
+      shape = new JPH::SphereShape(m_interactionProxyDef->getRadius());
     }
     break;
 
   case InteractionProxyDef::BoxShape:
     {
-      shapeDesc.geometry = &boxGeom;
+      shape = new JPH::BoxShape(JPH::Vec3(
+          m_interactionProxyDef->getWidth() * 0.5f,
+          m_interactionProxyDef->getHeight() * 0.5f,
+          m_interactionProxyDef->getDepth() * 0.5f));
     }
     break;
 
@@ -99,55 +88,51 @@ void InteractionProxy::init(
     return;
   }
 
-  shapeDesc.localPose = MR::nmMatrix34ToPxTransform(m);
-  shapeDesc.contactOffset = 0.0001f;
-  shapeDesc.restOffset = 0.0f;
-  physx::PxFilterData collisionData; // Make non-colliding
-  collisionData.word0 = 0;
-  collisionData.word1 = 0xffffffff;
-  shapeDesc.simulationFilterData = collisionData;
-  shapeDesc.setSingleMaterial(material);
+  //shapeDesc.localPose = MR::nmMatrix34ToPxTransform(m);
+  //shapeDesc.contactOffset = 0.0001f;
+  //shapeDesc.restOffset = 0.0f;
+  //physx::PxFilterData collisionData; // Make non-colliding
+  //collisionData.word0 = 0;
+  //collisionData.word1 = 0xffffffff;
+  //shapeDesc.simulationFilterData = collisionData;
+  //shapeDesc.setSingleMaterial(material);
 
   // And also a descriptor for the capsule actor
-  PxRigidDynamicDesc actorDesc(PxGetPhysics().getTolerancesScale()); 
-  actorDesc.setSingleShape(shapeDesc);
-  actorDesc.globalPose.p = MR::nmVector3ToPxVec3(interactionProxySetup.m_initialTM.translation());
-  actorDesc.globalPose.q = MR::nmQuatToPxQuat(interactionProxySetup.m_initialTM.toQuat());
-  actorDesc.maxAngularVelocity = FLT_MAX;
-  m_actor = PxCreateRigidDynamic(actorDesc);
-  if (!m_actor)
+  JPH::BodyCreationSettings bodysettings;
+  bodysettings.SetShape(shape);
+  bodysettings.mPosition = MR::nmVector3ToJPHVec3(interactionProxySetup.m_initialTM.translation());
+  bodysettings.mRotation = MR::nmQuatToJPHQuat(interactionProxySetup.m_initialTM.toQuat());
+  bodysettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
+  bodysettings.mMassPropertiesOverride.mMass = interactionProxySetup.m_mass > 0.0f ? interactionProxySetup.m_mass : FLT_MAX;
+  bodysettings.mMaxAngularVelocity = FLT_MAX;
+  m_body = m_physicsScene->GetBodyInterface().CreateBody(bodysettings);
+  if (!m_body)
   {
     return;
   }
-  physx::PxRigidBodyExt::setMassAndUpdateInertia(*m_actor->is<physx::PxRigidDynamic>(),
-    interactionProxySetup.m_mass > 0.0f ? interactionProxySetup.m_mass : FLT_MAX);
-  m_actor->setName("Interaction proxy");
-
-  m_actor->setClientBehaviorFlags(interactionProxySetup.m_clientBehaviourFlags);
-  m_actor->setOwnerClient(interactionProxySetup.m_ownerClientID);
-  interactionProxySetup.m_physicsScene->addActor(*m_actor);
+  //m_body->setName("Interaction proxy");
 
   // Special query filter data for the proxy character
-  physx::PxShape* proxyShape;
-  m_actor->getShapes(&proxyShape, 1);
-  physx::PxFilterData data;
-  data.word0 = 1 << MR::GROUP_INTERACTION_PROXY;
-  // By giving it the character rig id we ensure that the character's probes don't collide with it
-  data.word2 = interactionProxySetup.m_ownerPhysicsRigID;
-  proxyShape->setQueryFilterData(data);
-  m_prevTransform = interactionProxySetup.m_initialTM;
+  //physx::PxShape* proxyShape;
+  //m_actor->getShapes(&proxyShape, 1);
+  //physx::PxFilterData data;
+  //data.word0 = 1 << MR::GROUP_INTERACTION_PROXY;
+  //// By giving it the character rig id we ensure that the character's probes don't collide with it
+  //data.word2 = interactionProxySetup.m_ownerPhysicsRigID;
+  //proxyShape->setQueryFilterData(data);
+  //m_prevTransform = interactionProxySetup.m_initialTM;
 
-  MR::PhysXPerShapeData::create(proxyShape);
+  MR::JoltPhysPerBodyData::create(m_body);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void InteractionProxy::setRigID(int32_t ownerPhysicsRigID)
 {
-  physx::PxShape* proxyShape;
-  m_actor->getShapes(&proxyShape, 1);
-  physx::PxFilterData data = proxyShape->getQueryFilterData();
-  data.word2 = ownerPhysicsRigID;
-  proxyShape->setQueryFilterData(data);
+  //physx::PxShape* proxyShape;
+  //m_actor->getShapes(&proxyShape, 1);
+  //physx::PxFilterData data = proxyShape->getQueryFilterData();
+  //data.word2 = ownerPhysicsRigID;
+  //proxyShape->setQueryFilterData(data);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -157,8 +142,8 @@ void InteractionProxy::update(
   MR::FrameCount frameCount, 
   bool calculateVelocities)
 {
-  // The actor pointer can be 0 if we weren't initialised
-  if (!m_actor)
+  // The body pointer can be 0 if we weren't initialised
+  if (!m_body)
     return;
 
   NMP::Vector3 vel;
@@ -235,34 +220,42 @@ void InteractionProxy::update(
 void InteractionProxy::updateTM(const NMP::Matrix34& transform, const NMP::Vector3& velocity, 
   const NMP::Vector3& angularVelocity)
 {
-  if (!m_actor)
-  {
+  if (!m_body)
     return;
-  }
-  m_actor->setGlobalPose(MR::nmMatrix34ToPxTransform(transform));
-  m_actor->setLinearVelocity(MR::nmVector3ToPxVec3(velocity));
-  m_actor->setAngularVelocity(MR::nmVector3ToPxVec3(angularVelocity));
+
+  JPH::BodyInterface& interface = m_physicsScene->GetBodyInterface();
+  JPH::BodyID id = m_body->GetID();
+
+  interface.SetPositionAndRotation(
+      id,
+      MR::nmVector3ToJPHVec3(transform.translation()),
+      MR::nmQuatToJPHQuat(transform.toQuat()),
+      JPH::EActivation::Activate);
+
+  interface.SetLinearAndAngularVelocity(
+      id,
+      MR::nmVector3ToJPHVec3(velocity),
+      MR::nmVector3ToJPHVec3(angularVelocity)
+  );
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 /// Removes and deallocates the proxy.
 void InteractionProxy::term()
 {
-  if (!m_actor)
+  if (!m_body)
   {
     return;
   }
-  physx::PxShape* shapes[1];
-  m_actor->getShapes(&shapes[0], 1);
+  MR::JoltPhysPerBodyData* data = MR::JoltPhysPerBodyData::getFromBody(m_body);
+  MR::JoltPhysPerBodyData::destroy(data, m_body);
 
-  MR::PhysXPerShapeData* data = MR::PhysXPerShapeData::getFromShape(shapes[0]);
-  MR::PhysXPerShapeData::destroy(data, shapes[0]);
-
-  physx::PxMaterial* material[1];
-  shapes[0]->getMaterials(&material[0], 1);
-  material[0]->release();
-  m_actor->release();
-  m_actor = 0;
+  //physx::PxMaterial* material[1];
+  //shapes[0]->getMaterials(&material[0], 1);
+  //material[0]->release();
+  m_physicsScene->GetBodyInterface().RemoveBody(m_body->GetID());
+  m_physicsScene->GetBodyInterface().DestroyBody(m_body->GetID());
+  m_body = 0;
 }
 
 } // namespace ER

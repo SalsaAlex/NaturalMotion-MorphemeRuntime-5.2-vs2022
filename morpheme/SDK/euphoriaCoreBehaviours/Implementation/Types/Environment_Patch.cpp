@@ -413,7 +413,7 @@ void Environment::Patch::updateFromSweepResult(
   const ER::SweepResult& sweep, 
   const ER::DimensionalScaling& dimensionalScaling)
 {
-  NMP_ASSERT(sweep.getShapeID() == state.shapeID); // sweep result being applied to the wrong object
+  NMP_ASSERT(sweep.getBodyID() == state.bodyID); // sweep result being applied to the wrong object
   numKnownEdgeLengths = 0;
   radius = 0.0f;
   switch (sweep.getType())
@@ -719,11 +719,11 @@ void Environment::Patch::createAsPlane(
   const NMP::Vector3& velocity,
   const NMP::Vector3& angularVelocity,
   float mass,
-  int64_t shapeID)
+  int64_t bodyID)
 {
   // note, state constructor covers acceleration and spinAverageTimeLength
   // initialise state
-  state.bodyID = shapeID;
+  state.bodyID = bodyID;
   state.position = position;
   state.aabb.setCentreAndHalfExtents(position, NMP::Vector3(r, r, r));
   state.velocity = velocity;
@@ -746,11 +746,11 @@ void Environment::Patch::createAsSphere(
   float r,
   const NMP::Vector3& velocity,
   float mass,
-  int64_t shapeID)
+  int64_t bodyID)
 {
   // note, state constructor covers acceleration and spinAverageTimeLength
   // initialise state
-  state.bodyID = shapeID;
+  state.bodyID = bodyID;
   state.position = position;
   state.aabb.setCentreAndHalfExtents(position, NMP::Vector3(r, r, r));
   state.velocity = velocity;
