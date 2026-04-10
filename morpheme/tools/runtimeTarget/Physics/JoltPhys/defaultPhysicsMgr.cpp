@@ -411,6 +411,9 @@ JPH::Body* DefaultPhysicsMgr::createBody(
     bodysettings.SetShape(new JPH::RotatedTranslatedShape(JPH::Vec3(0, 0, 0), JPH::Quat::sRotation(JPH::Vec3(1, 0, 0), NM_PI_OVER_TWO), shape));
   }
 
+  bodysettings.mFriction = dynamicFriction;
+  bodysettings.mRestitution = restitution;
+
   JPH::Body* body = bodyinterface.CreateBody(bodysettings);
 
   NMP_ASSERT(body);

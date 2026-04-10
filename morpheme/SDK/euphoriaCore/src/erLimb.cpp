@@ -565,11 +565,11 @@ void Limb::prePhysicsStep(float timeDelta, MR::InstanceDebugInterface* pDebugDra
     // is too high the ankle doesn't make the foot clear the ground.
     float dampingMult = 1.0f;
     float extComplianceMult = 1.0f;
-    if (j == (m_numJointsInChain - 1) && (getType() == ER::LimbTypeEnum::L_leg || getType() == ER::LimbTypeEnum::L_arm))
-    {
-      dampingMult = 3.0f;
-      extComplianceMult = 0.75f;
-    }
+    //if (j == (m_numJointsInChain - 1) && (getType() == ER::LimbTypeEnum::L_leg || getType() == ER::LimbTypeEnum::L_arm))
+    //{
+    //  dampingMult = 3.0f;
+    //  extComplianceMult = 0.75f;
+    //}
 
     // ForceMultiplier is computed in GC and used for example on the ankles to reach the required
     // acceleration spring given the ground resistance.
@@ -596,48 +596,6 @@ void Limb::prePhysicsStep(float timeDelta, MR::InstanceDebugInterface* pDebugDra
     joint->setStrength(jointStrength);
     NMP_ASSERT(Validators::FloatValid(jointDamping));
     joint->setDamping(jointDamping * dampingMult * strengthReductionMultiplier);
-
-    // allow scaling of the default external compliance.. used in get up, may not be needed if can
-    // improve get up.
-    float extCompliance = extComplianceMult * m_externalCompliance * m_ECP.externalComplianceScale;
-    if (m_ECP.implicitStiffness < 1.0f && extCompliance > 0.0f)
-    {
-      // convert compensation to compliance
-      float s = joint->getStrength();
-      float d = joint->getDamping();
-
-      // Recalculate the external compliance so that we get the ISF value that we want.
-      // To do this:
-      //
-      // origISF = (1 + d * timeDelta + s * timeDelta * timeDelta) / extCompliance;
-      //
-      // We want to reduce the implicit contributions, so do that by reducing the timestep:
-      //
-      float dt = timeDelta * m_ECP.implicitStiffness;
-      float desiredISF = (1 + d * dt + s * dt * dt) / extCompliance;
-      //
-      // Now solve for modifiedCompliance so that
-      //
-      // modifiedISF = (1 + d * timeDelta + s * timeDelta * timeDelta) / modifiedCompliance = desiredISF;
-      //
-      // i.e. origISF * extCompliance / modifiedCompliance = desiredISF
-      //
-      // and set extCompliance = modifiedCompliance
-      NMP_ASSERT(desiredISF > 0.0f);
-      extCompliance = (1 + d * timeDelta + s * timeDelta * timeDelta) / desiredISF;
-    }
-    NMP_ASSERT(Validators::FloatValid(extCompliance));
-    joint->setExternalCompliance(extCompliance);
-
-#if defined(MR_OUTPUT_DEBUGGING)
-    float jointDriveCompensation = getFeatureFlag(kFeatureDriveCompensation) ?
-      m_ECP.driveCompensation * joint->getDriveCompensationScale() : 0.0f;
-#else
-    float jointDriveCompensation = m_ECP.driveCompensation * joint->getDriveCompensationScale();
-#endif
-    jointDriveCompensation *= strengthReductionMultiplier;
-    NMP_ASSERT(Validators::FloatValid(jointDriveCompensation));
-    joint->setDriveCompensation(jointDriveCompensation);
   } // for m_numJointsInChain
 
   if (m_endFrictionScale != 1.0f)
