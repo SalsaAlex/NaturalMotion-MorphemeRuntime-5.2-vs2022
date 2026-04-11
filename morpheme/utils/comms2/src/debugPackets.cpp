@@ -158,9 +158,9 @@ void DebugDrawPacket::deserialize()
   case DDTYPE_POINT:
     DebugDrawPoint::deserialiseTx(data);
     break;
-  case DDTYPE_SPHERE:
-    DebugDrawSphere::deserialiseTx(data);
-    break;
+  //case DDTYPE_SPHERE:
+  //  DebugDrawSphere::deserialiseTx(data);
+  //  break;
   case DDTYPE_LINE:
     DebugDrawLine::deserialiseTx(data);
     break;

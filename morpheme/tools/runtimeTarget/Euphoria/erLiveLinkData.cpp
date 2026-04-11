@@ -177,6 +177,8 @@ bool ERNetworkInstanceRecord::init(
         NMP::hashFunction(* ((uint32_t*) &characterStartPosition.z));
       behaviourNetwork->setNetworkRandomSeed(seed);
 
+      m_debugInterface.debugOutputsTurnOn(MR::DEBUG_OUTPUT_DEBUG_DRAW);
+
       m_character = netDefRecord->m_characterDef.createInstance(
           rig,
           (MR::PhysicsRigPhysX3Articulation*)physicsRig,

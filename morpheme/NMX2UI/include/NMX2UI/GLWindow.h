@@ -8,6 +8,10 @@ namespace nmxui
 		void setCurrent(void);
 		void render(void);
 		
+		void onPaint(wxPaintEvent& paintevent);
+		void onShow(wxShowEvent& showevent);
+		void onSize(wxSizeEvent& sizeevent);
+		
 	private:
 		HGLRC m_glcontext; //((HGLRC *)this + 97)
 		HDC m_devicecontext; //((HDC *)this + 98)
