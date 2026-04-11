@@ -292,8 +292,11 @@ public:
         if ( m_ignoreMask & (1 << entry.body->GetObjectLayer()) )
             return;
 
-        if (m_bClosest && (entry.fraction > m_vCastResult.hits[0].fraction))
-            return;
+        if(!m_vCastResult.hits.empty())
+        {
+            if (m_bClosest && (entry.fraction > m_vCastResult.hits[0].fraction))
+                return;
+        }
 
         m_vCastResult.hits.push_back(entry);
     }

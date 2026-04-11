@@ -565,11 +565,11 @@ void Limb::prePhysicsStep(float timeDelta, MR::InstanceDebugInterface* pDebugDra
     // is too high the ankle doesn't make the foot clear the ground.
     float dampingMult = 1.0f;
     float extComplianceMult = 1.0f;
-    //if (j == (m_numJointsInChain - 1) && (getType() == ER::LimbTypeEnum::L_leg || getType() == ER::LimbTypeEnum::L_arm))
-    //{
-    //  dampingMult = 3.0f;
-    //  extComplianceMult = 0.75f;
-    //}
+    if (j == (m_numJointsInChain - 1) && (getType() == ER::LimbTypeEnum::L_leg || getType() == ER::LimbTypeEnum::L_arm))
+    {
+      dampingMult = 3.0f;
+      extComplianceMult = 0.75f;
+    }
 
     // ForceMultiplier is computed in GC and used for example on the ankles to reach the required
     // acceleration spring given the ground resistance.

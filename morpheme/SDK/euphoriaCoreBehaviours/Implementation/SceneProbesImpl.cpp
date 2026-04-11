@@ -103,15 +103,17 @@ static bool setEnvironmentObjectFromBody(
   MR::InstanceDebugInterface* pDebugDrawInst)
 {
   // Early out: don't collide with own character controller
-  if (body->GetID() == ((MR::PhysicsRigJoltPhys*)owner->getCharacter()->getBody().getPhysicsRig())->getCharacterController()->GetBodyID())
-  {
-    return false;
-  }
+  // FIXME
+  //if (body->GetID() == ((MR::PhysicsRigJoltPhys*)owner->getCharacter()->getBody().getPhysicsRig())->getCharacterController()->GetBodyID())
+  //{
+  //  return false;
+  //}
 
   bool isMoveable = !body->IsStatic();
-  float bodymass = (1.0f / body->GetMotionProperties()->GetInverseMass());
+  float bodymass = 0.0f;
   if (isMoveable)
   {
+    bodymass = (1.0f / body->GetMotionProperties()->GetInverseMass());
     if (bodymass < owner->data->minInterestingRelativeMass * owner->data->totalMass)
     {
       // early out: too small to be dealing with

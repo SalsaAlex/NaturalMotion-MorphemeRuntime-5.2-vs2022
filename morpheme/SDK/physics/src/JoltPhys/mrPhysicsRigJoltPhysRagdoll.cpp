@@ -35,6 +35,8 @@
 #define MAX_STRENGTH 1e12f
 #define MAX_DAMPING 1e25f
 
+#define JPH_JOINTSTRENGTH_SCALE 0.6
+
 namespace MR 
 {
 
@@ -1413,12 +1415,12 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setStrength(float strength
   //NMP_ASSERT(m_jointInternal);
   NMP_ASSERT(strength >= 0.0f && strength < MAX_STRENGTH);
 
-  m_strength = strength;
+  m_strength = strength * JPH_JOINTSTRENGTH_SCALE;
 
   JPH::SwingTwistConstraintSettings* settings = (JPH::SwingTwistConstraintSettings*)m_jointInternal->GetConstraintSettings().GetPtr();
 
   float I_eff = 1.0 / CalculateInverseEffectiveMass(m_jointInternal->GetBody1(), m_jointInternal->GetBody2(), settings->mTwistAxis1.GetNormalizedPerpendicular());
-  SpringFreqDamp data = stiffnessDampingToFreqDamp(strength, m_damping, I_eff);
+  SpringFreqDamp data = stiffnessDampingToFreqDamp(m_strength, m_damping, I_eff);
   ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mFrequency = data.frequency;
   ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mFrequency = data.frequency;
 
@@ -1430,12 +1432,12 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setDamping(float damping)
 {
   //NMP_ASSERT(m_jointInternal);
   NMP_ASSERT(damping >= 0.0f && damping < MAX_DAMPING);
-  m_damping = damping;
+  m_damping = damping * sqrt(JPH_JOINTSTRENGTH_SCALE);
 
   JPH::SwingTwistConstraintSettings* settings = (JPH::SwingTwistConstraintSettings*)m_jointInternal->GetConstraintSettings().GetPtr();
 
   float I_eff = 1.0 / CalculateInverseEffectiveMass(m_jointInternal->GetBody1(), m_jointInternal->GetBody2(), settings->mTwistAxis1.GetNormalizedPerpendicular());
-  SpringFreqDamp data = stiffnessDampingToFreqDamp(m_strength, damping, I_eff);
+  SpringFreqDamp data = stiffnessDampingToFreqDamp(m_strength, m_damping, I_eff);
   ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mDamping = data.dampingRatio;
   ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mDamping = data.dampingRatio;
 }
@@ -1493,7 +1495,7 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setExternalCompliance(floa
 {
   if (compliance < MINIMUM_COMPLIANCE)
     compliance = MINIMUM_COMPLIANCE;
-  m_lastExternalCompliance = 0.0f;
+  m_lastExternalCompliance = compliance;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1501,7 +1503,7 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setInternalCompliance(floa
 {
   if (compliance < MINIMUM_COMPLIANCE)
     compliance = MINIMUM_COMPLIANCE;
-  m_lastInternalCompliance = 0.0f;
+  m_lastInternalCompliance = compliance;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

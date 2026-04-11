@@ -50,14 +50,14 @@ namespace ER
 
 	protected:
 		// See: ContactListener
-		JPH::ValidateResult	OnContactValidate(const JPH::Body& inBody1, const JPH::Body& inBody2,
-			JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult& inCollisionResult)
-			NM_OVERRIDE;
+		//JPH::ValidateResult	OnContactValidate(const JPH::Body& inBody1, const JPH::Body& inBody2,
+		//	JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult& inCollisionResult)
+		//	NM_OVERRIDE;
 
-		//void OnContactAdded(const JPH::Body& inBody1,
-		//	const JPH::Body& inBody2, const JPH::ContactManifold& inManifold,
-		//	JPH::ContactSettings& ioSettings) NM_OVERRIDE;
-		//
+		void OnContactAdded(const JPH::Body& inBody1,
+			const JPH::Body& inBody2, const JPH::ContactManifold& inManifold,
+			JPH::ContactSettings& ioSettings) NM_OVERRIDE;
+		
 		//void OnContactPersisted(const JPH::Body& inBody1,
 		//	const JPH::Body& inBody2, const JPH::ContactManifold& inManifold,
 		//	JPH::ContactSettings& ioSettings) NM_OVERRIDE;

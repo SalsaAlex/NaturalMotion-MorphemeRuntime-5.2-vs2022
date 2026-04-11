@@ -205,10 +205,9 @@ static void setBodiesInContact(JPH::Body* body0,
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-JPH::ValidateResult ContactFeedback::OnContactValidate(const JPH::Body& inBody1, 
-    const JPH::Body& inBody2,
-    JPH::RVec3Arg inBaseOffset, 
-    const JPH::CollideShapeResult& inCollisionResult)
+void ContactFeedback::OnContactAdded(const JPH::Body& inBody1,
+    const JPH::Body& inBody2, const JPH::ContactManifold& inManifold,
+    JPH::ContactSettings& ioSettings)
 {
   if (m_userContactHandler)
   {
@@ -221,9 +220,9 @@ JPH::ValidateResult ContactFeedback::OnContactValidate(const JPH::Body& inBody1,
   // Don't do the loop unless we would do something
   if (callSetActorsInContact || m_userContactHandler)
   {
-      const NMP::Vector3 point = MR::nmJPHVec3ToVector3(inCollisionResult.mContactPointOn1);
-      const NMP::Vector3 normal = MR::nmJPHVec3ToVector3(-inCollisionResult.mPenetrationAxis.Normalized());
-      float impulseMagnitude = inCollisionResult.mPenetrationDepth; //this prob not right
+      const NMP::Vector3 point = MR::nmJPHVec3ToVector3(inManifold.GetWorldSpaceContactPointOn1(0));
+      const NMP::Vector3 normal = MR::nmJPHVec3ToVector3(-inManifold.mWorldSpaceNormal);
+      float impulseMagnitude = inManifold.mPenetrationDepth; //this prob not right
       // Don't just check if these are articulation links, as then we won't get hits on HK
       // parts. We can get the per-actor data even from the HK parts, so use that instead.
       // This is slightly more expensive, but shouldn't be too significant.
@@ -235,8 +234,6 @@ JPH::ValidateResult ContactFeedback::OnContactValidate(const JPH::Body& inBody1,
           setBodiesInContact(bodyRefToPtr(inBody1), bodyRefToPtr(inBody2), point, normal, impulseMagnitude);
       }
   }
-
-  return JPH::ValidateResult::AcceptContact;
 }
 
 } // namespace
