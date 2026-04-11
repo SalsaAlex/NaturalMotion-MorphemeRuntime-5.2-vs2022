@@ -305,7 +305,7 @@ void CommsDebugClient::drawSphere(
     DebugDrawSphere::serializeTx(tm, radius, colour, data, dataSize);
   NMP_ASSERT(usedSize <= dataSize);
 
-  sendDebugDrawData(sourceInstanceID, sourceNodeID, sourceTagName, sourceFrame, sourceLimbIndex, DDTYPE_SPHERE, data, dataSize);
+  //sendDebugDrawData(sourceInstanceID, sourceNodeID, sourceTagName, sourceFrame, sourceLimbIndex, DDTYPE_SPHERE, data, dataSize);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

@@ -34,7 +34,7 @@ namespace MCOMMS
 enum DebugDrawTypes
 {
   DDTYPE_POINT = 0,              // 
-  DDTYPE_SPHERE,                 // 
+  //DDTYPE_SPHERE,                 // 
   DDTYPE_LINE,                   // 
   DDTYPE_POLY_LINE,              // 
   DDTYPE_VECTOR,                 // Inc: Lines with arrows at beginning, end or both.
