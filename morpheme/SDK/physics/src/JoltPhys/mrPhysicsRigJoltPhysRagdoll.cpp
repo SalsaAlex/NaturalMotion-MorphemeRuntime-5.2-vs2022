@@ -36,8 +36,12 @@
 #define MAX_STRENGTH 1e12f
 #define MAX_DAMPING 1e25f
 
-#define JPH_JOINTSTRENGTH_SCALE 1
-#define JPH_JOINTDAMP_SCALE 1
+constexpr float JPH_JOINTSTRENGTH_SCALE = 1.0;
+constexpr float JPH_JOINTDAMP_SCALE = 1.0;
+constexpr float JPH_JOINTDRIVESTRENGTH_SCALE = 1.0;
+constexpr float JPH_JOINTDRIVEDAMPING_SCALE = 0.4;
+constexpr float JPH_JOINTDRIVECOMPENSATION_SCALE = 2.0;
+
 
 
 //uncomment to use frequency & damping mode on joints instead
@@ -285,9 +289,9 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
       jointJolt->m_maxStrength = driverData->m_articulationSpring;
       jointJolt->m_maxDamping = driverData->m_articulationDamping;
 
-      jointJolt->m_driveStrengthScale = driverData->m_driveStrengthScale;
-      jointJolt->m_driveDampingScale = driverData->m_driveDampingScale;
-      jointJolt->m_driveCompensationScale = driverData->m_driveCompensationScale;
+      jointJolt->m_driveStrengthScale = JPH_JOINTDRIVESTRENGTH_SCALE;
+      jointJolt->m_driveDampingScale = JPH_JOINTDRIVEDAMPING_SCALE;
+      jointJolt->m_driveCompensationScale = JPH_JOINTDRIVECOMPENSATION_SCALE;
       jointJolt->m_driveMinDampingScale = driverData->m_driveMinDampingScale;
 
       jointJolt->m_lastTargetOrientation.setXYZW(0, 0, 0, 0); // So will always update the physX internal target orientation on the first frame.
