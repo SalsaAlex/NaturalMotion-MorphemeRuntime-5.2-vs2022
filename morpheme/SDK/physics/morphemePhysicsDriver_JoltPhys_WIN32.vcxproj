@@ -287,6 +287,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\JoltPhys\mrPhysicsUtilsJoltPhys.cpp" />
     <ClInclude Include="include\physics\JoltPhys\mrCharacterControllerInterfaceJoltPhys.h" />
     <ClInclude Include="include\physics\JoltPhys\mrPhysicsDriverDataJoltPhys.h" />
     <ClInclude Include="include\physics\JoltPhys\mrPhysicsRigJoltPhys.h" />
@@ -299,6 +300,7 @@
     <ClCompile Include="src\JoltPhys\mrPhysicsRigJoltPhys.cpp" />
     <ClCompile Include="src\JoltPhys\mrPhysicsRigJoltPhysRagdoll.cpp" />
     <ClCompile Include="src\JoltPhys\mrPhysicsSceneJoltPhys.cpp" />
+    <ClInclude Include="include\physics\JoltPhys\mrPhysicsUtilsJoltPhys.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="morphemePhysicsCore_WIN32.vcxproj">

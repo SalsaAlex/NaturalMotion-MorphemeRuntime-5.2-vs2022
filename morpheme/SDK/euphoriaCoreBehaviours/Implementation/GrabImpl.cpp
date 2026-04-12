@@ -14,6 +14,7 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 #include "mrPhysicsSceneJoltPhys.h"
+#include "mrPhysicsUtilsJoltPhys.h"
 #include "Grab.h"
 #include "MyNetwork.h"
 #include "GrabPackaging.h"

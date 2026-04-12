@@ -12,17 +12,6 @@
 #define NM_JOLTPHYSINCLUDES_H
 #include "NMPlatform/NMPlatform.h"
 
-#ifdef NM_HOST_IOS
-// Inhibit all wanings on ios that PhysX may produce
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#pragma clang diagnostic ignored "-Wunused-variable"
-#pragma clang diagnostic ignored "-Wshadow"
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wnewline-eof"
-
-#endif
-
 #include <cstdio>
 #include <cstdint>
 #include <string>
@@ -53,6 +42,7 @@
 #include <Jolt/Physics/Collision/ShapeCast.h>
 #include <Jolt/Physics/Collision/CollisionDispatch.h>
 #include <Jolt/Physics/Collision/EstimateCollisionResponse.h>
+#include <Jolt/Physics/Collision/GroupFilterTable.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
 #include <Jolt/Physics/Constraints/Constraint.h>

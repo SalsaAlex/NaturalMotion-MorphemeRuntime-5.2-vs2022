@@ -588,6 +588,9 @@ void Limb::prePhysicsStep(float timeDelta, MR::InstanceDebugInterface* pDebugDra
       jointStrength *= strengthReductionMultiplier;
     }
 
+    if (extComplianceMult < 1.0f)
+        jointStrength *= extComplianceMult;
+
     // Really forceMultiplier should be sqrted here, but that results in very jittery feet.
     float jointDamping = m_forceMultiplier[j] * m_ECP.damping * joint->getDriveDampingScale();
 

@@ -159,30 +159,6 @@ public:
     }
 };
 
-struct CastData
-{
-    struct perbodydata //expand as we go on
-    {
-        JPH::Body* body;
-        JPH::Vec3 normal;
-        JPH::Vec3 contactpoint; //worldspace. on the surface of the shape being swept
-        JPH::SubShapeID subshapeid;
-        float fraction; //fraction of the trace
-    };
-    std::vector<perbodydata> hits;
-};
-
-
-//sweep axis aligned shape through world
-CastData SweepAAShapeVsWorld(JPH::PhysicsSystem* scene, JPH::Shape* shape, JPH::Vec3 pos, JPH::Vec3 dir, float dist, uint32_t ignoremask = 0);
-
-//sweep axis aligned shape against body
-CastData SweepAAShapeVsBody(JPH::PhysicsSystem* scene, JPH::Shape* shape, JPH::Body* body, JPH::Vec3 pos, JPH::Vec3 dir, float dist, uint32_t ignoremask = 0);
-
-//sweep ray through world
-CastData SweepRayVsWorld(JPH::PhysicsSystem* scene, JPH::Vec3 pos, JPH::Vec3 dir, float dist, uint32_t ignoremask = 0);
-
-
 //----------------------------------------------------------------------------------------------------------------------
 /// \class PhysicsSceneJoltPhys
 ///

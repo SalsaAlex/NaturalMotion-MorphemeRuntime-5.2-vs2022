@@ -12,6 +12,7 @@
 #include "euphoria/erCollisionProbes.h"
 
 #include "mrPhysicsSceneJoltPhys.h"
+#include "mrPhysicsUtilsJoltPhys.h"
 #include "mrJoltPhys.h"
 #include "mrPhysicsRigJoltPhysRagdoll.h"
 #include "euphoria/erDebugDraw.h"

@@ -16,6 +16,7 @@
 #include "mrJoltPhys.h"
 #include "mrPhysicsDriverDataJoltPhys.h"
 #include "mrPhysicsRigJoltPhysRagdoll.h"
+#include "mrPhysicsUtilsJoltPhys.h"
 #include "physics/mrPhysicsRigDef.h"
 #include "physics/mrPhysicsAttribData.h"
 #include "mrPhysicsSceneJoltPhys.h"
@@ -36,7 +37,7 @@
 #define MAX_DAMPING 1e25f
 
 #define JPH_JOINTSTRENGTH_SCALE 1
-#define JPH_JOINTDAMP_SCALE 1
+#define JPH_JOINTDAMP_SCALE 0.5
 
 
 //uncomment to use frequency & damping mode on joints instead
@@ -224,6 +225,7 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
       bodysettings.mApplyGyroscopicForce = true;
       bodysettings.mMotionQuality = JPH::EMotionQuality::LinearCast;
       bodysettings.mUseManifoldReduction = false;
+      bodysettings.mAllowSleeping = false;
 
       ragdollsettings->mParts[iPart] = bodysettings;
   }
@@ -232,10 +234,35 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
     PhysicsRigJoltPhysRagdoll::createJoints(joltphys_scene, physicsRigDef, result, ragdollsettings);
   }
 
+//#define JPH_TESTCOLLIDEGROUP
+
+#ifdef JPH_TESTCOLLIDEGROUP
+
+  MR::JPH_nocollidegroup nocollide_group;
+  nocollide_group.m_numbodies = numParts;
+
+  for (int32_t i = 0; i < physicsRigDef->m_numCollisionGroups; i++)
+  {
+      const PhysicsRigDef::CollisionGroup* group = &physicsRigDef->m_collisionGroups[i];
+      MR::JPH_nocollide_entry &entry = nocollide_group.MakeEntry();
+      entry.m_enable = group->enabled;
+      for (int j = 0; j < group->numIndices; j++)
+      {
+          entry.AddBody(dynamic_cast<JPH::BodyCreationSettings*>(&ragdollsettings->mParts[group->indices[j]]));
+      }
+  }
+
+  JPH::CollisionGroup nocollidegroup_result = MR::CreateNoCollideGroup(nocollide_group);
+
+  ragdollsettings->Stabilize();
+
+  result->m_ragdoll = ragdollsettings->CreateRagdoll(nocollidegroup_result.GetGroupID(), 0, joltphys_scene->m_joltPhysScene);
+#else
   ragdollsettings->DisableParentChildCollisions();
   ragdollsettings->Stabilize();
 
   result->m_ragdoll = ragdollsettings->CreateRagdoll(0, 0, joltphys_scene->m_joltPhysScene);
+#endif
   for (int i = 0; i < result->m_ragdoll->GetConstraintCount(); i++)
   {
       JPH::SwingTwistConstraint* swingtwistconstraint = (JPH::SwingTwistConstraint*)result->m_ragdoll->GetConstraint(i);
