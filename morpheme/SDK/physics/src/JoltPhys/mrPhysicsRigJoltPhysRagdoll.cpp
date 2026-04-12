@@ -37,11 +37,11 @@
 #define MAX_DAMPING 1e25f
 
 #define JPH_JOINTSTRENGTH_SCALE 1
-#define JPH_JOINTDAMP_SCALE 0.5
+#define JPH_JOINTDAMP_SCALE 1
 
 
 //uncomment to use frequency & damping mode on joints instead
-//#define JPH_USE_FREQUENCY
+#define JPH_USE_FREQUENCY
 
 namespace MR 
 {
@@ -416,9 +416,6 @@ void PhysicsRigJoltPhysRagdoll::createJoints(
                 twistmotor.mSpringSettings.mStiffness = 30;
                 twistmotor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
 #endif
-
-                //maybe this is too big ?
-                csettings->mNumPositionStepsOverride = csettings->mNumVelocityStepsOverride = 32;
                 
                 childpart.mToParent = csettings;
             }
