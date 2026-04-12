@@ -27,11 +27,6 @@ class PhysicsSceneJoltPhys;
 struct PhysicsSerialisationBuffer;
 class AnimRigDef;
 
-/// Handler for ragdoll explosions.
-typedef void (*RagdollExplosionHandler)(
-  class PhysicsRigJoltPhysRagdoll* ragdoll,
-  NMP::Matrix34& initTM);
-
 class JoltPhysRagdollJointDesc
 {
     uint32_t parentindex;
@@ -325,13 +320,6 @@ public:
   void updatePrePhysics(float timeStep) NM_OVERRIDE;
   void updatePostPhysics(float timeStep) NM_OVERRIDE;
 
-  /// Register a handler for when the ragdoll simulation explodes.
-  static void setExplosionHandler(RagdollExplosionHandler* handler);
-
-  /// This is the default explosion handler - it will be called if there is no handler registered,
-  /// or it can be called from the registered handler if desired.
-  void handleExplosion(const NMP::Matrix34& worldRoot);
-
 
   /// Sets the AA target for an individual joint. targetQuat represents a rotation of the    
   /// joint limit frame (not the bodies)    
@@ -422,8 +410,6 @@ private:
   void removeRagdollFromScene();
 
   JPH::Ragdoll *m_ragdoll;
-
-  static RagdollExplosionHandler* s_explosionHandler;
 
   /// Bit mask using MR::GameGroup, possibly some game-specific bits too, indicating the type that this rig claims
   /// to be. Would normally be at least 1 << MR::GameGroup::GROUP_CHARACTER_PART

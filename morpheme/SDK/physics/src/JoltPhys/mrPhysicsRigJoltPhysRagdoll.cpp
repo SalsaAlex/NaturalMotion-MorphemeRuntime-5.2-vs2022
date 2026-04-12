@@ -35,17 +35,15 @@
 #define MAX_STRENGTH 1e12f
 #define MAX_DAMPING 1e25f
 
-#define JPH_JOINTSTRENGTH_SCALE 0.6
+#define JPH_JOINTSTRENGTH_SCALE 1
+#define JPH_JOINTDAMP_SCALE 1
+
+
+//uncomment to use frequency & damping mode on joints instead
+//#define JPH_USE_FREQUENCY
 
 namespace MR 
 {
-
-// This limit isn't nice, but PhysX is very jittery with tiny ranges, and currently we don't
-// have a hinge joint type in PhysX. See MORPH-11273
-static const float s_minSwingLimit = NMP::degreesToRadians(3.0f);
-
-
-RagdollExplosionHandler* PhysicsRigJoltPhysRagdoll::s_explosionHandler = 0;
 
 //----------------------------------------------------------------------------------------------------------------------
 NMP::Memory::Format PhysicsRigJoltPhysRagdoll::getMemoryRequirements(PhysicsRigDef *physicsRigDef)
@@ -217,11 +215,15 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
       bodysettings.mRotation = transform.GetQuaternion();
       bodysettings.mMotionType = JPH::EMotionType::Dynamic;
       bodysettings.mObjectLayer = NMPhysLayers::CHARACTER_PART;
-      bodysettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
-      bodysettings.mMassPropertiesOverride.mMass = 1;
+      bodysettings.mLinearDamping = part.body.linearDamping;
+      bodysettings.mAngularDamping = part.body.angularDamping;
+      bodysettings.mMaxAngularVelocity = ((MR::PhysicsBodyDriverDataJoltPhys*)part.body.driverData)->m_maxAngularVelocity;
+      bodysettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateMassAndInertia;
       bodysettings.mToParent = nullptr;
-      bodysettings.mGravityFactor = 1;
       bodysettings.mFriction = 1;
+      bodysettings.mApplyGyroscopicForce = true;
+      bodysettings.mMotionQuality = JPH::EMotionQuality::LinearCast;
+      bodysettings.mUseManifoldReduction = false;
 
       ragdollsettings->mParts[iPart] = bodysettings;
   }
@@ -366,17 +368,27 @@ void PhysicsRigJoltPhysRagdoll::createJoints(
                 csettings->mPlaneHalfConeAngle = swing2_limit;
 
                 JPH::MotorSettings& swingmotor = csettings->mSwingMotorSettings;
-                swingmotor.mMinTorqueLimit = -20000; 
-                swingmotor.mMaxTorqueLimit = 20000;
+                swingmotor.mMinTorqueLimit = -100000; 
+                swingmotor.mMaxTorqueLimit = 100000;
                 swingmotor.mSpringSettings.mDamping = 1;
+#ifdef JPH_USE_FREQUENCY
                 swingmotor.mSpringSettings.mFrequency = 30;
                 swingmotor.mSpringSettings.mMode = JPH::ESpringMode::FrequencyAndDamping;
+#else
+                swingmotor.mSpringSettings.mStiffness = 30;
+                swingmotor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
+#endif
                 JPH::MotorSettings& twistmotor = csettings->mTwistMotorSettings;
-                twistmotor.mMinTorqueLimit = -20000;
-                twistmotor.mMaxTorqueLimit = 20000;
+                twistmotor.mMinTorqueLimit = -100000;
+                twistmotor.mMaxTorqueLimit = 100000;
                 twistmotor.mSpringSettings.mDamping = 1;
+#ifdef JPH_USE_FREQUENCY
                 twistmotor.mSpringSettings.mFrequency = 30;
                 twistmotor.mSpringSettings.mMode = JPH::ESpringMode::FrequencyAndDamping;
+#else
+                twistmotor.mSpringSettings.mStiffness = 30;
+                twistmotor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
+#endif
 
                 //maybe this is too big ?
                 csettings->mNumPositionStepsOverride = csettings->mNumVelocityStepsOverride = 32;
@@ -522,34 +534,6 @@ bool PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll::generateCachedValues(float 
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void PhysicsRigJoltPhysRagdoll::handleExplosion(const NMP::Matrix34& worldRoot)
-{
-  if (m_isRagdollAddedToScene)
-  {
-    removeRagdollFromScene();
-    addRagdollToScene();
-  }
-
-  for (uint32_t i = 0; i < getNumParts(); i++)
-  {
-    PartJoltPhysRagdoll* partJoltPhysRagdoll = (PartJoltPhysRagdoll*)m_parts[i];
-
-    NMP::Matrix34 tm;
-    calculateWorldSpacePartTM(
-      tm, 
-      i, 
-      *m_animRigDef->getBindPose()->m_transformBuffer, 
-      *m_animRigDef->getBindPose()->m_transformBuffer, 
-      worldRoot, 
-      false);
-
-    partJoltPhysRagdoll->setTransform(tm);
-    partJoltPhysRagdoll->setVel(NMP::Vector3::InitZero);
-    partJoltPhysRagdoll->setAngVel(NMP::Vector3::InitZero);
-  }
-}
-
-//----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::generateCachedValues(float timeStep)
 {
   bool OK = true;
@@ -569,15 +553,6 @@ void PhysicsRigJoltPhysRagdoll::generateCachedValues(float timeStep)
     if (!worldRoot.isValidTM(0.001f))
     {
       worldRoot.identity();
-    }
-
-    if (s_explosionHandler)
-    {
-      (*s_explosionHandler)(this, worldRoot);
-    }
-    else
-    {
-      handleExplosion(worldRoot);
     }
   }
 }
@@ -1364,10 +1339,8 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::enableLimit(bool enable)
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::writeLimits()
 {
-  // PhysX crashes with zero swing range, as well as it just causing jitter when very small (e.g.
-  // with "hinge" limits).
-  float swing1 = NMP::maximum(m_modifiableLimits.getSwing1Limit(), s_minSwingLimit);
-  float swing2 = NMP::maximum(m_modifiableLimits.getSwing2Limit(), s_minSwingLimit);
+  float swing1 = NMP::maximum(m_modifiableLimits.getSwing1Limit(), 0.f);
+  float swing2 = NMP::maximum(m_modifiableLimits.getSwing2Limit(), 0.f);
   float twistLow = m_modifiableLimits.getTwistLimitLow();
   float twistHigh = m_modifiableLimits.getTwistLimitHigh();
 
@@ -1389,16 +1362,14 @@ JPH_INLINE float CalculateInverseEffectiveMass(const JPH::Body* inBody1, const J
     return inWorldSpaceAxis.Dot(mInvI1_Axis + mInvI2_Axis);
 }
 
-
+#ifdef JPH_USE_FREQUENCY
 struct SpringFreqDamp
 {
-    float frequency;    // Hz
-    float dampingRatio; // dimensionless (0=none, 1=critical, >1=overdamped)
+    float frequency;
+    float dampingRatio;
 };
-
 SpringFreqDamp stiffnessDampingToFreqDamp(float stiffness, float damping, float effectiveMass)
 {
-    // Guard against degenerate input
     if (stiffness <= 0.0f || effectiveMass <= 0.0f)
         return { 0.0f, 1.0f };
 
@@ -1408,6 +1379,7 @@ SpringFreqDamp stiffnessDampingToFreqDamp(float stiffness, float damping, float 
 
     return { frequency, dampingRatio };
 }
+#endif
 
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setStrength(float strength)
@@ -1419,27 +1391,36 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setStrength(float strength
 
   JPH::SwingTwistConstraintSettings* settings = (JPH::SwingTwistConstraintSettings*)m_jointInternal->GetConstraintSettings().GetPtr();
 
+#ifdef JPH_USE_FREQUENCY
   float I_eff = 1.0 / CalculateInverseEffectiveMass(m_jointInternal->GetBody1(), m_jointInternal->GetBody2(), settings->mTwistAxis1.GetNormalizedPerpendicular());
   SpringFreqDamp data = stiffnessDampingToFreqDamp(m_strength, m_damping, I_eff);
   ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mFrequency = data.frequency;
   ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mFrequency = data.frequency;
-
+#else
+  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mStiffness = m_strength;
+  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mStiffness = m_strength;
+#endif
   
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setDamping(float damping)
 {
-  //NMP_ASSERT(m_jointInternal);
+  NMP_ASSERT(m_jointInternal);
   NMP_ASSERT(damping >= 0.0f && damping < MAX_DAMPING);
-  m_damping = damping * sqrt(JPH_JOINTSTRENGTH_SCALE);
+  m_damping = damping * JPH_JOINTDAMP_SCALE;
 
   JPH::SwingTwistConstraintSettings* settings = (JPH::SwingTwistConstraintSettings*)m_jointInternal->GetConstraintSettings().GetPtr();
 
+#ifdef JPH_USE_FREQUENCY
   float I_eff = 1.0 / CalculateInverseEffectiveMass(m_jointInternal->GetBody1(), m_jointInternal->GetBody2(), settings->mTwistAxis1.GetNormalizedPerpendicular());
   SpringFreqDamp data = stiffnessDampingToFreqDamp(m_strength, m_damping, I_eff);
   ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mDamping = data.dampingRatio;
   ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mDamping = data.dampingRatio;
+#else
+  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mDamping = m_damping;
+  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mDamping = m_damping;
+#endif
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1451,7 +1432,7 @@ bool PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::supportsDriveCompensation(
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setDriveCompensation(float driveCompensation)
 {
-  //NMP_ASSERT(m_jointInternal);
+  NMP_ASSERT(m_jointInternal);
   NMP_ASSERT(driveCompensation >= 0.f); 
   setInternalCompliance(1.f/(1.f + driveCompensation));
 }
@@ -2383,12 +2364,6 @@ void PhysicsRigJoltPhysRagdoll::setCollisionGroupsToActivate(const int *collisio
   {
     m_collisionGroupIndicesToActivate[i] = collisionGroupIndices[i];
   }
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-void PhysicsRigJoltPhysRagdoll::setExplosionHandler(RagdollExplosionHandler* handler)
-{
-  s_explosionHandler = handler;
 }
 
 } // namespace MR

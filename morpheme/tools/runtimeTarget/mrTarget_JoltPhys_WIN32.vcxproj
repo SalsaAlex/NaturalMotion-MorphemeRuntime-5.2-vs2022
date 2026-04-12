@@ -44,7 +44,7 @@
     <TargetName>mrTarget_JoltPhys_debug</TargetName>
     <IntDir>..\..\..\obj\win32\vs$(VisualStudioVersion)\mrTarget_JoltPhys\debug\</IntDir>
     <OutDir>..\..\..\bin\win32\vs$(VisualStudioVersion)\</OutDir>
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -58,7 +58,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>Physics;Physics\JoltPhys;..\..\SDK\physics\include\Physics\JoltPhys;..\..\utils\physicsComms2\include;..\..\SDK\physics\include;..\..\utils\comms2\include;..\..\utils\simpleBundle\include;..\..\SDK\core\include;..\..\SDK;..\..\..\common\NMRuntimeUtils\include;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\external\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>Default</CompileAs>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
       <MinimalRebuild>false</MinimalRebuild>
       <PreprocessorDefinitions>NOMINMAX;WIN32;_CONSOLE;_DEBUG;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_USE_CPU_COMPUTE;JPH_DEBUG_RENDERER;JPH_PROFILE_ENABLED;JPH_OBJECT_STREAM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -68,6 +68,7 @@
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsDriver_JoltPhys_debug.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelAABBDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelClothDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelDynamicsDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\LowLevelParticlesDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3CharacterKinematicDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3CommonDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3CookingDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3DEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3ExtensionsDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\PhysX3VehicleDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\SceneQueryDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\SimulationControllerDEBUG.lib";"$(PHYSX3_PATH)\Lib\win32\PxFoundationDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PxPvdSDKDEBUG_x86.lib";"$(PHYSX3_PATH)\Lib\win32\PxTaskDEBUG_x86.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsComms2_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemePhysicsCore_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeComms2_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeSimpleBundle_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_debug.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_debug.lib";"..\..\..\external\lib\Jolt\x86\debug\Jolt.lib";WS2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
