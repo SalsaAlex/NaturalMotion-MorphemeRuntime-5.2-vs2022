@@ -36,11 +36,11 @@
 #define MAX_STRENGTH 1e12f
 #define MAX_DAMPING 1e25f
 
-constexpr float JPH_JOINTSTRENGTH_SCALE = 1.0;
-constexpr float JPH_JOINTDAMP_SCALE = 1.0;
-constexpr float JPH_JOINTDRIVESTRENGTH_SCALE = 1.0;
+constexpr float JPH_JOINTSTRENGTH_SCALE = 0.8;
+constexpr float JPH_JOINTDAMP_SCALE = 0.85;
+constexpr float JPH_JOINTDRIVESTRENGTH_SCALE = 1.2;
 constexpr float JPH_JOINTDRIVEDAMPING_SCALE = 0.4;
-constexpr float JPH_JOINTDRIVECOMPENSATION_SCALE = 2.0;
+constexpr float JPH_JOINTDRIVECOMPENSATION_SCALE = 1.0;
 
 
 
@@ -763,7 +763,7 @@ NMP::Vector3 PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll::getLinearMomentum()
 //----------------------------------------------------------------------------------------------------------------------
 NMP::Vector3 PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll::getMassSpaceInertiaTensor() const
 {
-  return nmJPHVec3ToVector3(m_rigidBody->GetMotionProperties()->GetLocalSpaceInverseInertia().GetDiagonal3().Reciprocal());
+  return nmJPHVec3ToVector3(m_rigidBody->GetMotionProperties()->GetInverseInertiaDiagonal().Reciprocal());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -784,9 +784,8 @@ void PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll::setMassSpaceInertia(const N
   // fast.
 
   JPH::Vec3 inv_inertia = nmVector3ToJPHVec3(inertia).Reciprocal();
-  JPH::Mat44 inv_inertia_tensor = JPH::Mat44::sScale(inv_inertia);
 
-  //m_rigidBody->GetMotionProperties()->SetInverseInertia(inv_inertia_tensor.GetTranslation(), inv_inertia_tensor.GetQuaternion());
+  m_rigidBody->GetMotionProperties()->SetInverseInertia(inv_inertia, JPH::Quat::sIdentity());
   m_modifiedFlags |= MODIFIED_INERTIA;
 }
 
@@ -1360,8 +1359,7 @@ bool PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::restoreState(PhysicsSerial
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::enableLimit(bool enable)
 {
-  //m_jointInternal->setSwingLimitEnabled(enable);
-  //m_jointInternal->setTwistLimitEnabled(enable);
+  ((JPH::SwingTwistConstraint*)m_jointInternal)->
 }
 
 //----------------------------------------------------------------------------------------------------------------------

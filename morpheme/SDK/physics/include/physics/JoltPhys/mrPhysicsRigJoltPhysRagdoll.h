@@ -252,7 +252,7 @@ public:
     bool storeState(MR::PhysicsSerialisationBuffer &savedState) NM_OVERRIDE;
     bool restoreState(MR::PhysicsSerialisationBuffer &savedState) NM_OVERRIDE;
 
-    JPH::TwoBodyConstraint* getInternalJoint() {return m_jointInternal;} //?
+    JPH::TwoBodyConstraint* getInternalJoint() {return m_jointInternal;}
   protected:
     float        m_maxDamping;
     float        m_maxStrength;
@@ -279,6 +279,8 @@ public:
 
     float       m_lastInternalCompliance;
     float       m_lastExternalCompliance;
+
+    bool m_bLimitsEnabled; //enableLimit()
 
     JPH::TwoBodyConstraint* m_jointInternal;
   public:
