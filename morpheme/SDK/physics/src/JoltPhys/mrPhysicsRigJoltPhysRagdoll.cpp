@@ -439,6 +439,18 @@ bool PhysicsRigJoltPhysRagdoll::term()
   JPH::PhysicsSystem *joltPhysScene = getPhysicsSceneJoltPhys()->m_joltPhysScene;
   if (joltPhysScene)
   {
+    for (uint32_t i = getNumParts(); i-- != 0; )
+    {
+        PartJoltPhysRagdoll* part = (PartJoltPhysRagdoll*)m_parts[i];
+        PhysicsRigJoltPhysBodyData::destroy(
+            PhysicsRigJoltPhysBodyData::getFromBody(part->getRigidBody()), part->getRigidBody());
+        //if (part->getKinematicActor()) //kinematic body and rigid body are the same for now
+        //{
+        //    PhysicsRigPhysX3ActorData::destroy(
+        //        PhysicsRigPhysX3ActorData::getFromActor(part->getKinematicBody()), part->getKinematicActor());
+        //    part->getKinematicActor()->release();
+        //}
+    }
     m_ragdoll->RemoveFromPhysicsSystem();
     delete m_ragdoll;
     m_ragdoll = nullptr;
