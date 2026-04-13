@@ -1359,7 +1359,7 @@ bool PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::restoreState(PhysicsSerial
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::enableLimit(bool enable)
 {
-  ((JPH::SwingTwistConstraint*)m_jointInternal)->
+  //((JPH::SwingTwistConstraint*)m_jointInternal)->
 }
 
 //----------------------------------------------------------------------------------------------------------------------

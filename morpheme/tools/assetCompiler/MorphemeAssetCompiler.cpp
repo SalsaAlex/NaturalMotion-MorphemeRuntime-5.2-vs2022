@@ -2642,7 +2642,9 @@ int32_t __cdecl main(int argc, char** argv)
 
   ACOptions acOptions;
 
+#ifdef _DEBUG
   Sleep(10 * 1000); //wait for debugger to attach
+#endif
 
 //#if NM_ENABLE_EXCEPTIONS
 //
