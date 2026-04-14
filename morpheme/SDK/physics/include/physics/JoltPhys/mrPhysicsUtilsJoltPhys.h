@@ -63,6 +63,7 @@ namespace MR
 
         JPH_nocollide_entry& MakeEntry() { return m_collidegroups.emplace_back(JPH_nocollide_entry()); }
         std::vector<JPH_nocollide_entry> m_collidegroups;
+        std::vector<JPH::BodyCreationSettings*> m_ordered_bodylist;
         uint32_t m_numbodies; //total number of unique bodies
     };
 

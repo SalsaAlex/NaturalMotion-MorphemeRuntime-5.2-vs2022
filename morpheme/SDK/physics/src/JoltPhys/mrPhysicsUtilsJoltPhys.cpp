@@ -144,11 +144,23 @@ CastData SweepRayVsWorld(JPH::PhysicsSystem* scene, JPH::Vec3 pos, JPH::Vec3 dir
     return collector.m_vCastResult;
 }
 
+static inline uint32_t GetBodyIndexInList(JPH::BodyCreationSettings* body, const std::vector<JPH::BodyCreationSettings*>& list)
+{
+    for (int i = 0; i < list.size(); i++)
+    {
+        if (list[i] == body)
+            return i;
+    }
+    NMP_ASSERT_FAIL();
+    return -1;
+}
+
 JPH::CollisionGroup CreateNoCollideGroup(const JPH_nocollidegroup& group)
 {
     static uint32_t collisiongroup_id = 0;
     static uint32_t collisionsubgroup_id = 0;
     JPH::Ref<JPH::GroupFilterTable> filtertable = new JPH::GroupFilterTable(group.m_numbodies);
+
 
     //yuck these for loops
     for (int i = 0; i < group.m_collidegroups.size(); i++)
@@ -156,14 +168,16 @@ JPH::CollisionGroup CreateNoCollideGroup(const JPH_nocollidegroup& group)
         const JPH_nocollide_entry& entry = group.m_collidegroups[i];
         for (int j = 0; j < entry.m_bodies.size(); j++)
         {
-            entry.m_bodies[j]->mCollisionGroup.SetSubGroupID(j);
+            uint32_t index1 = GetBodyIndexInList(entry.m_bodies[j], group.m_ordered_bodylist);
+            entry.m_bodies[j]->mCollisionGroup.SetSubGroupID(index1);
             entry.m_bodies[j]->mCollisionGroup.SetGroupFilter(filtertable);
             for (int k = 0; k < entry.m_bodies.size(); k++)
             {
                 if (k == j)
                     continue;
+                uint32_t index2 = GetBodyIndexInList(entry.m_bodies[k], group.m_ordered_bodylist);
                 if(entry.m_enable)
-                    filtertable->DisableCollision(j, k);
+                    filtertable->DisableCollision(index1, index2);
 
             }
         }

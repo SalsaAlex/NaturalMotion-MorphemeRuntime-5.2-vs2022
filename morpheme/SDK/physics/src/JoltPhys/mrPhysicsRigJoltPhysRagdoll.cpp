@@ -36,16 +36,16 @@
 #define MAX_STRENGTH 1e12f
 #define MAX_DAMPING 1e25f
 
-constexpr float JPH_JOINTSTRENGTH_SCALE = 0.8;
-constexpr float JPH_JOINTDAMP_SCALE = 0.85;
+constexpr float JPH_JOINTSTRENGTH_SCALE = 0.6;
+constexpr float JPH_JOINTDAMP_SCALE = 0.75;
 constexpr float JPH_JOINTDRIVESTRENGTH_SCALE = 1.2;
-constexpr float JPH_JOINTDRIVEDAMPING_SCALE = 0.4;
+constexpr float JPH_JOINTDRIVEDAMPING_SCALE = 0.9;
 constexpr float JPH_JOINTDRIVECOMPENSATION_SCALE = 1.0;
 
 
 
 //uncomment to use frequency & damping mode on joints instead
-#define JPH_USE_FREQUENCY
+//#define JPH_USE_FREQUENCY
 
 namespace MR 
 {
@@ -238,14 +238,16 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
     PhysicsRigJoltPhysRagdoll::createJoints(joltphys_scene, physicsRigDef, result, ragdollsettings);
   }
 
-//#define JPH_TESTCOLLIDEGROUP
+#define JPH_TESTCOLLIDEGROUP
 
 #ifdef JPH_TESTCOLLIDEGROUP
 
   MR::JPH_nocollidegroup nocollide_group;
   nocollide_group.m_numbodies = numParts;
+  for (int i = 0; i < numParts; i++)
+      nocollide_group.m_ordered_bodylist.push_back(&ragdollsettings->mParts[i]);
 
-  for (int32_t i = 0; i < physicsRigDef->m_numCollisionGroups; i++)
+  for (int i = 0; i < physicsRigDef->m_numCollisionGroups; i++)
   {
       const PhysicsRigDef::CollisionGroup* group = &physicsRigDef->m_collisionGroups[i];
       MR::JPH_nocollide_entry &entry = nocollide_group.MakeEntry();
