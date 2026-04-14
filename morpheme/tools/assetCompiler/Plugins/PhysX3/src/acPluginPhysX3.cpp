@@ -237,7 +237,7 @@ void PhysX3DriverBuilder::initJointDriverData(
   NMP_VERIFY_MSG(result, "could not find attribute 'useAccelerationSprings' in exported physics data");
   driverData->m_useAccelerationSprings = (useAccelerationSprings ? 1 : 0);
 
-  double driveStrengthScale = 10.0;
+  double driveStrengthScale = 1.0;
   //result = attributeBlock->getDoubleAttribute("driveStrengthScale", driveStrengthScale);
   //NMP_VERIFY_MSG(result, "could not find attribute 'driveStrengthScale' in exported physics data");
   driverData->m_driveStrengthScale = (float)driveStrengthScale;
