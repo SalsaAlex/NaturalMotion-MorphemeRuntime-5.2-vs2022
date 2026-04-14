@@ -1003,8 +1003,8 @@ void PhysicsRigPhysX3Articulation::updatePostPhysics(float timeStep)
 #endif // MR_OUTPUT_DEBUGGING
 
   resetJointLimits();
-  m_desiredJointProjectionIterations = 4;
-  m_desiredJointProjectionLinearTolerance = FLT_MAX;
+  m_desiredJointProjectionIterations = 16;
+  m_desiredJointProjectionLinearTolerance = 0.1;
 
   for (uint32_t i = 0 ; i < physicsRigPhysX->getNumParts() ; ++i)
   {
