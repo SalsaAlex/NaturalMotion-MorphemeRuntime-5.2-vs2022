@@ -1,0 +1,11 @@
+not bothered to organize this  yet, lol.
+
+sizeof(EAT::EnvData) == 156
+sizeof(AppUIServices) == 4
+sizeof(nmxui::UIServices) == 4
+sizeof(nmui::AppMainLoop) == 48
+sizeof(mcu::AppIcons) == 80
+sizeof(mcc::ApplicationColours) == 4
+sizeof(mcc::MainFrame) == 804 // big boy !
+sizeof(mcc::UIScriptCommands) == 12
+sizeof(mcc::ChooserSortData) == 24
