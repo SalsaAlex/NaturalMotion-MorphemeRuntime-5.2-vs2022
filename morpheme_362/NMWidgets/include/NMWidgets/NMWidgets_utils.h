@@ -15,4 +15,4 @@ namespace nmui
 	
 	bool isDescendedFrom(wxWindow* child, wxWindow* supposedparent);
 	
-}//namespace nmui
+} // namespace nmui

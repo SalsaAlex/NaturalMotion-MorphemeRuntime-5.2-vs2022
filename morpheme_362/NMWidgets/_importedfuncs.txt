@@ -1,32 +1,5 @@
 this only includes the functions imported from naturalmotion dlls (ex: nmutils.dll, nmtl.dll)
 
-            LuaPlus.dll
-                181   luaL_loadbuffer
-                1F3   lua_tostring
-                1EB   lua_settop
-                 63   ?Create@LuaState@LuaPlus@@SAPAV12@_N0@Z
-                 6A   ?Destroy@LuaState@LuaPlus@@SAXPAV12@@Z
-                 C2   ?IsBoolean@LuaObject@LuaPlus@@QBE_NXZ
-                 7C   ?GetBoolean@LuaObject@LuaPlus@@QBE_NXZ
-                 D4   ?IsNumber@LuaObject@LuaPlus@@QBE_NXZ
-                 CC   ?IsInteger@LuaObject@LuaPlus@@QBE_NXZ
-                 A7   ?GetNumber@LuaObject@LuaPlus@@QBENXZ
-                 D8   ?IsTable@LuaObject@LuaPlus@@QBE_NXZ
-                 D6   ?IsString@LuaObject@LuaPlus@@QBE_NXZ
-                 B0   ?GetString@LuaObject@LuaPlus@@QBEPB_WXZ
-                1B4   lua_gettop
-                1F7   lua_type
-                  5   ??0LuaObject@LuaPlus@@QAE@ABVLuaStackObject@1@@Z
-                 B4   ?GetTableCount@LuaObject@LuaPlus@@QAEHXZ
-                 3E   ?ArgError@LuaState@LuaPlus@@QAEHHPB_W@Z
-                 80   ?GetByName@LuaObject@LuaPlus@@QAE?AV12@PB_W@Z
-                 D0   ?IsNil@LuaObject@LuaPlus@@QBE_NXZ
-                 22   ??4LuaObject@LuaPlus@@QAEAAV01@ABVLuaStackObject@1@@Z
-                11A   ?Reset@LuaObject@LuaPlus@@QAEXXZ
-                 21   ??4LuaObject@LuaPlus@@QAEAAV01@ABV01@@Z
-                 1A   ??1LuaObject@LuaPlus@@QAE@XZ
-                  9   ??0LuaObject@LuaPlus@@QAE@XZ
-
             NMTL.dll
                   4   ?NMTLGetDefaultAllocator@nmtl@@YAPAVallocator@1@XZ
 

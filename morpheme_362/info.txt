@@ -9,3 +9,4 @@ sizeof(mcc::ApplicationColours) == 4
 sizeof(mcc::MainFrame) == 804 // big boy !
 sizeof(mcc::UIScriptCommands) == 12
 sizeof(mcc::ChooserSortData) == 24
+sizeof(nmui::GUIServices) == 1028

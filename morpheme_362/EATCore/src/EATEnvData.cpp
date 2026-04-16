@@ -1,5 +1,5 @@
 
-static static inline uint32_t ROL32(uint32_t value, int shift)
+static inline uint32_t ROL32(uint32_t value, int shift)
 {
 	return (value << shift) | (value >> (32 - shift));
 }

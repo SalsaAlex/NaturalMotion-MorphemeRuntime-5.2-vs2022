@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{375b6099-e803-4a4a-a85f-1d2484bfceac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{cf577685-cff9-436d-8631-7a1e26891d6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\EATCore">
+      <UniqueIdentifier>{1e2174fe-223e-4d35-99f2-ada1cbd1d78a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\EATCore\EATBuildStampInfo.h">
+      <Filter>Header Files\EATCore</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EATCore\EATBuildStampParser.h">
+      <Filter>Header Files\EATCore</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EATCore\EATEnvData.h">
+      <Filter>Header Files\EATCore</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\EATBuildStampInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EATBuildStampParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EATEnvData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

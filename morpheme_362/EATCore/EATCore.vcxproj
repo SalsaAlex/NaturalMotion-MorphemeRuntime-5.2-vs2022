@@ -19,21 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\nmui_Frame.cpp" />
-    <ClCompile Include="src\nmui_GUIServices.cpp" />
+    <ClInclude Include="include\EATCore\EATBuildStampInfo.h" />
+    <ClInclude Include="include\EATCore\EATBuildStampParser.h" />
+    <ClInclude Include="include\EATCore\EATEnvData.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\NMWidgets\nmui_Frame.h" />
-    <ClInclude Include="include\NMWidgets\nmui_GUIServices.h" />
-    <ClInclude Include="include\NMWidgets\NMWidgets_utils.h" />
+    <ClCompile Include="src\EATBuildStampInfo.cpp" />
+    <ClCompile Include="src\EATBuildStampParser.cpp" />
+    <ClCompile Include="src\EATEnvData.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{4e6778b4-4933-4bca-8155-9a57f161e9d2}</ProjectGuid>
-    <RootNamespace>NMWidgets</RootNamespace>
+    <RootNamespace>EATCore</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>NMWidgets</ProjectName>
+    <ProjectName>EATCore</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -90,7 +91,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>include\NMWidgets\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include\EATCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
