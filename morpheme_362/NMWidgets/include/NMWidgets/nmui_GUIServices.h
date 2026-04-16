@@ -1,6 +1,17 @@
 
+#include "wx\wx.h"
+
 namespace nmui
 {
+	enum StaticTextFont
+	{
+		StandardFontBold = 1,
+		LargeFont,
+		LargeFontBold,
+		SmallFont,
+		StandardFontItalic
+	};
+
 	//sizeof(GUIServices) == 1028
 	class GUIServices
 	{
@@ -8,13 +19,25 @@ namespace nmui
 		GUIServices(void);
 		
 		void init(void);
+		void initBitmaps();
 		void initFonts();
 		void initBrushes();
 		void initPens();
 				
 		void term(void);
+		void termBitmaps();
+		void termFonts();
+		void termBrushes();
+		void termPens();
+
 		void update(void);
+
+		void setDefaultStandardColours(void);
+		void calculateDerivedColours(void);
+
+		static void setDefaultFontAndColours(wxWindow* window, bool ControlMixedBackgroundColour);
 		
+		static nmui::GUIServices* getInstance(void);
 		
 		wxBitmap* getArrowDown(void);
 		wxBitmap* getArrowDownDisabled(void);
@@ -61,96 +84,96 @@ namespace nmui
 		wxBrush* getDialogDarkTintBrush(void);
 		wxBrush* getDialogDarkerTintBrush(void);
 		wxBrush* getDialogDarkestTintBrush(void);
-		wxBrush* GUIServices::getDialogDisabledTextBrush(void);
-		wxBrush* GUIServices::getDialogEdgeBrush(void);
-		wxBrush* GUIServices::getDialogFocusBrush(void);
-		wxBrush* GUIServices::getDialogLighterTintBrush(void);
-		wxBrush* GUIServices::getDialogLightestTintBrush(void);
-		wxBrush* GUIServices::getDialogSelectedBackgroundBlendedBrush(void);
-		wxBrush* GUIServices::getDialogSelectedBackgroundBrush(void);
-		wxBrush* GUIServices::getDialogSelectedTextBrush(void);
-		wxBrush* GUIServices::getDialogTextBrush(void);
+		wxBrush* getDialogDisabledTextBrush(void);
+		wxBrush* getDialogEdgeBrush(void);
+		wxBrush* getDialogFocusBrush(void);
+		wxBrush* getDialogLighterTintBrush(void);
+		wxBrush* getDialogLightestTintBrush(void);
+		wxBrush* getDialogSelectedBackgroundBlendedBrush(void);
+		wxBrush* getDialogSelectedBackgroundBrush(void);
+		wxBrush* getDialogSelectedTextBrush(void);
+		wxBrush* getDialogTextBrush(void);
 		
 		
-		wxPen* GUIServices::getControlBlendedTextDottedPen(void);
-		wxPen* GUIServices::getControlDarkShadowDottedPen(void);
-		wxPen* GUIServices::getControlDarkTintPen(void);
-		wxPen* GUIServices::getControlDarkerTintPen(void);
-		wxPen* GUIServices::getControlDarkestTintPen(void);
-		wxPen* GUIServices::getControlDisabledTextPen(void);
-		wxPen* GUIServices::getControlEdgePen(void);
-		wxPen* GUIServices::getControlErrorBackgroundPen(void);
-		wxPen* GUIServices::getControlFocusPen(void);
-		wxPen* GUIServices::getControlHeaderBackgroundPen(void);
-		wxPen* GUIServices::getControlHeaderTextPen(void);
-		wxPen* GUIServices::getControlLighterTintPen(void);
-		wxPen* GUIServices::getControlLightestTintPen(void);
-		wxPen* GUIServices::getControlMixedBackgroundPen(void);
-		wxPen* GUIServices::getControlScrollbarHighlightPen(void);
-		wxPen* GUIServices::getControlScrollbarPen(void);
-		wxPen* GUIServices::getControlSelectedBackgroundPen(void);
-		wxPen* GUIServices::getControlSelectedTextPen(void);
-		wxPen* GUIServices::getControlSelectedUnfocusedPen(void);
-		wxPen* GUIServices::getControlSelectedUnfocusedTextPen(void);
-		wxPen* GUIServices::getControlSplitterHighlightPen(void);
-		wxPen* GUIServices::getControlSplitterPen(void);
-		wxPen* GUIServices::getControlTargetPen(void);
-		wxPen* GUIServices::getControlTextDottedPen(void);
-		wxPen* GUIServices::getControlTextPen(void);
-		wxPen* GUIServices::getDialogDarkTintPen(void);
-		wxPen* GUIServices::getDialogDarkerTintDottedPen(void);
-		wxPen* GUIServices::getDialogDarkerTintPen(void);
-		wxPen* GUIServices::getDialogDarkestTintPen(void);
-		wxPen* GUIServices::getDialogDisabledTextPen(void);
-		wxPen* GUIServices::getDialogEdgePen(void);
-		wxPen* GUIServices::getDialogFocusPen(void);
-		wxPen* GUIServices::getDialogLighterTintDottedPen(void);
-		wxPen* GUIServices::getDialogLighterTintPen(void);
-		wxPen* GUIServices::getDialogLightestTintPen(void);
-		wxPen* GUIServices::getDialogSelectedBackgroundBlendedPen(void);
-		wxPen* GUIServices::getDialogSelectedBackgroundPen(void);
-		wxPen* GUIServices::getDialogSelectedTextPen(void);
-		wxPen* GUIServices::getDialogTextPen(void);
+		wxPen* getControlBlendedTextDottedPen(void);
+		wxPen* getControlDarkShadowDottedPen(void);
+		wxPen* getControlDarkTintPen(void);
+		wxPen* getControlDarkerTintPen(void);
+		wxPen* getControlDarkestTintPen(void);
+		wxPen* getControlDisabledTextPen(void);
+		wxPen* getControlEdgePen(void);
+		wxPen* getControlErrorBackgroundPen(void);
+		wxPen* getControlFocusPen(void);
+		wxPen* getControlHeaderBackgroundPen(void);
+		wxPen* getControlHeaderTextPen(void);
+		wxPen* getControlLighterTintPen(void);
+		wxPen* getControlLightestTintPen(void);
+		wxPen* getControlMixedBackgroundPen(void);
+		wxPen* getControlScrollbarHighlightPen(void);
+		wxPen* getControlScrollbarPen(void);
+		wxPen* getControlSelectedBackgroundPen(void);
+		wxPen* getControlSelectedTextPen(void);
+		wxPen* getControlSelectedUnfocusedPen(void);
+		wxPen* getControlSelectedUnfocusedTextPen(void);
+		wxPen* getControlSplitterHighlightPen(void);
+		wxPen* getControlSplitterPen(void);
+		wxPen* getControlTargetPen(void);
+		wxPen* getControlTextDottedPen(void);
+		wxPen* getControlTextPen(void);
+		wxPen* getDialogDarkTintPen(void);
+		wxPen* getDialogDarkerTintDottedPen(void);
+		wxPen* getDialogDarkerTintPen(void);
+		wxPen* getDialogDarkestTintPen(void);
+		wxPen* getDialogDisabledTextPen(void);
+		wxPen* getDialogEdgePen(void);
+		wxPen* getDialogFocusPen(void);
+		wxPen* getDialogLighterTintDottedPen(void);
+		wxPen* getDialogLighterTintPen(void);
+		wxPen* getDialogLightestTintPen(void);
+		wxPen* getDialogSelectedBackgroundBlendedPen(void);
+		wxPen* getDialogSelectedBackgroundPen(void);
+		wxPen* getDialogSelectedTextPen(void);
+		wxPen* getDialogTextPen(void);
 		
 		
-		wxColour GUIServices::getControlBackgroundColour(void);
-		wxColour GUIServices::getControlDarkTintColour(void);
-		wxColour GUIServices::getControlDarkerTintColour(void);
-		wxColour GUIServices::getControlDarkestTintColour(void);
-		wxColour GUIServices::getControlDisabledTextColour(void);
-		wxColour GUIServices::getControlEdgeColour(void);
-		wxColour GUIServices::getControlErrorBackgroundColour(void);
-		wxColour GUIServices::getControlFocusColour(void);
-		wxColour GUIServices::getControlHeaderBackgroundColour(void);
-		wxColour GUIServices::getControlHeaderTextColour(void);
-		wxColour GUIServices::getControlLighterTintColour(void);
-		wxColour GUIServices::getControlLightestTintColour(void);
-		wxColour GUIServices::getControlMixedBackgroundColour(void);
-		wxColour GUIServices::getControlScrollbarColour(void);
-		wxColour GUIServices::getControlScrollbarHighlightColour(void);
-		wxColour GUIServices::getControlSelectedBackgroundColour(void);
-		wxColour GUIServices::getControlSelectedTextColour(void);
-		wxColour GUIServices::getControlSelectedUnfocusedColour(void);
-		wxColour GUIServices::getControlSelectedUnfocusedTextColour(void);
-		wxColour GUIServices::getControlSplitterColour(void);
-		wxColour GUIServices::getControlSplitterHighlightColour(void);
-		wxColour GUIServices::getControlTextColour(void);
-		wxColour GUIServices::getDialogBackgroundColour(void);
-		wxColour GUIServices::getDialogDarkTintColour(void);
-		wxColour GUIServices::getDialogDarkerTintColour(void);
-		wxColour GUIServices::getDialogDarkestTintColour(void);
-		wxColour GUIServices::getDialogDisabledTextColour(void);
-		wxColour GUIServices::getDialogEdgeColour(void);
-		wxColour GUIServices::getDialogFocusColour(void);
-		wxColour GUIServices::getDialogLighterTintColour(void);
-		wxColour GUIServices::getDialogLightestTintColour(void);
-		wxColour GUIServices::getDialogSelectedBackgroundBlendedColour(void);
-		wxColour GUIServices::getDialogSelectedBackgroundColour(void);
-		wxColour GUIServices::getDialogSelectedTextColour(void);
-		wxColour GUIServices::getDialogTextColour(void);
+		wxColour getControlBackgroundColour(void);
+		wxColour getControlDarkTintColour(void);
+		wxColour getControlDarkerTintColour(void);
+		wxColour getControlDarkestTintColour(void);
+		wxColour getControlDisabledTextColour(void);
+		wxColour getControlEdgeColour(void);
+		wxColour getControlErrorBackgroundColour(void);
+		wxColour getControlFocusColour(void);
+		wxColour getControlHeaderBackgroundColour(void);
+		wxColour getControlHeaderTextColour(void);
+		wxColour getControlLighterTintColour(void);
+		wxColour getControlLightestTintColour(void);
+		wxColour getControlMixedBackgroundColour(void);
+		wxColour getControlScrollbarColour(void);
+		wxColour getControlScrollbarHighlightColour(void);
+		wxColour getControlSelectedBackgroundColour(void);
+		wxColour getControlSelectedTextColour(void);
+		wxColour getControlSelectedUnfocusedColour(void);
+		wxColour getControlSelectedUnfocusedTextColour(void);
+		wxColour getControlSplitterColour(void);
+		wxColour getControlSplitterHighlightColour(void);
+		wxColour getControlTextColour(void);
+		wxColour getDialogBackgroundColour(void);
+		wxColour getDialogDarkTintColour(void);
+		wxColour getDialogDarkerTintColour(void);
+		wxColour getDialogDarkestTintColour(void);
+		wxColour getDialogDisabledTextColour(void);
+		wxColour getDialogEdgeColour(void);
+		wxColour getDialogFocusColour(void);
+		wxColour getDialogLighterTintColour(void);
+		wxColour getDialogLightestTintColour(void);
+		wxColour getDialogSelectedBackgroundBlendedColour(void);
+		wxColour getDialogSelectedBackgroundColour(void);
+		wxColour getDialogSelectedTextColour(void);
+		wxColour getDialogTextColour(void);
 		
 		
-		int GUIServices::getControlTargetSize(void);
+		int getControlTargetSize(void);
 		
 		
 		wxFont* getFont(nmui::StaticTextFont fonttype);
@@ -291,7 +314,7 @@ namespace nmui
 		
 	
 		wxBitmap* m_pTick; //(char *)this + 876 || (_DWORD *)this + 219
-		wxBitmap* m_pIndeterminateCheckMarkTick; //(char *)this + 888 || (_DWORD *)this + 222
+		wxBitmap* m_pCheckMarkTick; //(char *)this + 888 || (_DWORD *)this + 222
 		wxBitmap* m_pDarkArrowRight; //(char *)this + 892 || (_DWORD *)this + 223
 		wxBitmap* m_pArrowUp; //(char *)this + 896 || (_DWORD *)this + 224
 		wxBitmap* m_pArrowDown; //(char *)this + 900 || (_DWORD *)this + 225
@@ -329,6 +352,9 @@ namespace nmui
 		wxFont* m_pSmallFontBold; //(char *)this + 1016 || (_DWORD *)this + 254
 		wxFont* m_pVerySmallFont; //(char *)this + 1020 || (_DWORD *)this + 255
 		void* m_unknown37; //(char *)this + 1024 || (_DWORD *)this + 256
-	}
+
+
+		static nmui::GUIServices* staticInstance;
+	};
 	
 } // namespace nmui

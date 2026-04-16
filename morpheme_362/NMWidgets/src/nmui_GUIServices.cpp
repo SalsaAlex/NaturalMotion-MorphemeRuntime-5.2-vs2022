@@ -3,6 +3,9 @@
 
 namespace nmui
 {
+	nmui::GUIServices* GUIServices::staticInstance = nullptr;
+
+
 	GUIServices::GUIServices()
 	{
 		init();
@@ -17,21 +20,33 @@ namespace nmui
 		initBrushes();
 		initPens();
 	}
+	void GUIServices::initBitmaps()
+	{
+
+	}
 	void GUIServices::initFonts()
 	{
-		m_pStandardFont = 						new wxFont(8, 74, 90, 90, 0, "Tahoma", 0); 		//243
-		m_pStandardFontBold = 					new wxFont(8, 74, 90, 92, 0, "Tahoma", 0); 		//244
-		m_pStandardFontItalic = 				new wxFont(8, 74, 93, 90, 0, "Tahoma", 0);		//245
-		m_pStandardFontBoldItalic = 			new wxFont(8, 74, 93, 92, 0, "Tahoma", 0);		//246
-		m_pStandardFontFixedWidth = 			new wxFont(8, 74, 90, 90, 0, "Courier New", 0);	//247
-		m_pStandardFontFixedWidthBold = 		new wxFont(8, 74, 90, 92, 0, "Courier New", 0);	//248
-		m_pStandardFontFixedWidthItalic = 		new wxFont(8, 74, 93, 90, 0, "Courier New", 0);	//249
-		m_pStandardFontFixedWidthBoldItalic = 	new wxFont(8, 74, 93, 92, 0, "Courier New", 0);	//250
-		m_pLargeFont = 							new wxFont(8, 74, 90, 90, 0, "Tahoma", 0);		//251
-		m_pLargeFontBold = 						new wxFont(8, 74, 90, 92, 0, "Tahoma", 0);		//252
-		m_pSmallFont = 							new wxFont(7, 74, 90, 90, 0, "Tahoma", 0);		//253
-		m_pSmallFontBold = 						new wxFont(7, 74, 90, 92, 0, "Tahoma", 0);		//254
-		m_pVerySmallFont = 						new wxFont(8, 74, 90, 90, 0, "Trebuchet MS", 0);//255
+		m_pStandardFont = 						new wxFont(8, 74, 90, 90, false, "Tahoma"); 		//243
+		m_pStandardFontBold = 					new wxFont(8, 74, 90, 92, false, "Tahoma"); 		//244
+		m_pStandardFontItalic = 				new wxFont(8, 74, 93, 90, false, "Tahoma");		//245
+		m_pStandardFontBoldItalic = 			new wxFont(8, 74, 93, 92, false, "Tahoma");		//246
+		m_pStandardFontFixedWidth = 			new wxFont(8, 74, 90, 90, false, "Courier New");	//247
+		m_pStandardFontFixedWidthBold = 		new wxFont(8, 74, 90, 92, false, "Courier New");	//248
+		m_pStandardFontFixedWidthItalic = 		new wxFont(8, 74, 93, 90, false, "Courier New");	//249
+		m_pStandardFontFixedWidthBoldItalic = 	new wxFont(8, 74, 93, 92, false, "Courier New");	//250
+		m_pLargeFont = 							new wxFont(8, 74, 90, 90, false, "Tahoma");		//251
+		m_pLargeFontBold = 						new wxFont(8, 74, 90, 92, false, "Tahoma");		//252
+		m_pSmallFont = 							new wxFont(7, 74, 90, 90, false, "Tahoma");		//253
+		m_pSmallFontBold = 						new wxFont(7, 74, 90, 92, false, "Tahoma");		//254
+		m_pVerySmallFont = 						new wxFont(8, 74, 90, 90, false, "Trebuchet MS");//255
+	}
+	void GUIServices::initBrushes()
+	{
+
+	}
+	void GUIServices::initPens()
+	{
+
 	}
 	
 	void GUIServices::term()
@@ -41,6 +56,22 @@ namespace nmui
 		termBrushes();
 		termPens();
 	}
+	void GUIServices::termBitmaps()
+	{
+
+	}
+	void GUIServices::termFonts()
+	{
+
+	}
+	void GUIServices::termBrushes()
+	{
+
+	}
+	void GUIServices::termPens()
+	{
+
+	}
 	
 	void GUIServices::update()
 	{
@@ -49,6 +80,57 @@ namespace nmui
 		termPens();
 		initBrushes();
 		initPens();
+	}
+
+	void GUIServices::setDefaultStandardColours(void)
+	{
+		m_controlTextColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_WINDOWTEXT);
+		m_controlBackgroundColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_WINDOW);
+		m_controlMixedBackgroundColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_3DSHADOW);
+		m_controlErrorBackgroundColour = wxColour(255, 0, 0);
+		m_controlSelectedTextColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_HIGHLIGHTTEXT);
+		m_controlSelectedBackgroundColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_HIGHLIGHT);
+		m_controlHeaderTextColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_BTNTEXT);
+		m_controlHeaderBackgroundColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_BTNFACE);
+		m_controlEdgeColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_3DDKSHADOW);
+		m_controlScrollbarColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_SCROLLBAR);
+		m_controlScrollbarHighlightColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_SCROLLBAR);
+		m_controlSplitterColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_SCROLLBAR);
+		m_controlSplitterHighlightColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_SCROLLBAR);
+		m_dialogTextColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_BTNTEXT);
+		m_dialogBackgroundColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_BTNFACE);
+		m_dialogSelectedTextColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_HIGHLIGHTTEXT);
+		m_dialogSelectedBackgroundColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_HIGHLIGHT);
+		m_dialogEdgeColour = wxSystemSettingsNative::GetColour(wxSystemColour::wxSYS_COLOUR_3DDKSHADOW);
+
+	}
+	void GUIServices::calculateDerivedColours(void)
+	{
+		//undone
+	}
+
+
+	void GUIServices::setDefaultFontAndColours(wxWindow* window, bool ControlMixedBackgroundColour)
+	{
+		window->SetFont(*getInstance()->getStandardFont());
+		window->SetForegroundColour(getInstance()->getDialogTextColour());
+		if (ControlMixedBackgroundColour)
+		{
+			window->SetBackgroundColour(getInstance()->getControlMixedBackgroundColour());
+		}
+		else
+		{
+			window->SetBackgroundColour(getInstance()->getDialogBackgroundColour());
+		}
+	}
+
+	nmui::GUIServices* GUIServices::getInstance(void)
+	{
+		if (!nmui::GUIServices::staticInstance)
+		{
+			nmui::GUIServices::staticInstance = new nmui::GUIServices();
+		}
+		return nmui::GUIServices::staticInstance;
 	}
 	
 	wxBitmap* GUIServices::getArrowDown(void){

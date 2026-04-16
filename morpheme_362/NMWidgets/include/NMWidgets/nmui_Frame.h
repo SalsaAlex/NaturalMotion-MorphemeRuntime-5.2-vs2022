@@ -1,31 +1,33 @@
 
+#include "wx\wx.h"
+
 namespace nmui
 {
 	class Frame : public wxFrame
 	{
 	public:
 		Frame(
-			wxWindow* window, 
-			wxWindowID windowid, 
-			const wxString &title, 
-			const wxPoint &pos,
-			const wxSize &size,
+			wxWindow* window,
+			wxWindowID windowid,
+			const wxString& title,
+			const wxPoint& pos,
+			const wxSize& size,
 			long style,
-			const wxString &name);
-		
-		void onActiveColourSchemeChanged(void) override;
-		void enable(void) override;
+			const wxString& name);
+
+		virtual void onActiveColourSchemeChanged(void);
+		virtual void enable(void);
 		void Create(
-			wxWindow* window, 
-			wxWindowID windowid, 
-			const wxString &title, 
-			const wxPoint &pos,
-			const wxSize &size,
+			wxWindow* window,
+			wxWindowID windowid,
+			const wxString& title,
+			const wxPoint& pos,
+			const wxSize& size,
 			long style,
-			const wxString &name);
-	
+			const wxString& name);
+
 	private:
-		
-	}
+
+	};
 	
 } // namespace nmui
