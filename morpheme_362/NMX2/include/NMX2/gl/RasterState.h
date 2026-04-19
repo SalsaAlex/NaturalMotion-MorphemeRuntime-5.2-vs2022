@@ -8,9 +8,24 @@ namespace gl
 	//sizeof(SamplerStateDesc) == 20
 	struct RasterStateDesc
 	{
-		void setToDefaults(void);
+		void setToDefaults(void)
+		{
+			polyfill = 1;
+			unknown2 = 0;
+			unknown3 = 1;
+			unknown4 = 0.0f;
+			unknown5 = true;
+			unknown6 = false;
+			unknown7 = false;
+		}
 		
-		float m_unknown[5];
+		int polyfill;
+		int unknown2;
+		int unknown3;
+		float unknown4;
+		bool unknown5;
+		bool unknown6;
+		bool unknown7;
 	}
 	
 	//sizeof(RasterState) == 32
@@ -26,7 +41,13 @@ namespace gl
 		void pop(void);
 		
 	private:
-		int m_unknown[8];
+		int m_unknown1;
+		int m_unknown2;
+		int m_unknown3;
+		int m_unknown4;
+		GLuint m_rasterstatelist;
+		int m_unknown6;
+		nmx::gl::Device* m_device;
 	}
 	
 } // namespace gl

@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\NMX2\Command.h" />
+    <ClInclude Include="include\NMX2\Database.h" />
+    <ClInclude Include="include\NMX2\FileTranslators.h" />
+    <ClInclude Include="include\NMX2\HostApplication.h" />
+    <ClInclude Include="include\NMX2\Merge.h" />
+    <ClInclude Include="include\NMX2\NativeFileTranslators.h" />
+    <ClInclude Include="include\NMX2\Node.h" />
+    <ClInclude Include="include\NMX2\PluginInstance.h" />
+    <ClInclude Include="include\NMX2\PluginManager.h" />
+    <ClInclude Include="include\NMX2\Scene.h" />
+    <ClInclude Include="include\NMX2\Settings.h" />
+    <ClInclude Include="include\NMX2\SettingsProvider.h" />
+    <ClInclude Include="include\NMX2\Tool.h" />
+    <ClInclude Include="include\NMX2\ToolContext.h" />
+    <ClInclude Include="include\NMX2\Viewport.h" />
+    <ClInclude Include="include\NMX2\widgets\DeferredWidget.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidArrow.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidBox.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidCappedCone.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidCapsule.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidCircle.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidCone.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidCylinder.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidDisc.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidQuad.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidRectangle.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidSixDofJoint.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidSlopedCylinder.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidSphere.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidTexturedBox.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidTexturedCapsule.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidTexturedHemiSphere.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidTexturedSphere.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidTriangle.h" />
+    <ClInclude Include="include\NMX2\widgets\solid\SolidWedge.h" />
+    <ClInclude Include="include\NMX2\widgets\WidgetBase.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidArrow.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidBox.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidCappedCone.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidCappedCylinder.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidCapsule.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidCone.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidCylinder.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidDisc.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidHemiSphere.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidQuad.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidRectangle.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidSixDofJoint.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidSlopedCylinder.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidTexturedBox.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidTexturedCapsule.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidTexturedSphere.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidTriangle.h" />
+    <ClInclude Include="include\NMX2\widgets\wireonsolid\WireOnSolidWedge.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireArrow.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireBezier.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireBox.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireCapsule.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireCircle.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireCone.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireCylinder.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireDisc.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireFoot.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireHand.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireHead.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireHemiSphere.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WirePelvis.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireQuad.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireRagdollJoint.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireRectangle.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireSixDofJoint.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireSlopedCylinder.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireSphere.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireSphereSegment.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireSpineOrient.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireTriangle.h" />
+    <ClInclude Include="include\NMX2\widgets\wire\WireWedge.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Command.cpp" />
+    <ClCompile Include="src\Database.cpp" />
+    <ClCompile Include="src\HostApplication.cpp" />
+    <ClCompile Include="src\Merge.cpp" />
+    <ClCompile Include="src\NativeFileTranslators.cpp" />
+    <ClCompile Include="src\Node.cpp" />
+    <ClCompile Include="src\PluginInstance.cpp" />
+    <ClCompile Include="src\PluginManager.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
+    <ClCompile Include="src\Tool.cpp" />
+    <ClCompile Include="src\Viewport.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidArrow.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidBox.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidCappedCone.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidCapsule.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidCircle.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidCone.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidCylinder.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidDisc.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidQuad.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidRectangle.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidSixDofJoint.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidSlopedCylinder.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidSphere.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidTexturedBox.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidTexturedCapsule.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidTexturedHemiSphere.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidTexturedSphere.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidTriangle.cpp" />
+    <ClCompile Include="src\widgets\solid\SolidWedge.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidArrow.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidBox.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidCappedCone.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidCappedCylinder.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidCapsule.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidCone.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidCylinder.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidDisc.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidHemiSphere.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidQuad.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidRectangle.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidSixDofJoint.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidSlopedCylinder.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidTexturedBox.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidTexturedCapsule.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidTexturedSphere.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidTriangle.cpp" />
+    <ClCompile Include="src\widgets\wireonsolid\WireOnSolidWedge.cpp" />
+    <ClCompile Include="src\widgets\wire\WireArrow.cpp" />
+    <ClCompile Include="src\widgets\wire\WireBezier.cpp" />
+    <ClCompile Include="src\widgets\wire\WireBox.cpp" />
+    <ClCompile Include="src\widgets\wire\WireCapsule.cpp" />
+    <ClCompile Include="src\widgets\wire\WireCircle.cpp" />
+    <ClCompile Include="src\widgets\wire\WireCone.cpp" />
+    <ClCompile Include="src\widgets\wire\WireCylinder.cpp" />
+    <ClCompile Include="src\widgets\wire\WireDisc.cpp" />
+    <ClCompile Include="src\widgets\wire\WireFoot.cpp" />
+    <ClCompile Include="src\widgets\wire\WireHand.cpp" />
+    <ClCompile Include="src\widgets\wire\WireHead.cpp" />
+    <ClCompile Include="src\widgets\wire\WireHemiSphere.cpp" />
+    <ClCompile Include="src\widgets\wire\WirePelvis.cpp" />
+    <ClCompile Include="src\widgets\wire\WireQuad.cpp" />
+    <ClCompile Include="src\widgets\wire\WireRagdollJoint.cpp" />
+    <ClCompile Include="src\widgets\wire\WireRectangle.cpp" />
+    <ClCompile Include="src\widgets\wire\WireSixDofJoint.cpp" />
+    <ClCompile Include="src\widgets\wire\WireSlopedCylinder.cpp" />
+    <ClCompile Include="src\widgets\wire\WireSphere.cpp" />
+    <ClCompile Include="src\widgets\wire\WireSphereSegment.cpp" />
+    <ClCompile Include="src\widgets\wire\WireSpineOrient.cpp" />
+    <ClCompile Include="src\widgets\wire\WireTriangle.cpp" />
+    <ClCompile Include="src\widgets\wire\WireWedge.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{4e6778b4-4933-4bca-8155-9a57f161e9d2}</ProjectGuid>
+    <RootNamespace>NMX2</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>NMX2</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>C:\Program Files (x86)\NaturalMotion\morphemeConnect 3.6.2\bin</OutDir>
+    <IntDir>C:\Program Files (x86)\NaturalMotion\morphemeConnect 3.6.2\bin\int</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include\NMX2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include\NMX2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
