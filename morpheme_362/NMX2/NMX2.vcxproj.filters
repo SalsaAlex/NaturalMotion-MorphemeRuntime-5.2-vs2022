@@ -10,24 +10,24 @@
     <Filter Include="Header Files\NMX2">
       <UniqueIdentifier>{ebc91404-c611-49cb-9d84-67e6e77c554c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\NMX2\widgets">
+      <UniqueIdentifier>{47d14c7a-fe86-41f8-8ab5-89a1b255a40e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NMX2\gl">
+      <UniqueIdentifier>{a7261993-823f-4f5a-8772-083c3855b9d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gl">
+      <UniqueIdentifier>{bcc6859b-4643-490e-b505-07f9595ef631}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\nmui_Frame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\nmui_GUIServices.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\gl\FFProgram.cpp">
+      <Filter>Source Files\gl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\NMX2\nmui_Frame.h">
-      <Filter>Header Files\NMX2</Filter>
-    </ClInclude>
-    <ClInclude Include="include\NMX2\nmui_GUIServices.h">
-      <Filter>Header Files\NMX2</Filter>
-    </ClInclude>
-    <ClInclude Include="include\NMX2\NMX2_utils.h">
-      <Filter>Header Files\NMX2</Filter>
+    <ClInclude Include="include\NMX2\gl\FFProgram.h">
+      <Filter>Header Files\NMX2\gl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

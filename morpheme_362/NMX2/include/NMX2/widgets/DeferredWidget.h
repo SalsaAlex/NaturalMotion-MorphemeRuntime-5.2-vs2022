@@ -1,4 +1,5 @@
 #include "widgets/WidgetBase.h"
+#include "gl/Device.h"
 
 
 namespace nmx
@@ -133,6 +134,7 @@ namespace widgets
 
 	};
 	
+	//sizeof(DeferredWidgetContainer) == 36
 	class DeferredWidgetManager
 	{
 	public:

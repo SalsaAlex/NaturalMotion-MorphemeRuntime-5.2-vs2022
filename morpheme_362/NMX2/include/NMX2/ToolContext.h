@@ -17,20 +17,23 @@ namespace nmx
 		float width(void);
 		float aspect(void);
 		
-		void setSize(uint32_t width, uint32_t height);
 		void setCurrentToolByName(const wchar_t* toolname);
 		
 		void registerObserver(nmx::ToolObserver* observer);
 		void unregisterObserver(nmx::ToolObserver* observer);
 		
-		void onBeginTool(void);
-		void onEndTool(void);
-		void onPassive(const nmx::ToolEvent& event);
-		void onPress(const nmx::ToolEvent& event);
-		void onRelease(const nmx::ToolEvent& event);
-		void onTimer(const nmx::ToolEvent& event);
-		void onWheel(const nmx::ToolEvent& event);
-		void onDrag(const nmx::ToolEvent& event);
+		virtual bool isViewport(void);
+		
+		virtual void onBeginTool(void);
+		virtual void onEndTool(void);
+		virtual void onPress(const nmx::ToolEvent& event);
+		virtual void onRelease(const nmx::ToolEvent& event);
+		virtual void onDrag(const nmx::ToolEvent& event);
+		virtual void onWheel(const nmx::ToolEvent& event);
+		virtual void onTimer(const nmx::ToolEvent& event);
+		virtual void onPassive(const nmx::ToolEvent& event);
+		
+		virtual void setSize(uint32_t width, uint32_t height);
 		
 	private:
 		uint32_t m_width;

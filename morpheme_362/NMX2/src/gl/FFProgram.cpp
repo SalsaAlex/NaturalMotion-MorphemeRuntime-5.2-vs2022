@@ -1,4 +1,4 @@
-#include "FFProgram.h"
+#include "gl/FFProgram.h"
 
 
 namespace nmx
@@ -56,7 +56,7 @@ namespace gl
 	}
 	void FFProgram::setSpecular(const nmx::Colour& colour)
 	{
-		m_specular = colour
+		m_specular = colour;
 	}
 	void FFProgram::setShininess(float shine)
 	{
