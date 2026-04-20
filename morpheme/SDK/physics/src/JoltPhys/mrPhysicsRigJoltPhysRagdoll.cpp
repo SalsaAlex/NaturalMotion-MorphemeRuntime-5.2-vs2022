@@ -238,10 +238,6 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
     PhysicsRigJoltPhysRagdoll::createJoints(joltphys_scene, physicsRigDef, result, ragdollsettings);
   }
 
-#define JPH_TESTCOLLIDEGROUP
-
-#ifdef JPH_TESTCOLLIDEGROUP
-
   MR::JPH_nocollidegroup nocollide_group;
   nocollide_group.m_numbodies = numParts;
   for (int i = 0; i < numParts; i++)
@@ -263,12 +259,6 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
   ragdollsettings->Stabilize();
 
   result->m_ragdoll = ragdollsettings->CreateRagdoll(nocollidegroup_result.GetGroupID(), 0, joltphys_scene->m_joltPhysScene);
-#else
-  ragdollsettings->DisableParentChildCollisions();
-  ragdollsettings->Stabilize();
-
-  result->m_ragdoll = ragdollsettings->CreateRagdoll(0, 0, joltphys_scene->m_joltPhysScene);
-#endif
   for (int i = 0; i < result->m_ragdoll->GetConstraintCount(); i++)
   {
       JPH::SwingTwistConstraint* swingtwistconstraint = (JPH::SwingTwistConstraint*)result->m_ragdoll->GetConstraint(i);
