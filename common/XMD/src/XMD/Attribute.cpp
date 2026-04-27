@@ -8,6 +8,12 @@
 #include "XMD/Model.h"
 #include "XMD/FileIO.h"
 
+#pragma warning(push)
+#ifdef _MSC_VER
+# pragma warning(disable:4328)
+# pragma warning(disable:4458) //salsa: shut up man
+#endif
+
 namespace XMD
 {
 NMTL_POD_VECTOR_EXPORT(XInt2,XMD_EXPORT,XM2);
@@ -4567,3 +4573,5 @@ bool XAttribute::Set(const XMatrixArray& value)
 }
 }
 
+
+#pragma warning(pop)

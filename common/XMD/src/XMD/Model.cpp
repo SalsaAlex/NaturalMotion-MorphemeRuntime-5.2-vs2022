@@ -5,6 +5,11 @@
 
 #include <time.h>
 #if defined(WIN32) || defined(WIN64)
+
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
+
 #include <windows.h>
 #endif
 #include "XMD/Model.h"
@@ -117,10 +122,6 @@
 #include "nmtl/algorithm.h"
 
 #include "XMU/FileSystem.h"
-#ifdef WIN32
-#include <windows.h>
-#else
-#endif
 
 #include <string>
 #include <sstream>

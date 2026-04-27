@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XMD", "XMD_WIN32.vcxproj", "{80C0AC14-53FB-425C-FA8E-2E4A82CD3D6D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug Tool|x86 = Debug Tool|x86
+		Release Tool|x86 = Release Tool|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{80C0AC14-53FB-425C-FA8E-2E4A82CD3D6D}.Debug Tool|x86.ActiveCfg = Debug Tool|Win32
+		{80C0AC14-53FB-425C-FA8E-2E4A82CD3D6D}.Debug Tool|x86.Build.0 = Debug Tool|Win32
+		{80C0AC14-53FB-425C-FA8E-2E4A82CD3D6D}.Release Tool|x86.ActiveCfg = Release Tool|Win32
+		{80C0AC14-53FB-425C-FA8E-2E4A82CD3D6D}.Release Tool|x86.Build.0 = Release Tool|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5365C8E6-A6C3-470D-BF11-80D9E91E3B25}
+	EndGlobalSection
+EndGlobal

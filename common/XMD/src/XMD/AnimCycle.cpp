@@ -1293,7 +1293,7 @@ bool XSampledKeys::ReadChunk(std::istream& ifs)
   for( ; its != m_ScaleKeys.end(); ++its,++itt,++itr )
   {
     ifs >> *itr >> *itt >> *its;
-  }
+  } 
   return ifs.good();
 }
 

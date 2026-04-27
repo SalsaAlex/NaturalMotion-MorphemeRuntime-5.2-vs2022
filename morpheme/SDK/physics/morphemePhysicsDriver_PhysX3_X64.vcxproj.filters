@@ -50,9 +50,6 @@
     <ClCompile Include="src\PhysX3\mrPhysicsRigPhysX3Articulation.cpp">
       <Filter>src\PhysX3</Filter>
     </ClCompile>
-    <ClCompile Include="src\PhysX3\mrPhysicsRigPhysX3Jointed.cpp">
-      <Filter>src\PhysX3</Filter>
-    </ClCompile>
     <ClCompile Include="src\PhysX3\mrPhysicsScenePhysX3.cpp">
       <Filter>src\PhysX3</Filter>
     </ClCompile>

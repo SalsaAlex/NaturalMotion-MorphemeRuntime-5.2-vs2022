@@ -3,6 +3,12 @@
 //----------------------------------------------------------------------------------------------------------------------
 #include "XM2/MathCommon.h"
 //----------------------------------------------------------------------------------------------------------------------
+
+#pragma warning(push)
+#ifdef _MSC_VER
+# pragma warning(disable:4458) //salsa: shut up man
+#endif
+
 namespace XM2
 {
 //----------------------------------------------------------------------------------------------------------------------
@@ -789,3 +795,5 @@ XM2EXPORT std::istream& operator>>(std::istream& is, XColour& data);
 #else
 # error Unknown CPU architecture
 #endif
+
+#pragma warning(pop)

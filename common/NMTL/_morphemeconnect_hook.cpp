@@ -131,7 +131,7 @@ void HookFunction(void* to_be_hooked, void* our_function)
 
 bool __cdecl isEuphoriaEnabled()
 {
-    return true; //uhhhmm.. yes the fuck is ?
+    return true; //uhhhmm.. yes the fuck it is ?
 }
 
 void Hook_morpheme_Functions()

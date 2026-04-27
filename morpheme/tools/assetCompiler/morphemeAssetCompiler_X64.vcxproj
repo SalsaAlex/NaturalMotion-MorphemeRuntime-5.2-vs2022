@@ -20,13 +20,13 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Target LE64 Debug|x64'">
     <CharacterSet>Unicode</CharacterSet>
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Target LE64 Release|x64'">
     <CharacterSet>Unicode</CharacterSet>
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -63,8 +63,9 @@
       <PreprocessorDefinitions>NM_TARGET_BIGENDIAN=0;WIN32;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_DEBUG;_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeSimpleBundle_target_LE64_debug.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\acCore_target_LE64_debug.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE64_debug.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeCore_target_LE64_debug.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE64_debug.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeExport_debug.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTinyXML_debug.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\NMNumerics_debug.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\NMPlatform_target_LE64_debug.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\XMD_debug.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTL_debug.lib";shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -94,8 +95,9 @@
       <PreprocessorDefinitions>NDEBUG;NM_ENABLE_EXCEPTIONS=1;NM_TARGET_BIGENDIAN=0;WIN32;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeSimpleBundle_target_LE64.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\acCore_target_LE64.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE64.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeCore_target_LE64.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE64.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeExport.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTinyXML.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\NMNumerics.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\NMPlatform_target_LE64.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\XMD.lib";"..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTL.lib";shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>

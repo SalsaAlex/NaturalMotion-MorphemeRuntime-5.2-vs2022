@@ -68,6 +68,9 @@
 #if defined(NM_ENABLE_FBX)
   #include "FBX/FBXPlugin.h"
 #else
+  # ifndef WIN32_LEAN_AND_MEAN
+  #  define WIN32_LEAN_AND_MEAN
+  # endif
   #include "windows.h"
 #endif
 
