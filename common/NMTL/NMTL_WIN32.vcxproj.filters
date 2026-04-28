@@ -7,6 +7,12 @@
     <Filter Include="include\NMTL\_morphemeconnect_hook">
       <UniqueIdentifier>{5ff760b9-0243-4dd7-99ad-8bb1c1626e2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\hooking">
+      <UniqueIdentifier>{93ef4b0d-d23c-44f3-b5d5-37b76cc4742f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\hooking\dlls">
+      <UniqueIdentifier>{4d44a2d8-52a9-4169-a225-689fbc5bfad4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\NMTL\algorithm.h">
@@ -84,10 +90,73 @@
     <ClInclude Include="include\_morphemeconnect_hook\morphemeConnectCore_magicnums.h">
       <Filter>include\NMTL\_morphemeconnect_hook</Filter>
     </ClInclude>
+    <ClInclude Include="include\nmhook_common.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\_global_hook.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="_morphemeconnect_hook.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="src\nmhook_common.cpp">
+      <Filter>src\hooking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_EATCore_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_mcEventDetection_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_morphemeConnectCore_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMDatabase_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMDatabase2_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMDatabase2UI_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMDatabase2XMLIO_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMDatabaseUI_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMEditors_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMLua_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMLuaUI_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMUtils_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMWidgets_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMX2_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMX2Extensions_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMX2Foundation_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMX2PhysicsExtensions_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMX2UI_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_NMX2XMD_hook.cpp">
+      <Filter>src\hooking\dlls</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

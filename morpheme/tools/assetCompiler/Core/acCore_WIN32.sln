@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "acCore", "acCore_WIN32.vcxproj", "{92DB81F1-94FB-4ABF-339B-36D6C9D1CB93}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Target BE32 Debug|x86 = Target BE32 Debug|x86
+		Target BE32 Release|x86 = Target BE32 Release|x86
+		Target LE32 Debug|x86 = Target LE32 Debug|x86
+		Target LE32 Release|x86 = Target LE32 Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{92DB81F1-94FB-4ABF-339B-36D6C9D1CB93}.Target BE32 Debug|x86.ActiveCfg = Target BE32 Debug|Win32
+		{92DB81F1-94FB-4ABF-339B-36D6C9D1CB93}.Target BE32 Debug|x86.Build.0 = Target BE32 Debug|Win32
+		{92DB81F1-94FB-4ABF-339B-36D6C9D1CB93}.Target BE32 Release|x86.ActiveCfg = Target BE32 Release|Win32
+		{92DB81F1-94FB-4ABF-339B-36D6C9D1CB93}.Target BE32 Release|x86.Build.0 = Target BE32 Release|Win32
+		{92DB81F1-94FB-4ABF-339B-36D6C9D1CB93}.Target LE32 Debug|x86.ActiveCfg = Target LE32 Debug|Win32
+		{92DB81F1-94FB-4ABF-339B-36D6C9D1CB93}.Target LE32 Debug|x86.Build.0 = Target LE32 Debug|Win32
+		{92DB81F1-94FB-4ABF-339B-36D6C9D1CB93}.Target LE32 Release|x86.ActiveCfg = Target LE32 Release|Win32
+		{92DB81F1-94FB-4ABF-339B-36D6C9D1CB93}.Target LE32 Release|x86.Build.0 = Target LE32 Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {07B523CF-008C-4D74-9CCF-D595E9D2FE6D}
+	EndGlobalSection
+EndGlobal

@@ -1,7 +1,0 @@
-
-namespace nmxui
-{
-	
-	
-	
-} //namespace nmxui

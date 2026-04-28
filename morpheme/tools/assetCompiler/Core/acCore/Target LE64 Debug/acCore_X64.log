@@ -1,0 +1,302 @@
+﻿D:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(1133,5): warning MSB4211: The property "GetTargetPathDependsOn" is being set to a value for the first time, but it was already consumed at "D:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\Microsoft.Common.CurrentVersion.targets (2243,5)".
+  acCore.cpp
+  AnalysisConditionAtFrame.cpp
+  AnalysisConditionCrossedDurationFraction.cpp
+  AnalysisConditionDiscreteEventTriggered.cpp
+  AnalysisConditionInSyncEventRange.cpp
+  AnalysisConditionStateMachineInState.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\acCore.cpp(12,10): error C1083: Cannot open include file: 'acCore.h': No such file or directory
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisConditionAtFrame.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisConditionAtFrame.h': No such file or directory
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisConditionCrossedDurationFraction.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisConditionCrossedDurationFraction.h': No such file or directory
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisConditionDiscreteEventTriggered.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisConditionDiscreteEventTriggered.h': No such file or directory
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisConditionInSyncEventRange.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisConditionInSyncEventRange.h': No such file or directory
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisConditionStateMachineInState.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisConditionStateMachineInState.h': No such file or directory
+  AnalysisInterval.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisInterval.cpp(12,10): error C1083: Cannot open include file: 'assetProcessor/AssetProcessor.h': No such file or directory
+  AnalysisParameteriser.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisParameteriser.cpp(12,10): error C1083: Cannot open include file: 'assetProcessor/AssetProcessor.h': No such file or directory
+  AnalysisProperty.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisProperty.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisProperty.h': No such file or directory
+  AnalysisPropertyCustom.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyCustom.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyCustom.h': No such file or directory
+  AnalysisPropertyEulerAngleComponent.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyEulerAngleComponent.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyEulerAngleComponent.h': No such file or directory
+  AnalysisPropertyPositionArcDistance.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyPositionArcDistance.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyPositionArcDistance.h': No such file or directory
+  AnalysisPropertyPositionDeltaDistance.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyPositionDeltaDistance.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyPositionDeltaDistance.h': No such file or directory
+  AnalysisPropertyPositionDeltaInAxis.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyPositionDeltaInAxis.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyPositionDeltaInAxis.h': No such file or directory
+  AnalysisPropertyPositionValueInAxis.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyPositionValueInAxis.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyPositionValueInAxis.h': No such file or directory
+  AnalysisPropertyRateOfTurnWithForwardTravel.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyRateOfTurnWithForwardTravel.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyRateOfTurnWithForwardTravel.h': No such file or directory
+  AnalysisPropertyRotationDeltaInAxis.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyRotationDeltaInAxis.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyRotationDeltaInAxis.h': No such file or directory
+  AnalysisPropertySpeed.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertySpeed.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertySpeed.h': No such file or directory
+  AnalysisPropertySpeedForCutTurns.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertySpeedForCutTurns.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertySpeedForCutTurns.h': No such file or directory
+  AnalysisPropertySpeedInPlane.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertySpeedInPlane.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertySpeedInPlane.h': No such file or directory
+  Generating Code...
+  Compiling...
+  AnalysisPropertyStrideLength.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyStrideLength.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyStrideLength.h': No such file or directory
+  AnalysisPropertyTakeOffDirectionInPlane.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyTakeOffDirectionInPlane.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyTakeOffDirectionInPlane.h': No such file or directory
+  AnalysisPropertyTravelDirectionInPlane.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyTravelDirectionInPlane.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyTravelDirectionInPlane.h': No such file or directory
+  AnalysisPropertyTravelSlopeAngle.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyTravelSlopeAngle.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyTravelSlopeAngle.h': No such file or directory
+  AnalysisPropertyTurningRate.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyTurningRate.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyTurningRate.h': No such file or directory
+  AnalysisPropertyUtils.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyUtils.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyUtils.h': No such file or directory
+  AnalysisPropertyVelocityInAxis.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\AnalysisPropertyVelocityInAxis.cpp(12,10): error C1083: Cannot open include file: 'Analysis/AnalysisPropertyVelocityInAxis.h': No such file or directory
+  ControlParameterRegularSampleGrid.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\ControlParameterRegularSampleGrid.cpp(12,10): error C1083: Cannot open include file: 'Analysis/ControlParameterRegularSampleGrid.h': No such file or directory
+  DemoPredictionModel.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\DemoPredictionModel.cpp(12,10): error C1083: Cannot open include file: 'Analysis/DemoPredictionModel.h': No such file or directory
+  NDMeshAnalysisData.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\NDMeshAnalysisData.cpp(12,10): error C1083: Cannot open include file: 'Analysis/NDMeshAnalysisData.h': No such file or directory
+  NDMeshAPResampleMapBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\NDMeshAPResampleMapBuilder.cpp(12,10): error C1083: Cannot open include file: 'Analysis/NDMeshAPResampleMapBuilder.h': No such file or directory
+  NDMeshAPSearchMapBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\NDMeshAPSearchMapBuilder.cpp(12,10): error C1083: Cannot open include file: 'Analysis/NDMeshAPSearchMapBuilder.h': No such file or directory
+  NDMeshBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\NDMeshBuilder.cpp(12,10): error C1083: Cannot open include file: 'Analysis/NDMeshBuilder.h': No such file or directory
+  NDMeshQuantisationData.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\NDMeshQuantisationData.cpp(12,10): error C1083: Cannot open include file: 'Analysis/NDMeshQuantisationData.h': No such file or directory
+  NDMeshResampleMapExportData.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\NDMeshResampleMapExportData.cpp(12,10): error C1083: Cannot open include file: 'assetProcessor/AssetProcessor.h': No such file or directory
+  NDMeshResampleMapIntermediteData.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\NDMeshResampleMapIntermediteData.cpp(12,10): error C1083: Cannot open include file: 'assetProcessor/AssetProcessor.h': No such file or directory
+  NDMeshResampler.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\NDMeshResampler.cpp(12,10): error C1083: Cannot open include file: 'assetProcessor/AssetProcessor.h': No such file or directory
+  NetworkControlPlayer.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\NetworkControlPlayer.cpp(12,10): error C1083: Cannot open include file: 'Analysis/NetworkControlPlayer.h': No such file or directory
+  PredictionModelNDMeshAnalyser.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\PredictionModelNDMeshAnalyser.cpp(12,10): error C1083: Cannot open include file: 'Analysis/PredictionModelNDMeshAnalyser.h': No such file or directory
+  PredictionModelNDMeshBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\PredictionModelNDMeshBuilder.cpp(12,10): error C1083: Cannot open include file: 'Analysis/PredictionModelNDMeshBuilder.h': No such file or directory
+  Generating Code...
+  Compiling...
+  ScatterBlend1DTask.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\ScatterBlend1DTask.cpp(12,10): error C1083: Cannot open include file: 'Analysis/ScatterBlend1DTask.h': No such file or directory
+  ScatterBlend2DBSPTreeAnalyser.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\ScatterBlend2DBSPTreeAnalyser.cpp(12,10): error C1083: Cannot open include file: 'Analysis/ScatterBlend2DBSPTreeAnalyser.h': No such file or directory
+  ScatterBlendTriangleAnnotationAnalyser.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\ScatterBlendTriangleAnnotationAnalyser.cpp(12,10): error C1083: Cannot open include file: 'Analysis/ScatterBlendTriangleAnnotationAnalyser.h': No such file or directory
+  ScatterBlendVertexSourceAnalyser.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\ScatterBlendVertexSourceAnalyser.cpp(12,10): error C1083: Cannot open include file: 'Analysis/ScatterBlendVertexSourceAnalyser.h': No such file or directory
+  XMDNetworkControlTake.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\Analysis\XMDNetworkControlTake.cpp(12,10): error C1083: Cannot open include file: 'morpheme/mrNetwork.h': No such file or directory
+  BasicCharacterController.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\BasicCharacterController.cpp(12,10): error C1083: Cannot open include file: 'BasicCharacterController.h': No such file or directory
+  CharacterControllerDefBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\CharacterControllerDefBuilder.cpp(12,10): error C1083: Cannot open include file: 'CharacterControllerDefBuilder.h': No such file or directory
+  EventTrackCurveBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\EventTrackCurveBuilder.cpp(12,10): error C1083: Cannot open include file: 'EventTrackCurveBuilder.h': No such file or directory
+  EventTrackDiscreteBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\EventTrackDiscreteBuilder.cpp(12,10): error C1083: Cannot open include file: 'EventTrackDiscreteBuilder.h': No such file or directory
+  EventTrackDurationBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\EventTrackDurationBuilder.cpp(12,10): error C1083: Cannot open include file: 'EventTrackDurationBuilder.h': No such file or directory
+  JointLimitsBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\JointLimitsBuilder.cpp(12,10): error C1083: Cannot open include file: 'JointLimitsBuilder.h': No such file or directory
+  MessageScaleCharacterBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\MessageScaleCharacterBuilder.cpp(12,10): error C1083: Cannot open include file: 'MessageScaleCharacterBuilder.h': No such file or directory
+  MirroredAnimMappingBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\MirroredAnimMappingBuilder.cpp(12,10): error C1083: Cannot open include file: 'MirroredAnimMappingBuilder.h': No such file or directory
+  NetworkDefBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NetworkDefBuilder.cpp(12,10): error C1083: Cannot open include file: 'morpheme/mrDefines.h': No such file or directory
+  NetworkPredictionDefBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NetworkPredictionDefBuilder.cpp(12,10): error C1083: Cannot open include file: 'morpheme/Prediction/mrNetworkPredictionDef.h': No such file or directory
+  NodeAnimSyncEventsBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeAnimSyncEventsBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeApplyBindPoseBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeApplyBindPoseBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeApplyGlobalTimeBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeApplyGlobalTimeBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeBasicUnevenTerrainBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeBasicUnevenTerrainBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeBlend2Builder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeBlend2Builder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  Generating Code...
+  Compiling...
+  NodeBlend2x2Builder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeBlend2x2Builder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeBlendAllBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeBlendAllBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeBlendNBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeBlendNBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeBlendNxMBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeBlendNxMBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeCharacterControllerOverrideBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeCharacterControllerOverrideBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeClosestAnimBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeClosestAnimBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeControlParamBoolBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeControlParamBoolBuilder.cpp(12,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeControlParamFloatBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeControlParamFloatBuilder.cpp(12,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeControlParamIntBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeControlParamIntBuilder.cpp(12,10): error C1083: Cannot open include file: 'NodeControlParamIntBuilder.h': No such file or directory
+  NodeControlParamUIntBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeControlParamUIntBuilder.cpp(12,10): error C1083: Cannot open include file: 'NodeControlParamUIntBuilder.h': No such file or directory
+  NodeControlParamVector3Builder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeControlParamVector3Builder.cpp(12,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeControlParamVector4Builder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeControlParamVector4Builder.cpp(12,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeEmitMessageOnDiscreteEventBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeEmitMessageOnDiscreteEventBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeExtractJointInfoBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeExtractJointInfoBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeFeatherBlend2Builder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeFeatherBlend2Builder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeFilterTransformsBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeFilterTransformsBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeFreezeBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeFreezeBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeGunAimIKBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeGunAimIKBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeHeadLookBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeHeadLookBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeHipsIKBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeHipsIKBuilder.cpp(12,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  Generating Code...
+  Compiling...
+  NodeLockFootBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeLockFootBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeMirrorTransformsBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeMirrorTransformsBuilder.cpp(12,10): error C1083: Cannot open include file: 'NodeMirrorTransformsBuilder.h': No such file or directory
+  NodeModifyJointTransformBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeModifyJointTransformBuilder.cpp(12,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeModifyTrajectoryTransformBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeModifyTrajectoryTransformBuilder.cpp(12,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorArithmeticBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorArithmeticBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorArithmeticVector3Builder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorArithmeticVector3Builder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorBooleanBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorBooleanBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorCPCompareBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorCPCompareBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorFloatsToVector3Builder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorFloatsToVector3Builder.cpp(14,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorFloatToIntBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorFloatToIntBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorFunctionBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorFunctionBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorIntToFloatBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorIntToFloatBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorNoiseGenBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorNoiseGenBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorOneInputArithmeticBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorOneInputArithmeticBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorOneInputArithmeticVector3Builder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorOneInputArithmeticVector3Builder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorRampFloatBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorRampFloatBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorRandomFloatBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorRandomFloatBuilder.cpp(14,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorRateOfChangeBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorRateOfChangeBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorRayCastBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorRayCastBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorSmoothFloatBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorSmoothFloatBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  Generating Code...
+  Compiling...
+  NodeOperatorTimeLagInputBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorTimeLagInputBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorVector3AngleBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorVector3AngleBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorVector3CrossProductBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorVector3CrossProductBuilder.cpp(14,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorVector3DistanceBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorVector3DistanceBuilder.cpp(14,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorVector3DotBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorVector3DotBuilder.cpp(14,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorVector3NormaliseBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorVector3NormaliseBuilder.cpp(14,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeOperatorVector3ToFloatsBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeOperatorVector3ToFloatsBuilder.cpp(14,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodePassThroughBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodePassThroughBuilder.cpp(13,10): error C1083: Cannot open include file: 'NodePassThroughBuilder.h': No such file or directory
+  NodePlaySpeedModifierBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodePlaySpeedModifierBuilder.cpp(14,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodePredictiveUnevenTerrainBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodePredictiveUnevenTerrainBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeRetargetBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeRetargetBuilder.cpp(2,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeScaleCharacterBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeScaleCharacterBuilder.cpp(2,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeScaleToDurationBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeScaleToDurationBuilder.cpp(14,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeScatterBlend1DAnnotationExport.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeScatterBlend1DAnnotationExport.cpp(12,10): error C1083: Cannot open include file: 'morpheme/mrNetwork.h': No such file or directory
+  NodeScatterBlend1DBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeScatterBlend1DBuilder.cpp(13,10): error C1083: Cannot open include file: 'NodeScatterBlend1DBuilder.h': No such file or directory
+  NodeScatterBlend2DAnnotation.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeScatterBlend2DAnnotation.cpp(12,10): error C1083: Cannot open include file: 'NMPlatform/NMMathUtils.h': No such file or directory
+  NodeScatterBlend2DAnnotationExport.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeScatterBlend2DAnnotationExport.cpp(12,10): error C1083: Cannot open include file: 'NodeScatterBlend2DAnnotationExport.h': No such file or directory
+  NodeScatterBlendBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeScatterBlendBuilder.cpp(13,10): error C1083: Cannot open include file: 'NodeScatterBlendBuilder.h': No such file or directory
+  NodeSequenceBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeSequenceBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeSingleFrameBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeSingleFrameBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  Generating Code...
+  Compiling...
+  NodeSmoothTransformsBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeSmoothTransformsBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeStateMachineBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeStateMachineBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeSubtractiveBlendBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeSubtractiveBlendBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeSwitchBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeSwitchBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeTransitBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeTransitBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeTransitSyncEventsBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeTransitSyncEventsBuilder.cpp(13,10): error C1083: Cannot open include file: 'NetworkDefBuilder.h': No such file or directory
+  NodeTwoBoneIKBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\NodeTwoBoneIKBuilder.cpp(13,10): error C1083: Cannot open include file: 'NodeTwoBoneIKBuilder.h': No such file or directory
+  PluginManager.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\PluginManager.cpp(11,10): error C1083: Cannot open include file: 'PluginManager.h': No such file or directory
+  RigBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\RigBuilder.cpp(12,10): error C1083: Cannot open include file: 'RigBuilder.h': No such file or directory
+  RigRetargetMappingBuilder.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\RigRetargetMappingBuilder.cpp(14,10): error C1083: Cannot open include file: 'RigRetargetMappingBuilder.h': No such file or directory
+  TransitConditionDefBuilderControlParamBoolSet.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\TransitConditionDefBuilderControlParamBoolSet.cpp(12,10): error C1083: Cannot open include file: 'TransitConditionDefBuilderControlParamBoolSet.h': No such file or directory
+  TransitConditionDefBuilderControlParamInRange.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\TransitConditionDefBuilderControlParamInRange.cpp(12,10): error C1083: Cannot open include file: 'TransitConditionDefBuilderControlParamInRange.h': No such file or directory
+  TransitConditionDefBuilderControlParamTest.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\TransitConditionDefBuilderControlParamTest.cpp(12,10): error C1083: Cannot open include file: 'TransitConditionDefBuilderControlParamTest.h': No such file or directory
+  TransitConditionDefBuilderCrossedCurveEventValueDecreasing.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\TransitConditionDefBuilderCrossedCurveEventValueDecreasing.cpp(12,10): error C1083: Cannot open include file: 'TransitConditionDefBuilderCrossedCurveEventValueDecreasing.h': No such file or directory
+  TransitConditionDefBuilderCrossedDurationFraction.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\TransitConditionDefBuilderCrossedDurationFraction.cpp(12,10): error C1083: Cannot open include file: 'TransitConditionDefBuilderCrossedDurationFraction.h': No such file or directory
+  TransitConditionDefBuilderDiscreteEventTriggered.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\TransitConditionDefBuilderDiscreteEventTriggered.cpp(12,10): error C1083: Cannot open include file: 'TransitConditionDefBuilderDiscreteEventTriggered.h': No such file or directory
+  TransitConditionDefBuilderFalse.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\TransitConditionDefBuilderFalse.cpp(12,10): error C1083: Cannot open include file: 'TransitConditionDefBuilderFalse.h': No such file or directory
+  TransitConditionDefBuilderInDurationEvent.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\TransitConditionDefBuilderInDurationEvent.cpp(12,10): error C1083: Cannot open include file: 'TransitConditionDefBuilderInDurationEvent.h': No such file or directory
+  TransitConditionDefBuilderInSyncEventRange.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\TransitConditionDefBuilderInSyncEventRange.cpp(12,10): error C1083: Cannot open include file: 'TransitConditionDefBuilderInSyncEventRange.h': No such file or directory
+  TransitConditionDefBuilderNodeActive.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\TransitConditionDefBuilderNodeActive.cpp(12,10): error C1083: Cannot open include file: 'TransitConditionDefBuilderNodeActive.h': No such file or directory
+  Generating Code...
+  Compiling...
+  TransitConditionDefBuilderOnMessage.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\TransitConditionDefBuilderOnMessage.cpp(12,10): error C1083: Cannot open include file: 'TransitConditionDefBuilderOnMessage.h': No such file or directory
+  TransitConditionDefBuilderRayHit.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\TransitConditionDefBuilderRayHit.cpp(12,10): error C1083: Cannot open include file: 'TransitConditionDefBuilderRayHit.h': No such file or directory
+  TransitDeadBlendDefBuilderDefault.cpp
+D:\NaturalMotion-MorphemeRuntime-5.2-main\NaturalMotion-MorphemeRuntime-5.2-main\morpheme\tools\assetCompiler\Core\src\TransitDeadBlendDefBuilderDefault.cpp(12,10): error C1083: Cannot open include file: 'TransitDeadBlendDefBuilderDefault.h': No such file or directory
+  Generating Code...

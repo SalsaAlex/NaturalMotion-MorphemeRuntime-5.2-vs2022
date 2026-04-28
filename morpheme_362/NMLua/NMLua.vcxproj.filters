@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{70a1d6b0-39fb-4d92-bce9-c4f2be848266}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{facc0f29-9736-491e-90cb-f5977210b079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NMWidgets">
+      <UniqueIdentifier>{ebc91404-c611-49cb-9d84-67e6e77c554c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\nmui_Frame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\nmui_GUIServices.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\NMWidgets\nmui_Frame.h">
+      <Filter>Header Files\NMWidgets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NMWidgets\nmui_GUIServices.h">
+      <Filter>Header Files\NMWidgets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NMWidgets\NMWidgets_utils.h">
+      <Filter>Header Files\NMWidgets</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
