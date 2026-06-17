@@ -76,7 +76,7 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>..\..\..\..\lib\x64\vs17.0\morphemeAssetProcessor_target_LE64_debug.lib;..\..\..\..\lib\x64\vs17.0\morphemeCore_target_LE64_debug.lib;..\..\..\..\lib\x64\vs17.0\NMRuntimeUtils_target_LE64_debug.lib;..\..\..\..\lib\x64\vs17.0\morphemeExport_debug.lib;..\..\..\..\lib\x64\vs17.0\NMTinyXML_debug.lib;..\..\..\..\lib\x64\vs17.0\NMNumerics_debug.lib;..\..\..\..\lib\x64\vs17.0\NMPlatform_target_LE64_debug.lib;..\..\..\..\lib\x64\vs17.0\XMD_debug.lib;..\..\..\..\lib\x64\vs17.0\NMTL_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE64_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeCore_target_LE64_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE64_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeExport_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTinyXML_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMNumerics_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMPlatform_target_LE64_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\XMD_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTL_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)acCore_target_LE64_debug.dll</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)acCore_target_LE64_debug.pdb</ProgramDatabaseFile>
@@ -108,7 +108,7 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>..\..\..\..\lib\x64\vs17.0\morphemeAssetProcessor_target_LE64.lib;..\..\..\..\lib\x64\vs17.0\morphemeCore_target_LE64.lib;..\..\..\..\lib\x64\vs17.0\NMRuntimeUtils_target_LE64.lib;..\..\..\..\lib\x64\vs17.0\morphemeExport.lib;..\..\..\..\lib\x64\vs17.0\NMTinyXML.lib;..\..\..\..\lib\x64\vs17.0\NMNumerics.lib;..\..\..\..\lib\x64\vs17.0\NMPlatform_target_LE64.lib;..\..\..\..\lib\x64\vs17.0\XMD.lib;..\..\..\..\lib\x64\vs17.0\NMTL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE64.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeCore_target_LE64.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE64.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeExport.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTinyXML.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMNumerics.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMPlatform_target_LE64.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\XMD.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)acCore_target_LE64.dll</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)acCore_target_LE64.pdb</ProgramDatabaseFile>
