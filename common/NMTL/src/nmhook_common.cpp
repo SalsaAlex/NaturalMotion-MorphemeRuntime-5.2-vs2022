@@ -1,5 +1,4 @@
 
-#ifdef CONNECT_3_6_2_HOOK
 
 #include <cstdlib>
 #include <stdlib.h>
@@ -11,6 +10,9 @@
 #include <vector>
 #include <Windows.h>
 #include <psapi.h>
+
+#ifdef CONNECT_3_6_2_HOOK
+
 #include "nmhook_common.h"
 #include "MinHook/MinHook.h"
 
@@ -127,6 +129,17 @@ BOOL DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
         break;
     }
     return TRUE;
+}
+
+#else //CONNECT_3_6_2_HOOK
+
+HMODULE PoolForDll(const char* dllname)
+{
+    return nullptr;
+}
+
+void HookFunction(void* to_be_hooked, void* our_function)
+{
 }
 
 #endif //CONNECT_3_6_2_HOOK
