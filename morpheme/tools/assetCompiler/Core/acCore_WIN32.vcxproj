@@ -23,6 +23,7 @@
     <ProjectName>acCore</ProjectName>
     <ProjectGuid>{92DB81F1-94FB-4ABF-339B-36D6C9D1CB93}</ProjectGuid>
     <RootNamespace>acCore</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target BE32 Release|Win32'" Label="Configuration">
@@ -65,29 +66,29 @@
     <_ProjectFileVersion>17.0.36414.14</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target LE32 Debug|Win32'">
-    <OutDir>..\..\..\..\bin\win32\vs9.0\</OutDir>
-    <IntDir>..\..\..\..\obj\win32\vs9.0\acCore\target_le32_debug\</IntDir>
+    <OutDir>..\..\..\..\bin\win32\vs$(VisualStudioVersion)\</OutDir>
+    <IntDir>..\..\..\..\obj\win32\vs$(VisualStudioVersion)\acCore\target_le32_debug\</IntDir>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target LE32 Release|Win32'">
-    <OutDir>..\..\..\..\bin\win32\vs9.0\</OutDir>
-    <IntDir>..\..\..\..\obj\win32\vs9.0\acCore\target_le32_release\</IntDir>
+    <OutDir>..\..\..\..\bin\win32\vs$(VisualStudioVersion)\</OutDir>
+    <IntDir>..\..\..\..\obj\win32\vs$(VisualStudioVersion)\acCore\target_le32_release\</IntDir>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target BE32 Debug|Win32'">
-    <OutDir>..\..\..\..\bin\win32\vs9.0\</OutDir>
-    <IntDir>..\..\..\..\obj\win32\vs9.0\acCore\target_be32_debug\</IntDir>
+    <OutDir>..\..\..\..\bin\win32\vs$(VisualStudioVersion)\</OutDir>
+    <IntDir>..\..\..\..\obj\win32\vs$(VisualStudioVersion)\acCore\target_be32_debug\</IntDir>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target BE32 Release|Win32'">
-    <OutDir>..\..\..\..\bin\win32\vs9.0\</OutDir>
-    <IntDir>..\..\..\..\obj\win32\vs9.0\acCore\target_be32_release\</IntDir>
+    <OutDir>..\..\..\..\bin\win32\vs$(VisualStudioVersion)\</OutDir>
+    <IntDir>..\..\..\..\obj\win32\vs$(VisualStudioVersion)\acCore\target_be32_release\</IntDir>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
@@ -114,7 +115,7 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>..\..\..\..\lib\win32\vs17.0\morphemeAssetProcessor_target_LE32_debug.lib;..\..\..\..\lib\win32\vs17.0\morphemeCore_target_LE32_debug.lib;..\..\..\..\lib\win32\vs17.0\NMRuntimeUtils_target_LE32_debug.lib;..\..\..\..\lib\win32\vs17.0\morphemeExport_debug.lib;..\..\..\..\lib\win32\vs17.0\NMTinyXML_debug.lib;..\..\..\..\lib\win32\vs17.0\NMNumerics_tool_debug.lib;..\..\..\..\lib\win32\vs17.0\NMPlatform_target_LE32_debug.lib;..\..\..\..\lib\win32\vs17.0\XMD_debug.lib;..\..\..\..\lib\win32\vs17.0\NMTL_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE32_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_LE32_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE32_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMNumerics_tool_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_LE32_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)acCore_target_LE32_debug.dll</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)acCore_target_LE32_debug.pdb</ProgramDatabaseFile>
@@ -146,7 +147,7 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>..\..\..\..\lib\win32\vs9.0\morphemeAssetProcessor_target_LE32.lib;..\..\..\..\lib\win32\vs9.0\morphemeCore_target_LE32.lib;..\..\..\..\lib\win32\vs9.0\NMRuntimeUtils_target_LE32.lib;..\..\..\..\lib\win32\vs9.0\morphemeExport.lib;..\..\..\..\lib\win32\vs9.0\NMTinyXML.lib;..\..\..\..\lib\win32\vs9.0\NMNumerics_tool.lib;..\..\..\..\lib\win32\vs9.0\NMPlatform_target_LE32.lib;..\..\..\..\lib\win32\vs9.0\XMD.lib;..\..\..\..\lib\win32\vs9.0\NMTL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE32.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_LE32.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE32.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMNumerics_tool.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_LE32.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)acCore_target_LE32.dll</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)acCore_target_LE32.pdb</ProgramDatabaseFile>
@@ -181,7 +182,7 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>..\..\..\..\lib\win32\vs9.0\morphemeAssetProcessor_target_BE32_debug.lib;..\..\..\..\lib\win32\vs9.0\morphemeCore_target_BE32_debug.lib;..\..\..\..\lib\win32\vs9.0\NMRuntimeUtils_target_BE32_debug.lib;..\..\..\..\lib\win32\vs9.0\morphemeExport_debug.lib;..\..\..\..\lib\win32\vs9.0\NMTinyXML_debug.lib;..\..\..\..\lib\win32\vs9.0\NMNumerics_tool_debug.lib;..\..\..\..\lib\win32\vs9.0\NMPlatform_target_BE32_debug.lib;..\..\..\..\lib\win32\vs9.0\XMD_debug.lib;..\..\..\..\lib\win32\vs9.0\NMTL_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_BE32_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_BE32_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_BE32_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMNumerics_tool_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_BE32_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD_debug.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)acCore_target_BE32_debug.dll</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)acCore_target_BE32_debug.pdb</ProgramDatabaseFile>
@@ -213,7 +214,7 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>..\..\..\..\lib\win32\vs9.0\morphemeAssetProcessor_target_BE32.lib;..\..\..\..\lib\win32\vs9.0\morphemeCore_target_BE32.lib;..\..\..\..\lib\win32\vs9.0\NMRuntimeUtils_target_BE32.lib;..\..\..\..\lib\win32\vs9.0\morphemeExport.lib;..\..\..\..\lib\win32\vs9.0\NMTinyXML.lib;..\..\..\..\lib\win32\vs9.0\NMNumerics_tool.lib;..\..\..\..\lib\win32\vs9.0\NMPlatform_target_BE32.lib;..\..\..\..\lib\win32\vs9.0\XMD.lib;..\..\..\..\lib\win32\vs9.0\NMTL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_BE32.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore_target_BE32.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils_target_BE32.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeExport.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTinyXML.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMNumerics_tool.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform_target_BE32.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\XMD.lib;..\..\..\..\lib\win32\vs$(VisualStudioVersion)\NMTL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)acCore_target_BE32.dll</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)acCore_target_BE32.pdb</ProgramDatabaseFile>

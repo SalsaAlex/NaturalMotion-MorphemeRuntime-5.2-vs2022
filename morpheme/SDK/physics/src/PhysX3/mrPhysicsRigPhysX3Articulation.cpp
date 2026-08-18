@@ -1862,6 +1862,8 @@ void PhysicsRigPhysX3Articulation::restoreAllJointDrivesToDefault()
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigPhysX3Articulation::disableSleeping()
 {
+  if (!m_isArticulationAddedToScene)
+      return;
   float threshold = m_articulation->getSleepThreshold();
   if (threshold > 0.0f)
     m_cachedSleepThreshold = threshold;
