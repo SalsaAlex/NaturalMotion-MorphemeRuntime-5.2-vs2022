@@ -1476,15 +1476,15 @@ uint32_t PhysicsRigPhysX3Articulation::PartPhysX3Articulation::serializeTxFrameD
     PhysicsPartFrameData *partFrameData = (PhysicsPartFrameData *)outputBuffer;
 
     physx::PxTransform globalPose;
+    //apply shape local offset.. 3.6.2 runtime didnt need to do this.. but problem fixed either way
+    physx::PxShape* shape;
+    m_rigidBody->getShapes(&shape, 1);
     if (m_isKinematic)
     {
-      globalPose = m_kinematicActor->getGlobalPose();
+      globalPose = physx::PxShapeExt::getGlobalPose(*shape, *m_kinematicActor);
     }
     else
     {
-      //3.6.2 runtime didnt need to do this.. but problem fixed either way
-      physx::PxShape* shape;
-      m_rigidBody->getShapes(&shape, 1);
       globalPose = physx::PxShapeExt::getGlobalPose(*shape, *m_rigidBody);
     }
     partFrameData->m_globalPose = nmPxTransformToNmMatrix34(globalPose);
