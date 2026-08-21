@@ -132,7 +132,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>include\Physics\PhysX3;..\..\..\external\physx\Include;..\..\..\external\physx\Include\characterkinematic;..\..\..\external\physx\Include\cloth;..\..\..\external\physx\Include\common;..\..\..\external\physx\Include\cooking;..\..\..\external\physx\Include\depracated;..\..\..\external\physx\Include\extensions;..\..\..\external\physx\Include\foundation;..\..\..\external\physx\Include\geometry;..\..\..\external\physx\Include\gpu;..\..\..\external\physx\Include\particles;..\..\..\external\physx\Include\physxprofilesdk;..\..\..\external\physx\Include\physxvisualdebuggersdk;..\..\..\external\physx\Include\pvd;..\..\..\external\physx\Include\pxtask;..\..\..\external\physx\Include\RepX;..\..\..\external\physx\Include\vehicle;..\..\..\external\physx\Include\foundation\windows;include;..\core\include;..;..\..\..\common\NMRuntimeUtils\include;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>Default</CompileAs>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
       <MinimalRebuild>false</MinimalRebuild>
       <PreprocessorDefinitions>NM_PHYSX3;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -145,6 +145,7 @@
       <Optimization>Disabled</Optimization>
       <FloatingPointModel>Fast</FloatingPointModel>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -185,7 +186,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>include\Physics\PhysX3;..\..\..\external\physx\Include;..\..\..\external\physx\Include\characterkinematic;..\..\..\external\physx\Include\cloth;..\..\..\external\physx\Include\common;..\..\..\external\physx\Include\cooking;..\..\..\external\physx\Include\depracated;..\..\..\external\physx\Include\extensions;..\..\..\external\physx\Include\foundation;..\..\..\external\physx\Include\geometry;..\..\..\external\physx\Include\gpu;..\..\..\external\physx\Include\particles;..\..\..\external\physx\Include\physxprofilesdk;..\..\..\external\physx\Include\physxvisualdebuggersdk;..\..\..\external\physx\Include\pvd;..\..\..\external\physx\Include\pxtask;..\..\..\external\physx\Include\RepX;..\..\..\external\physx\Include\vehicle;..\..\..\external\physx\Include\foundation\windows;include;..\core\include;..;..\..\..\common\NMRuntimeUtils\include;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>Default</CompileAs>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
       <MinimalRebuild>false</MinimalRebuild>
       <PreprocessorDefinitions>NM_PHYSX3;NM_TARGET_BIGENDIAN=0;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -235,7 +236,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>include\Physics\PhysX3;"$(PHYSX3_PATH)\Include";"$(PHYSX3_PATH)\Include\characterkinematic";"$(PHYSX3_PATH)\Include\cloth";"$(PHYSX3_PATH)\Include\common";"$(PHYSX3_PATH)\Include\cooking";"$(PHYSX3_PATH)\Include\depracated";"$(PHYSX3_PATH)\Include\extensions";"$(PHYSX3_PATH)\Include\foundation";"$(PHYSX3_PATH)\Include\geometry";"$(PHYSX3_PATH)\Include\gpu";"$(PHYSX3_PATH)\Include\particles";"$(PHYSX3_PATH)\Include\physxprofilesdk";"$(PHYSX3_PATH)\Include\physxvisualdebuggersdk";"$(PHYSX3_PATH)\Include\pvd";"$(PHYSX3_PATH)\Include\pxtask";"$(PHYSX3_PATH)\Include\RepX";"$(PHYSX3_PATH)\Include\vehicle";"$(PHYSX3_PATH)\Include\foundation\windows";include;..\core\include;..;..\..\..\common\NMRuntimeUtils\include;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>Default</CompileAs>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
       <MinimalRebuild>false</MinimalRebuild>
       <PreprocessorDefinitions>NM_PHYSX3;NM_TARGET_BIGENDIAN=1;NOMINMAX;PX_PHYSX_CHARACTER_STATIC_LIB;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -245,6 +246,7 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

@@ -130,7 +130,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>.;include\core;..\..\..\SDK\assetProcessor\include;..\..\..\SDK\core\include;..\..\..\SDK;..\..\..\..\common\NMRuntimeUtils\include;..\..\..\SDK\export\include;..\..\..\..\common\tinyxml;..\..\..\..\common\NMNumerics\include;..\..\..\..\common\NMPlatform\include;..\..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\..\common\qhull\src;..\..\..\..\common\XMD\include;..\..\..\..\common\NMTL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>AC_CORE_EXPORTS;NDEBUG;NM_ENABLE_EXCEPTIONS=1;NM_TARGET_BIGENDIAN=0;WIN32;_CRT_SECURE_NO_WARNINGS;_USRDLL;_WINDLL;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>AC_CORE_EXPORTS;NDEBUG;NM_ENABLE_EXCEPTIONS=0;NM_TARGET_BIGENDIAN=0;WIN32;_CRT_SECURE_NO_WARNINGS;_USRDLL;_WINDLL;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>

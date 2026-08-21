@@ -2107,6 +2107,11 @@ DefaultPhysicsMgr::Constraint* DefaultPhysicsMgr::getConstraint(uint64_t guid) c
 void DefaultPhysicsMgr::deleteScene()
 {
   clearScene();
+  if (m_characterControllerManager != NULL)
+  {
+      delete m_characterControllerManager;
+      m_characterControllerManager = NULL;
+  }
   if (m_physicsScene)
   {
     m_cpuDispatcher->release();
@@ -2116,9 +2121,6 @@ void DefaultPhysicsMgr::deleteScene()
     NMP::Memory::memFree(m_physicsScene);
     m_physicsScene = 0;
   }
-
-  delete m_characterControllerManager;
-  m_characterControllerManager = 0;
 
   PhysicsSDK::term();
 }

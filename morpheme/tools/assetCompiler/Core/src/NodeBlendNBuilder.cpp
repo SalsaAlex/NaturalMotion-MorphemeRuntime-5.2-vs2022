@@ -70,7 +70,7 @@ void NodeBlendNBuilder::getNodeDefInputConnections(
   }
 
   // Control parameters
-  readDataPinChildNodeID(nodeDefDataBlock, "Weight", childNodeIDs, true);
+  readDataPinChildNodeID(nodeDefDataBlock, "WeightNodeID", childNodeIDs, true);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ void NodeBlendNBuilder::preInit(
   const ME::NetworkDefExport* NMP_UNUSED(netDefExport),
   AssetProcessor*             NMP_UNUSED(processor))
 {
-  declareDataPin(netDefCompilationInfo, nodeDefExport, "Weight", 0, true, MR::ATTRIB_SEMANTIC_CP_FLOAT);
+  declareDataPin(netDefCompilationInfo, nodeDefExport, "WeightNodeID", 0, true, MR::ATTRIB_SEMANTIC_CP_FLOAT);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

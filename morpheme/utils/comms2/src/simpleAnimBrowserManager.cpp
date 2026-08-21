@@ -940,7 +940,7 @@ bool SimpleAnimBrowserManager::setAnimationBrowserNetwork(
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SimpleAnimBrowserManager::loadAnimationBrowserData(const char* compressionTypeString, Connection* connection)
+bool SimpleAnimBrowserManager::loadAnimationBrowserData(char compressionType, Connection* connection)
 {
   ConnectionData* connectionData = findConnectionData(connection);
   if (!connectionData)
@@ -952,11 +952,26 @@ bool SimpleAnimBrowserManager::loadAnimationBrowserData(const char* compressionT
 
   char temporaryAnimBuffer[256];
   char temporaryNetBuffer[256];
+  const char* temporaryExtPtr = nullptr;
   // Determine the animation browser file extension.
+  switch (compressionType)
+  {
+  case 0:
+      temporaryExtPtr = ".mba";
+      break;
+  case 1:
+      temporaryExtPtr = ".asa";
+      break;
+  case 3:
+      temporaryExtPtr = ".qsa";
+      break;
+  default:
+      temporaryExtPtr = ".nsa";
+      break;
+  }
   NMP_STRNCPY_S(temporaryAnimBuffer, sizeof(temporaryAnimBuffer), connectionData->getAnimBrowserFileServerPath());
   NMP_STRNCAT_S(temporaryAnimBuffer, sizeof(temporaryAnimBuffer), ANIM_BROWSER_ANIM_FILE_NAME);
-  NMP_STRNCAT_S(temporaryAnimBuffer, sizeof(temporaryAnimBuffer), ".");
-  NMP_STRNCAT_S(temporaryAnimBuffer, sizeof(temporaryAnimBuffer), compressionTypeString);
+  NMP_STRNCAT_S(temporaryAnimBuffer, sizeof(temporaryAnimBuffer), temporaryExtPtr);
 
   // Determine animation/bundle sizes.
   const uint32_t animSize = connection->getFileSize(temporaryAnimBuffer);

@@ -1482,7 +1482,10 @@ uint32_t PhysicsRigPhysX3Articulation::PartPhysX3Articulation::serializeTxFrameD
     }
     else
     {
-      globalPose = m_rigidBody->getGlobalPose();
+      //3.6.2 runtime didnt need to do this.. but problem fixed either way
+      physx::PxShape* shape;
+      m_rigidBody->getShapes(&shape, 1);
+      globalPose = physx::PxShapeExt::getGlobalPose(*shape, *m_rigidBody);
     }
     partFrameData->m_globalPose = nmPxTransformToNmMatrix34(globalPose);
 
