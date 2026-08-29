@@ -1274,14 +1274,24 @@ uint32_t PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll::serializeTxFrameData(vo
     PhysicsPartFrameData *partFrameData = (PhysicsPartFrameData *)outputBuffer;
 
     JPH::Mat44 globalPose;
+
+    JPH::TransformedShape ts;
     if (m_isKinematic)
     {
-      globalPose = m_kinematicBody->GetWorldTransform();
+        ts = m_kinematicBody->GetTransformedShape();
     }
     else
     {
-      globalPose = m_rigidBody->GetWorldTransform();
+        ts = m_rigidBody->GetTransformedShape();
     }
+    JPH::SubShapeID remainder, id;
+    JPH::TransformedShape firstshape;
+
+    id.SetValue(0);
+    JPH::TransformedShape child = ts.GetSubShapeTransformedShape(id, remainder);
+
+    globalPose = firstshape.GetWorldTransform();
+
     partFrameData->m_globalPose = nmJPHMat44ToNmMatrix34(globalPose);
 
     NMP::netEndianSwap(partFrameData->m_globalPose);
