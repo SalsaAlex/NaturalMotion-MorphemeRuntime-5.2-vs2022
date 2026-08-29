@@ -171,7 +171,7 @@ bool PhysicsScenePhysX3::rayCollide(physx::PxRaycastHit &raycastHit,
     physx::PxQueryFlag::ePREFILTER);
 
   physx::PxSceneQueryFlags flags(
-    //physx::PxSceneQueryFlag::eIMPACT | 
+    physx::PxSceneQueryFlag::ePOSITION | 
     physx::PxSceneQueryFlag::eNORMAL | 
     physx::PxSceneQueryFlag::eDISTANCE);
 
@@ -364,7 +364,7 @@ void addLocalImpulseAtLocalPosToActor(physx::PxActor& actor, const NMP::Vector3 
 //----------------------------------------------------------------------------------------------------------------------
 void addImpulseToActor(physx::PxActor& actor, const NMP::Vector3 &impulse, const NMP::Vector3 &position, float torqueMultiplier)
 {
-  if (actor.is<physx::PxRigidBody>())
+  if (actor.is<physx::PxRigidBody>() && actor.getScene())
   {
     NMP::Vector3 actorCOM = getActorCOMPos(&actor);
     NMP::Vector3 torque = NMP::vCross(position - actorCOM, impulse) * torqueMultiplier;

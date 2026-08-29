@@ -2645,7 +2645,7 @@ int32_t __cdecl main(int argc, char** argv)
 
   ACOptions acOptions;
 
-  Sleep(10 * 1000); //wait for debugger to attach
+  //Sleep(10 * 1000); //wait for debugger to attach
 
 #if NM_ENABLE_EXCEPTIONS
 
