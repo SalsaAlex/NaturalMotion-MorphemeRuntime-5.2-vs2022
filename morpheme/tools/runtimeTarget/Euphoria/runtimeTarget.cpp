@@ -270,7 +270,7 @@ bool PluginValidator::validatePluginList(const NMP::OrderedStringTable& pluginLi
 static int runtimeTarget(const NMP::CommandLineProcessor& commandLineArguments)
 {
   // Initialize runtime target components.
-  static const uint32_t MAX_SIMULATANEOUS_CONNECTIONS = 10;
+  static const uint32_t MAX_SIMULATANEOUS_CONNECTIONS = MCOMMS::ConnectionManager::MAX_NUMBER_CONNECTIONS;
   static const uint32_t MAX_ENVIRONMENT_ATTRIBUTES = 40;
 
   PluginValidator pluginValidator;
@@ -444,7 +444,6 @@ int main(
     commandLineArguments.registerFlagOption("-autoKillTarget");
     commandLineArguments.registerUInt32Option("-port");
     commandLineArguments.registerStringOption("-pvdFilename");
-    commandLineArguments.registerStringOption("-physicsRigType");
 
     if (!commandLineArguments.parseCommandLine(argc, argv))
     {

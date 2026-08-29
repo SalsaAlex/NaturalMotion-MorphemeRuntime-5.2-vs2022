@@ -1039,14 +1039,14 @@ NM_INLINE Vector3 Matrix34::toEulerXYZ() const
 
   if (cy > 16 * FLT_EPSILON)
   {
-    ea.x = atan2((float)matT(k, j), (float)matT(k, k));
-    ea.y = atan2((float) - matT(k, i), (float)cy);
-    ea.z = atan2((float)matT(j, i), (float)matT(i, i));
+    ea.x = atan2f((float)matT(k, j), (float)matT(k, k));
+    ea.y = atan2f((float) - matT(k, i), (float)cy);
+    ea.z = atan2f((float)matT(j, i), (float)matT(i, i));
   }
   else
   {
-    ea.x = atan2((float) - matT(j, k), (float)matT(j, j));
-    ea.y = atan2((float) - matT(k, i), (float)cy);
+    ea.x = atan2f((float) - matT(j, k), (float)matT(j, j));
+    ea.y = atan2f((float) - matT(k, i), (float)cy);
     ea.z = 0;
   }
 

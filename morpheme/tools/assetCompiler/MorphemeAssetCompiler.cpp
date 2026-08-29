@@ -68,6 +68,9 @@
 #if defined(NM_ENABLE_FBX)
   #include "FBX/FBXPlugin.h"
 #else
+  # ifndef WIN32_LEAN_AND_MEAN
+  #  define WIN32_LEAN_AND_MEAN
+  # endif
   #include "windows.h"
 #endif
 
@@ -2642,18 +2645,16 @@ int32_t __cdecl main(int argc, char** argv)
 
   ACOptions acOptions;
 
-#ifdef _DEBUG
-  Sleep(10 * 1000); //wait for debugger to attach
+  //Sleep(10 * 1000); //wait for debugger to attach
+
+#if NM_ENABLE_EXCEPTIONS
+
+#if NM_CALL_STACK_DEBUG
+  NMP::SetSETranslator Seh;
 #endif
 
-//#if NM_ENABLE_EXCEPTIONS
-//
-//#if NM_CALL_STACK_DEBUG
-//  NMP::SetSETranslator Seh;
-//#endif
-//
-//  try
-//#endif // NM_ENABLE_EXCEPTIONS
+  try
+#endif // NM_ENABLE_EXCEPTIONS
   {
     //-----------------------------------------
 
@@ -2951,45 +2952,45 @@ int32_t __cdecl main(int argc, char** argv)
 
 //-----------------------------------------
   }
-//#if NM_ENABLE_EXCEPTIONS
-//#if NM_CALL_STACK_DEBUG
-//  catch (NMP::SEHException& e)
-//  {
-//    // Clean up morpheme and log any messages.
-//    MR::DispatcherBasic::term();
-//    MR::Manager::termMorphemeLib();
-//
-//    // Ensure things are as they should be.
-//    if (NMP::Exception::alreadyDealingWithAnException())
-//    {
-//      // Just log the call stack
-//      acOptions.getErrorLogger()->output("%s\n", e.getMessage());
-//      _flushall();
-//    }
-//
-//    return acOptions.getFailureCode();
-//  }
-//#endif // NM_CALL_STACK_DEBUG
-//  catch (const NMP::Exception& e)
-//  {
-//    // Clean up morpheme and log any messages.
-//    MR::DispatcherBasic::term();
-//    MR::Manager::termMorphemeLib();
-//
-//    // Guard against throwing across .dll boundaries...
-//    if (NMP::Exception::alreadyDealingWithAnException())
-//    {
-//      acOptions.getErrorLogger()->output(
-//        "Error in asset processor: %s\nFile: %s, Line: %d\n",
-//        e.getMessage(),
-//        e.getFile(),
-//        e.getLine());
-//      _flushall();  // Flush all streams, so that any logged error messages get written to file before proceeding.
-//    }
-//
-//    return acOptions.getFailureCode();
-//  }
-//#endif // NM_ENABLE_EXCEPTIONS
+#if NM_ENABLE_EXCEPTIONS
+#if NM_CALL_STACK_DEBUG
+  catch (NMP::SEHException& e)
+  {
+    // Clean up morpheme and log any messages.
+    MR::DispatcherBasic::term();
+    MR::Manager::termMorphemeLib();
+
+    // Ensure things are as they should be.
+    if (NMP::Exception::alreadyDealingWithAnException())
+    {
+      // Just log the call stack
+      acOptions.getErrorLogger()->output("%s\n", e.getMessage());
+      _flushall();
+    }
+
+    return acOptions.getFailureCode();
+  }
+#endif // NM_CALL_STACK_DEBUG
+  catch (const NMP::Exception& e)
+  {
+    // Clean up morpheme and log any messages.
+    MR::DispatcherBasic::term();
+    MR::Manager::termMorphemeLib();
+
+    // Guard against throwing across .dll boundaries...
+    if (NMP::Exception::alreadyDealingWithAnException())
+    {
+      acOptions.getErrorLogger()->output(
+        "Error in asset processor: %s\nFile: %s, Line: %d\n",
+        e.getMessage(),
+        e.getFile(),
+        e.getLine());
+      _flushall();  // Flush all streams, so that any logged error messages get written to file before proceeding.
+    }
+
+    return acOptions.getFailureCode();
+  }
+#endif // NM_ENABLE_EXCEPTIONS
 //-----------------------------------------
 
   if (g_animCache)

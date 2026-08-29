@@ -81,8 +81,8 @@ void NodeBlendNxMBuilder::getNodeDefInputConnections(
   }
 
   // Set up connected weight X control param nodes data.
-  readDataPinChildNodeID(nodeDefDataBlock, "WeightX", childNodeIDs, true);
-  readDataPinChildNodeID(nodeDefDataBlock, "WeightY", childNodeIDs, true);
+  readDataPinChildNodeID(nodeDefDataBlock, "WeightXNodeID", childNodeIDs, true);
+  readDataPinChildNodeID(nodeDefDataBlock, "WeightYNodeID", childNodeIDs, true);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -92,8 +92,8 @@ void NodeBlendNxMBuilder::preInit(
   const ME::NetworkDefExport* NMP_UNUSED(netDefExport),
   AssetProcessor*             NMP_UNUSED(processor))
 {
-  declareDataPin(netDefCompilationInfo, nodeDefExport, "WeightX", 0, true, MR::ATTRIB_SEMANTIC_CP_FLOAT);
-  declareDataPin(netDefCompilationInfo, nodeDefExport, "WeightY", 1, true, MR::ATTRIB_SEMANTIC_CP_FLOAT);
+  declareDataPin(netDefCompilationInfo, nodeDefExport, "WeightYNodeID", 0, true, MR::ATTRIB_SEMANTIC_CP_FLOAT);
+  declareDataPin(netDefCompilationInfo, nodeDefExport, "WeightXNodeID", 1, true, MR::ATTRIB_SEMANTIC_CP_FLOAT);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -235,13 +235,22 @@ MR::NodeDef* NodeBlendNxMBuilder::init(
     wrapWeightsY,
     MR::IS_DEF_ATTRIB_DATA);
 
-  // Weights X
-  for (uint32_t i = 0; i < (uint32_t)nodeCountX; ++i)
+  // Weights
+  // reproducing whatever the fuck the 3.6.2 blendNxM serialization function does
+  int xindex = 0;
+  for (uint32_t i = 0; i <= (uint32_t)(nodeCountX*(nodeCountX-1)); i += nodeCountX)
   {
     float weight = 0.0f;
     sprintf_s(paramName, "BlendWeightX_%d", i);
     nodeDefDataBlock->readFloat(weight, paramName);
-    weightsDefData->m_weightsX[i] = weight;
+    weightsDefData->m_weightsX[xindex++] = weight;
+  }
+  for (uint32_t i = 0; i < (uint32_t)nodeCountY; ++i)
+  {
+      float weight = 0.0f;
+      sprintf_s(paramName, "BlendWeightY_%d", i);
+      nodeDefDataBlock->readFloat(weight, paramName);
+      weightsDefData->m_weightsY[i] = weight;
   }
 
   if (wrapWeightsX)
@@ -249,15 +258,6 @@ MR::NodeDef* NodeBlendNxMBuilder::init(
     float weight = 0.0f;
     nodeDefDataBlock->readFloat(weight, "WrapWeightX");
     weightsDefData->m_weightsX[nodeCountX] = weight;
-  }
-
-  // Weights Y
-  for (uint32_t i = 0; i < (uint32_t)nodeCountY; ++i)
-  {
-    float weight = 0.0f;
-    sprintf_s(paramName, "BlendWeightY_%d", i);
-    nodeDefDataBlock->readFloat(weight, paramName);
-    weightsDefData->m_weightsY[i] = weight;
   }
 
   if (wrapWeightsY)

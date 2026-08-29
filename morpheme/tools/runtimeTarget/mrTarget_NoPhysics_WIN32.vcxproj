@@ -91,8 +91,9 @@
       <PreprocessorDefinitions>NDEBUG;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeComms2.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeSimpleBundle.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\morphemeCore.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMRuntimeUtils.lib";"..\..\..\lib\win32\vs$(VisualStudioVersion)\NMPlatform.lib";WS2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>

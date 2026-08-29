@@ -1,0 +1,235 @@
+// Copyright (c) 2013 NaturalMotion.  All Rights Reserved.
+// Not to be copied, adapted, modified, used, distributed, sold,
+// licensed or commercially exploited in any manner without the
+// written consent of NaturalMotion.
+//
+// All non public elements of this software are the confidential
+// information of NaturalMotion and may not be disclosed to any
+// person nor used for any purpose not expressly approved by
+// NaturalMotion in writing.
+
+/*
+ * --- THIS FILE IS GENERATED FROM GOLD GRAMMAR DEFINITIONS ---
+ *       To edit, change the PGT templates and re-export!
+ */
+
+#include "MDFTypesGrammar.h"
+#include "StringBuilder.h"
+
+namespace MDFTypes
+{
+
+  // --------------------------------------------------------------------
+  // Symbols
+  // --------------------------------------------------------------------
+##SYMBOL-TABLE
+  const Symbol SymbolArray[%Count%] = 
+  {
+##SYMBOLS
+    /* %Index% */  {(SymbolKind)%Kind%, "%Name%"},
+##END-SYMBOLS
+  };
+##END-SYMBOL-TABLE
+
+
+  // --------------------------------------------------------------------
+  // Grammar Character Set Definitions
+  // --------------------------------------------------------------------
+  
+##CHAR-SET-TABLE
+##CHAR-SETS
+##RANGE-CHARS '..'
+##DELIMITER ','
+
+	// Set %Index% !: [%Chars.XML%]
+	const unsigned int  Charset%Index%Count = %CharCount%;
+	const char          Charset%Index%[%CharCount%+1] = {%Chars.List%, 0};
+
+##END-CHAR-SETS
+##END-CHAR-SET-TABLE
+
+  // --------------------------------------------------------------------
+  // Deterministic FSM Automaton (DFA)
+  //
+  //                     target state, character count, character set ptr
+  // --------------------------------------------------------------------
+  
+##DFA-TABLE
+##DFA-STATES
+	// State: %Index%, Accept: %AcceptIndex%
+	const DFAEdge DFAEdgeArray%Index%[%EdgeCount%+1] =
+	{
+##DFA-EDGES
+		{%Target%, Charset%CharSetIndex%Count, Charset%CharSetIndex%},
+##END-DFA-EDGES
+		{-1, 0, NULL}
+	};
+##END-DFA-STATES
+##END-DFA-TABLE
+
+  // --------------------------------------------------------------------
+  // Rules
+  // --------------------------------------------------------------------
+  
+##RULE-TABLE
+##RULES
+	// %Description%
+	const int RuleSymbolArray%Index%[%SymbolCount%+1] =
+	{
+##RULE-SYMBOLS
+		%SymbolIndex%,
+##END-RULE-SYMBOLS
+		-1
+	};
+##END-RULES
+##END-RULE-TABLE
+
+  // --------------------------------------------------------------------
+  // LALR
+  //                                             entry, action op, target
+  // --------------------------------------------------------------------
+  
+##LALR-TABLE
+##LALR-STATES
+	const Action LALRActionArray%Index%[%ActionCount%+1] =
+	{
+##LALR-ACTIONS
+		{%SymbolIndex%, Action::Op(%Action%), %Value%}, // Action Name here
+##END-LALR-ACTIONS
+		{-1, Action::INVALID, -1}
+	};
+##END-LALR-STATES
+##END-LALR-TABLE
+
+  // --------------------------------------------------------------------
+  // DFA Table
+  //                                accept symbol, edge count, edge array
+  // --------------------------------------------------------------------
+  
+##DFA-TABLE
+  const DFAState DFAStateArray[%Count%+1] = 
+  {
+##DFA-STATES
+    /* %Index% */   {%AcceptIndex%, %EdgeCount%, DFAEdgeArray%Index%},
+##END-DFA-STATES
+    {-1, 0, NULL}
+  };
+##END-DFA-TABLE
+
+
+
+  // --------------------------------------------------------------------
+  // Rule Table
+  //                        head, symbol count, symbol array, description
+  // --------------------------------------------------------------------
+
+##RULE-TABLE
+  const Rule RuleArray[%Count%] = 
+  {
+##RULES
+    /* %Index% */   {%NonterminalIndex%, %SymbolCount%, RuleSymbolArray%Index%, "%Description%"},
+##END-RULES
+  };
+##END-RULE-TABLE
+
+
+  // --------------------------------------------------------------------
+  // LALR State Table
+  //                                           action count, action array
+  // --------------------------------------------------------------------
+
+##LALR-TABLE
+  const LALRState LALRStateArray[%Count%+1] = 
+  {
+##LALR-STATES
+    /* %Index% */   {%ActionCount%, LALRActionArray%Index%},
+##END-LALR-STATES
+    {0, NULL}
+  };
+##END-LALR-TABLE
+
+
+  // --------------------------------------------------------------------
+  // 
+  // --------------------------------------------------------------------
+
+  const Grammar Parser::sGrammar = 
+  {
+    CASESENTITIVEHERE%CaseSensitive%,
+	STARTSYMBOLHERE%StartSymbol%,
+##DFA-TABLE
+    %InitialState%,
+##END-DFA-TABLE
+##LALR-TABLE
+    %InitialState%,
+##END-LALR-TABLE
+
+##SYMBOL-TABLE
+    %Count%, SymbolArray,
+##END-SYMBOL-TABLE
+##RULE-TABLE
+    %Count%, RuleArray,
+##END-RULE-TABLE
+##DFA-TABLE
+    %Count%, DFAStateArray,
+##END-DFA-TABLE
+##LALR-TABLE
+    %Count%, LALRStateArray
+##END-LALR-TABLE
+  };
+
+  /**
+   * used to cram together the tokens that make up a function declaration
+   */
+  void Parser::recursiveFunctionDeclarationConcat(const Grammar& grammar, Token *token, unsigned int startToken) 
+  {
+    unsigned int i, symbolCount;
+    int symbolID;
+
+    symbolCount = grammar.m_ruleArray[token->m_reductionRule].m_symbolsCount;
+
+    for (i=startToken; i<symbolCount; i++) 
+    {
+      Token *tk = token->m_tokens[i];
+      symbolID = tk->m_symbol;
+
+      if (tk->m_reductionRule < 0) 
+      {
+        // add spacing based on the last token appended to the buffer 
+        if ((symbolID == Symbol_IdentifierTerm) &&                        // IdentifierTerm
+          (
+          (m_trackingLastSeenSymbol == Symbol_IdentifierTerm) ||    // IdentifierTerm <- IdentifierTerm
+          (m_trackingLastSeenSymbol == Symbol_IdRef)          ||    // & <- IdentifierTerm
+          (m_trackingLastSeenSymbol == Symbol_IdStar)         ||    // * <- IdentifierTerm
+          (m_trackingLastSeenSymbol == Symbol_Comma)                // , <- IdentifierTerm
+          )
+          )
+        {
+          m_stringBuilder->appendChar(' ');
+        }
+        if (symbolID == Symbol_IdentifierTerm &&                 // eg 'const'
+            m_trackingLastSeenSymbol == Symbol_RParan)                   // closing brace ')'
+        {
+          // we only know about 'const' being able to follow a fnDecl
+          if (strcmp(tk->m_data, "const"))
+          {
+            throw(new RuleExecutionException(token, tk->m_data, "unknown identifier following function declaration (expecting 'const')"));
+          }
+
+          m_stringBuilder->appendChar(' ');
+        }
+
+        m_stringBuilder->appendCharBuf(tk->m_data);
+        m_trackingLastSeenSymbol = symbolID;
+      } 
+      else 
+      {
+        // rule, call to expand it's contents
+        recursiveFunctionDeclarationConcat(grammar, tk, 0);
+      }
+    }
+  }
+
+
+
+} // namespace MDFTypes

@@ -70,14 +70,14 @@ public:
   NM_FORCEINLINE Vector3  operator - (const Vector3& v) const;
   NM_FORCEINLINE Vector3  operator * (const Vector3& v) const;
   NM_FORCEINLINE Vector3  operator * (vector4_t v) const;
-  NM_FORCEINLINE Vector3  operator * (float f) const;
-  NM_FORCEINLINE Vector3  operator / (float f) const;
+  NM_FORCEINLINE Vector3  operator * (float fVal) const;
+  NM_FORCEINLINE Vector3  operator / (float fVal) const;
   NM_FORCEINLINE void     operator += (const Vector3& v);
   NM_FORCEINLINE void     operator -= (const Vector3& v);
   NM_FORCEINLINE void     operator *= (const Vector3& v);
   NM_FORCEINLINE void     operator *= (vector4_t v);
-  NM_FORCEINLINE void     operator *= (float f);
-  NM_FORCEINLINE void     operator /= (float f);
+  NM_FORCEINLINE void     operator *= (float fVal);
+  NM_FORCEINLINE void     operator /= (float fVal);
 
   /// \ingroup Maths
   /// \brief Copy the local values to the vector specified
@@ -367,9 +367,9 @@ NM_FORCEINLINE Vector3  Vector3::operator - (const Vector3& v) const
   return Vector3(sub4f(vec, v.vec));
 }
 //----------------------------------------------------------------------------------------------------------------------
-NM_FORCEINLINE Vector3  Vector3::operator * (float f) const
+NM_FORCEINLINE Vector3  Vector3::operator * (float fVal) const
 {
-  return Vector3(mul4f(vec, set4f(f)));
+  return Vector3(mul4f(vec, set4f(fVal)));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -379,9 +379,9 @@ NM_FORCEINLINE Vector3  Vector3::operator * (const Vector3& v) const
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-NM_FORCEINLINE Vector3  Vector3::operator / (float f) const
+NM_FORCEINLINE Vector3  Vector3::operator / (float fVal) const
 {
-  return Vector3(mul4f(vec, rcp4f(set4f(f))));
+  return Vector3(mul4f(vec, rcp4f(set4f(fVal))));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -397,9 +397,9 @@ NM_FORCEINLINE void     Vector3::operator -= (const Vector3& v)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-NM_FORCEINLINE void     Vector3::operator *= (float f)
+NM_FORCEINLINE void     Vector3::operator *= (float fVal)
 {
-  vec = mul4f(vec, set4f(f));
+  vec = mul4f(vec, set4f(fVal));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -415,9 +415,9 @@ NM_FORCEINLINE void     Vector3::operator *= (vector4_t v)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-NM_FORCEINLINE void     Vector3::operator /= (float f)
+NM_FORCEINLINE void     Vector3::operator /= (float fVal)
 {
-  vec = mul4f(vec, rcp4f(set4f(f)));
+  vec = mul4f(vec, rcp4f(set4f(fVal)));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -696,9 +696,9 @@ NM_FORCEINLINE void Vector3::lerp(const Vector3& vTo, float t)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-NM_FORCEINLINE Vector3  operator*(float f, const Vector3& b)
+NM_FORCEINLINE Vector3  operator*(float fVal, const Vector3& b)
 {
-  return Vector3(f * b.x, f * b.y, f * b.z);
+  return Vector3(fVal * b.x, fVal * b.y, fVal * b.z);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

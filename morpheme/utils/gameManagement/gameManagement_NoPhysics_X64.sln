@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gameManagement_NoPhysics", "gameManagement_NoPhysics_X64.vcxproj", "{C4E21FB7-6883-456D-8AAA-3306F29276B1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4E21FB7-6883-456D-8AAA-3306F29276B1}.Debug|Win32.ActiveCfg = Debug|x64
+		{C4E21FB7-6883-456D-8AAA-3306F29276B1}.Debug|Win32.Build.0 = Debug|x64
+		{C4E21FB7-6883-456D-8AAA-3306F29276B1}.Release|Win32.ActiveCfg = Release|x64
+		{C4E21FB7-6883-456D-8AAA-3306F29276B1}.Release|Win32.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2EE71DE3-B3B3-4BD1-9743-D86AF64765A6}
+	EndGlobalSection
+EndGlobal

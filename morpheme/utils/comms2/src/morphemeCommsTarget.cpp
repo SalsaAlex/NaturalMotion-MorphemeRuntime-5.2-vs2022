@@ -623,12 +623,12 @@ CmdRequestID RuntimeTarget::setAnimationBrowserNetwork(
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-CmdRequestID RuntimeTarget::loadAnimationBrowserData(const char* compressionType)
+CmdRequestID RuntimeTarget::loadAnimationBrowserData(char compressionType)
 {
   ++sm_requestID;
   LoadAnimBrowserDataCmdPacket packet;
   packet.m_requestId = sm_requestID;
-  NMP_STRNCPY_S(packet.m_compressionType, sizeof(packet.m_compressionType), compressionType);
+  packet.m_compressionType = compressionType;
   if (doSendCommandPacket(this, packet))
   {
     return sm_requestID;

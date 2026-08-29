@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -11,83 +11,87 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
     <ProjectName>gameManagement_NoPhysics</ProjectName>
-    <ProjectGuid>{D269426C-8DC7-4536-90B2-173B3D1C9356}</ProjectGuid>
+    <ProjectGuid>{9FB7C6F7-8D0E-409D-C682-AACAADC0D055}</ProjectGuid>
     <RootNamespace>gameManagement_NoPhysics</RootNamespace>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <CharacterSet>Unicode</CharacterSet>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
-    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <CharacterSet>Unicode</CharacterSet>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
-    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>17.0.36414.14</_ProjectFileVersion>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetName>gameManagement_NoPhysics_debug</TargetName>
-    <IntDir>..\..\..\obj\win32\vs$(VisualStudioVersion)\gameManagement_NoPhysics\debug\</IntDir>
-    <OutDir>..\..\..\lib\win32\vs$(VisualStudioVersion)\</OutDir>
+    <OutDir>..\..\..\lib\win32\vs9.0\</OutDir>
+    <IntDir>..\..\..\obj\win32\vs9.0\gameManagement_NoPhysics\debug\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>gameManagement_NoPhysics</TargetName>
-    <IntDir>..\..\..\obj\win32\vs$(VisualStudioVersion)\gameManagement_NoPhysics\release\</IntDir>
-    <OutDir>..\..\..\lib\win32\vs$(VisualStudioVersion)\</OutDir>
+    <OutDir>..\..\..\lib\win32\vs9.0\</OutDir>
+    <IntDir>..\..\..\obj\win32\vs9.0\gameManagement_NoPhysics\release\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>include;..\comms2\include;..\simpleBundle\include;..\..\SDK\core\include;..\..\SDK;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CompileAs>Default</CompileAs>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <MinimalRebuild>false</MinimalRebuild>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ProgramDatabaseFileName>$(OutDir)gameManagement_NoPhysics_debug.pdb</ProgramDatabaseFileName>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <PrecompiledHeader />
+      <ProgramDataBaseFileName>$(OutDir)gameManagement_NoPhysics_debug.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
+    <Lib>
+      <OutputFile>$(OutDir)gameManagement_NoPhysics_debug.lib</OutputFile>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>include;..\comms2\include;..\simpleBundle\include;..\..\SDK\core\include;..\..\SDK;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CompileAs>Default</CompileAs>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <MinimalRebuild>false</MinimalRebuild>
       <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>include;..\comms2\include;..\simpleBundle\include;..\..\SDK\core\include;..\..\SDK;..\..\..\common\NMPlatform\include;..\..\..\common\NMPlatform\include\NMPlatform\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_CRT_SECURE_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ProgramDatabaseFileName>$(OutDir)gameManagement_NoPhysics.pdb</ProgramDatabaseFileName>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <PrecompiledHeader />
+      <ProgramDataBaseFileName>$(OutDir)gameManagement_NoPhysics.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
-    <Link>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
+    <Lib>
+      <OutputFile>$(OutDir)gameManagement_NoPhysics.lib</OutputFile>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\GameManagement\GameAnimLoader.h" />
@@ -102,6 +106,8 @@
     <ClInclude Include="include\GameManagement\NoPhysics\GameCharacterManagerNoPhysics.h" />
     <ClInclude Include="include\GameManagement\NoPhysics\GameCharacterManagerNoPhysicsThreaded.h" />
     <ClInclude Include="include\GameManagement\NoPhysics\GameCharacterNoPhysics.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="src\GameAnimLoader.cpp" />
     <ClCompile Include="src\GameAnimModule.cpp" />
     <ClCompile Include="src\GameAssetLoader.cpp" />
@@ -114,20 +120,6 @@
     <ClCompile Include="src\NoPhysics\GameCharacterManagerNoPhysics.cpp" />
     <ClCompile Include="src\NoPhysics\GameCharacterManagerNoPhysicsThreaded.cpp" />
     <ClCompile Include="src\NoPhysics\GameCharacterNoPhysics.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\comms2\morphemeComms2_WIN32.vcxproj">
-      <Project>{588D0E6B-FB5F-4D2B-8B80-973FD78928A5}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\simpleBundle\morphemeSimpleBundle_WIN32.vcxproj">
-      <Project>{A16C3047-7B5D-42CE-B4AA-190E025E16DC}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\SDK\core\morphemeCore_WIN32.vcxproj">
-      <Project>{AC5679CC-935C-4BCF-67A4-D937C17D2BC4}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\common\NMPlatform\NMPlatform_WIN32.vcxproj">
-      <Project>{A09CF394-9273-474D-4091-19EB54BF95DA}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

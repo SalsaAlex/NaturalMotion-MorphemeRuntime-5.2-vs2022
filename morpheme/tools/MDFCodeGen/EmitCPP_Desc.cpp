@@ -18,6 +18,13 @@
 
 #include "NMPlatform/NMPlatform.h"
 
+//uncomment to write euphoria profiling code
+//#define EUPHORIA_PROFILING
+
+//uncomment to write detailed euphoria profiling code
+//#define EUPHORIA_PROFILING_DETAILED
+
+
 //----------------------------------------------------------------------------------------------------------------------
 void recursiveWriteInstanceNIIDs(CodeWriter& code, const ModuleInstance* mi)
 {
@@ -452,14 +459,14 @@ void writePerModuleProfilingDeclarations(CodeWriter& code, const ModuleInstance 
 //----------------------------------------------------------------------------------------------------------------------
 void writePerModuleUpdateProfilingPrintfs(CodeWriter& code, const ModuleInstance *mi)
 {
-  code.write("#ifdef EUPHORIA_PROFILING_DETAILED");
+#ifdef EUPHORIA_PROFILING_DETAILED
   code.write(
     "NMP_MSG(\"update %s, %%f, %%f, %%f, %%f\", "
     "timer_update_%s[0], timer_update_%s[1], timer_update_%s[2], "
     "timer_update_%s[0] + timer_update_%s[1] + timer_update_%s[2]);",
     mi->m_NIID.c_str(), mi->m_NIID.c_str(), mi->m_NIID.c_str(), mi->m_NIID.c_str(),
     mi->m_NIID.c_str(), mi->m_NIID.c_str(), mi->m_NIID.c_str(), mi->m_NIID.c_str());
-  code.write("#endif // EUPHORIA_PROFILING_DETAILED");
+#endif // EUPHORIA_PROFILING_DETAILED
 
   code.write("timer_update_total[0] += timer_update_%s[0];", mi->m_NIID.c_str());
   code.write("timer_update_total[1] += timer_update_%s[1];", mi->m_NIID.c_str());
@@ -476,25 +483,25 @@ void writeUpdateProfilingPrintfs(CodeWriter& code, const ModuleInstance *mi)
 {
   code.write("timer_update_total[0] = timer_update_total[1] = timer_update_total[2] = 0.0f;");
   writePerModuleUpdateProfilingPrintfs(code, mi);
-  code.write("#ifndef EUPHORIA_PROFILING_DETAILED");
+#ifndef EUPHORIA_PROFILING_DETAILED
   code.write(
     "NMP_MSG(\"update total, %%f, %%f, %%f, %%f\", "
     "timer_update_total[0], timer_update_total[1], timer_update_total[2], "
     "timer_update_total[0] + timer_update_total[1] + timer_update_total[2]);");
-  code.write("#endif // EUPHORIA_PROFILING_DETAILED");
+#endif // EUPHORIA_PROFILING_DETAILED
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void writePerModuleFeedbackProfilingPrintfs(CodeWriter& code, const ModuleInstance *mi)
 {
-  code.write("#ifdef EUPHORIA_PROFILING_DETAILED");
+#ifdef EUPHORIA_PROFILING_DETAILED
   code.write(
     "NMP_MSG(\"feedback %s, %%f, %%f, %%f, %%f\", "
     "timer_feedback_%s[0], timer_feedback_%s[1], timer_feedback_%s[2], "
     "timer_feedback_%s[0] + timer_feedback_%s[1] + timer_feedback_%s[2]);",
     mi->m_NIID.c_str(), mi->m_NIID.c_str(), mi->m_NIID.c_str(), mi->m_NIID.c_str(),
     mi->m_NIID.c_str(), mi->m_NIID.c_str(), mi->m_NIID.c_str(), mi->m_NIID.c_str());
-  code.write("#endif // EUPHORIA_PROFILING_DETAILED");
+#endif // EUPHORIA_PROFILING_DETAILED
 
   code.write("timer_feedback_total[0] += timer_feedback_%s[0];", mi->m_NIID.c_str());
   code.write("timer_feedback_total[1] += timer_feedback_%s[1];", mi->m_NIID.c_str());
@@ -511,7 +518,7 @@ void writeFeedbackProfilingPrintfs(CodeWriter& code, const ModuleInstance *mi)
 {
   code.write("timer_feedback_total[0] = timer_feedback_total[1] = timer_feedback_total[2] = 0.0f;");
   writePerModuleFeedbackProfilingPrintfs(code, mi);
-  code.write("#ifndef EUPHORIA_PROFILING_DETAILED");
+#ifndef EUPHORIA_PROFILING_DETAILED
   code.write(
     "NMP_MSG(\"feedback total, %%f, %%f, %%f, %%f\", "
     "timer_feedback_total[0], timer_feedback_total[1], timer_feedback_total[2], "
@@ -524,7 +531,7 @@ void writeFeedbackProfilingPrintfs(CodeWriter& code, const ModuleInstance *mi)
     "NMP_MSG(\"total, %%f, %%f, %%f, %%f\\n\", "
     "timer_total[0], timer_total[1], timer_total[2], "
     "timer_total[0] + timer_total[1] + timer_total[2]);");
-  code.write("#endif // EUPHORIA_PROFILING_DETAILED");
+#endif // EUPHORIA_PROFILING_DETAILED
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -538,20 +545,20 @@ void writeUpdatePhaseRecursive(CodeWriter& code, ModuleInstance *mi)
   if (mi->m_parent && !hasModuleModifier(mi->m_module->m_modifiers, mmNoUpdate))
   {
     // timing code for the graphing/report stuff
-    code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
     code.write("QueryPerformanceCounter( &StartTimer );");
-    code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
 
     // Call the module update for this ModuleInstance
     code.write("module_%s->update(timeStep);", mi->m_NIID.c_str());
 
-    code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
     code.write("QueryPerformanceCounter( &EndTimer );");
     code.write("UpdateTicks = EndTimer.QuadPart - StartTimer.QuadPart;");
     code.write(
       "timer_update_%s[1] += (g_profilingTimerFraction * (UpdateTicks * dMicrosecondsPerTick - timer_update_%s[1]));", 
       mi->m_NIID.c_str(), mi->m_NIID.c_str());
-    code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
   }
 
   // Recurse children
@@ -599,19 +606,19 @@ void writeUpdatePhaseRecursive(CodeWriter& code, ModuleInstance *mi)
           if (ebMi->m_module->varDeclBlockHasJunctionAssignments(msInputs))
           {
             // timing code for the graphing/report stuff
-            code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
             code.write("QueryPerformanceCounter( &StartTimer );");
-            code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
 
             code.write("module_%s->combineInputs();", ebMi->m_NIID.c_str());
 
-            code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
             code.write("QueryPerformanceCounter( &EndTimer );");
             code.write("UpdateTicks = EndTimer.QuadPart - StartTimer.QuadPart;");
             code.write(
               "timer_update_%s[0] += (g_profilingTimerFraction * (UpdateTicks * dMicrosecondsPerTick - timer_update_%s[0]));", 
               ebMi->m_NIID.c_str(), ebMi->m_NIID.c_str());
-            code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
           }
           writeUpdatePhaseRecursive(code, ebMi);
 
@@ -630,19 +637,19 @@ void writeUpdatePhaseRecursive(CodeWriter& code, ModuleInstance *mi)
   if (mi->m_module->varDeclBlockHasJunctionAssignments(msOutputs))
   {
     // timing code for the graphing/report stuff
-    code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
     code.write("QueryPerformanceCounter( &StartTimer );");
-    code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
 
     code.write("module_%s->combineOutputs();", mi->m_NIID.c_str());
 
-    code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
     code.write("QueryPerformanceCounter( &EndTimer );");
     code.write("UpdateTicks = EndTimer.QuadPart - StartTimer.QuadPart;");
     code.write(
       "timer_update_%s[2] += (g_profilingTimerFraction * (UpdateTicks * dMicrosecondsPerTick - timer_update_%s[2]));", 
       mi->m_NIID.c_str(), mi->m_NIID.c_str());
-    code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
   }
 }
 
@@ -656,19 +663,19 @@ void writeFeedbackPhaseRecursive(CodeWriter& code, ModuleInstance *mi)
   if (mi->m_parent && !hasModuleModifier(mi->m_module->m_modifiers, mmNoFeedback))
   {
     // timing code for the graphing/report stuff
-    code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
     code.write("QueryPerformanceCounter( &StartTimer );");
-    code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
 
     code.write("module_%s->feedback(timeStep);", mi->m_NIID.c_str());
 
-    code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
     code.write("QueryPerformanceCounter( &EndTimer );");
     code.write("UpdateTicks = EndTimer.QuadPart - StartTimer.QuadPart;");
     code.write(
       "timer_feedback_%s[1] += (g_profilingTimerFraction * (UpdateTicks * dMicrosecondsPerTick - timer_feedback_%s[1]));", 
       mi->m_NIID.c_str(), mi->m_NIID.c_str());
-    code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
 
   }
 
@@ -716,19 +723,19 @@ void writeFeedbackPhaseRecursive(CodeWriter& code, ModuleInstance *mi)
           if (ebMi->m_module->varDeclBlockHasJunctionAssignments(msFeedInputs))
           {
             // timing code for the graphing/report stuff
-            code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
             code.write("QueryPerformanceCounter( &StartTimer );");
-            code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
 
             code.write("module_%s->combineFeedbackInputs();", ebMi->m_NIID.c_str());
 
-            code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
             code.write("QueryPerformanceCounter( &EndTimer );");
             code.write("UpdateTicks = EndTimer.QuadPart - StartTimer.QuadPart;");
             code.write(
               "timer_feedback_%s[0] += (g_profilingTimerFraction * (UpdateTicks * dMicrosecondsPerTick - timer_feedback_%s[0]));", 
               ebMi->m_NIID.c_str(), ebMi->m_NIID.c_str());
-            code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
           }
 
           writeFeedbackPhaseRecursive(code, ebMi);
@@ -746,19 +753,19 @@ void writeFeedbackPhaseRecursive(CodeWriter& code, ModuleInstance *mi)
   if (mi->m_module->varDeclBlockHasJunctionAssignments(msFeedOutputs))
   {
     // timing code for the graphing/report stuff
-    code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
     code.write("QueryPerformanceCounter( &StartTimer );");
-    code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
 
     code.write("module_%s->combineFeedbackOutputs();", mi->m_NIID.c_str());
 
-    code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
     code.write("QueryPerformanceCounter( &EndTimer );");
     code.write("UpdateTicks = EndTimer.QuadPart - StartTimer.QuadPart;");
     code.write(
       "timer_feedback_%s[2] += (g_profilingTimerFraction * (UpdateTicks * dMicrosecondsPerTick - timer_feedback_%s[2]));", 
       mi->m_NIID.c_str(), mi->m_NIID.c_str());
-    code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
   }
 }
 
@@ -806,38 +813,38 @@ bool DescGen::writeTaskExec(CodeWriter& code, const NetworkDatabase &ndb)
   // -----------------------------------------------------------------------------------------------
   code.write("namespace NM_BEHAVIOUR_LIB_NAMESPACE\n{\n");
 
-  code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
   writePerModuleProfilingDeclarations(code, ndb.m_instance);
   code.write("TIMETYPE timer_update_total[3] = {0,0,0};");
   code.write("TIMETYPE timer_feedback_total[3] = {0,0,0};");
   code.write("TIMETYPE timer_total[3] = {0,0,0};");
-  code.write("#endif // EUPHORIA_PROFILING\n");
+#endif // EUPHORIA_PROFILING
 
   code.write("void %s::executeNetworkUpdate(float timeStep)", rootInst->m_name.c_str());
   code.openBrace();
   {
     {
       // Create some floats to store our timings data in.
-      code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
 
       code.write("LARGE_INTEGER TicksPerSecond;");
       code.write("QueryPerformanceFrequency( &TicksPerSecond );");
       code.write("TIMETYPE dMicrosecondsPerTick = (TIMETYPE) (double(1.0) / ((double)TicksPerSecond.QuadPart * 0.000001));");
       code.write("LARGE_INTEGER StartTimer, EndTimer;");
       code.write("__int64 UpdateTicks;");
-      code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
     }
 
     writeUpdatePhaseRecursive(code, ndb.m_instance);
 
     {
       // Print out the floats to give us some timing data.
-      code.write("#ifdef EUPHORIA_PROFILING");
-      code.write("#ifdef EUPHORIA_PROFILING_DETAILED");
+#ifdef EUPHORIA_PROFILING
+#ifdef EUPHORIA_PROFILING_DETAILED
       code.write("NMP_MSG(\"\\n\\nUPDATE TIMINGS:\");");
-      code.write("#endif // EUPHORIA_PROFILING_DETAILED");
+#endif // EUPHORIA_PROFILING_DETAILED
       writeUpdateProfilingPrintfs(code, ndb.m_instance);
-      code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
     }
 
   }
@@ -850,26 +857,26 @@ bool DescGen::writeTaskExec(CodeWriter& code, const NetworkDatabase &ndb)
   {
     {
       // Create some floats to store our timings data in.
-      code.write("#ifdef EUPHORIA_PROFILING");
+#ifdef EUPHORIA_PROFILING
 
       code.write("LARGE_INTEGER TicksPerSecond;");
       code.write("QueryPerformanceFrequency( &TicksPerSecond );");
       code.write("TIMETYPE dMicrosecondsPerTick = (TIMETYPE) (double(1.0) / ((double)TicksPerSecond.QuadPart * 0.000001));");
       code.write("LARGE_INTEGER StartTimer, EndTimer;");
       code.write("__int64 UpdateTicks;");
-      code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
     }
 
     writeFeedbackPhaseRecursive(code, ndb.m_instance);
 
     {
       // Print out the floats to give us some timing data.
-      code.write("#ifdef EUPHORIA_PROFILING");
-      code.write("#ifdef EUPHORIA_PROFILING_DETAILED");
+#ifdef EUPHORIA_PROFILING
+#ifdef EUPHORIA_PROFILING_DETAILED
       code.write("NMP_MSG(\"\\n\\nFEEDBACK TIMINGS:\");");
-      code.write("#endif // EUPHORIA_PROFILING_DETAILED");
+#endif // EUPHORIA_PROFILING_DETAILED
       writeFeedbackProfilingPrintfs(code, ndb.m_instance);
-      code.write("#endif // EUPHORIA_PROFILING");
+#endif // EUPHORIA_PROFILING
     }
   }
   code.closeBrace();

@@ -38,6 +38,11 @@
   #define NMTL_INDEX
 #endif
 
+#pragma warning(push)
+#ifdef _MSC_VER
+# pragma warning(disable:4457) //salsa: shut up man
+#endif
+
 //----------------------------------------------------------------------------------------------------------------------
 namespace NMTL_NAMESPACE
 {
@@ -717,5 +722,7 @@ NMTL_INLINE bool operator !=(const vector<value_type>& lhs, const vector<value_t
 #ifdef NMTL_KILL_TEMPLATE_EXPORT
   #undef NMTL_TEMPLATE_EXPORT
 #endif
+
+#pragma warning(pop)
 
 #endif // NMTL_VECTOR_H

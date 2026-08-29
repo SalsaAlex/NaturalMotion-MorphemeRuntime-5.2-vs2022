@@ -1,150 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="include\core" />
-    <Filter Include="include" />
-    <Filter Include="include\core\Analysis" />
-    <Filter Include="src" />
-    <Filter Include="src\Analysis" />
+    <Filter Include="include">
+      <UniqueIdentifier>{567f7f8f-07d2-4b0f-ab29-83286853716e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\core">
+      <UniqueIdentifier>{b53c96eb-ba77-4b02-9725-14101fd95214}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\core\Analysis">
+      <UniqueIdentifier>{607f33dc-61cc-4371-ba75-9458e468ae28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{bb8a17a1-5718-4303-9cb6-7994cf3e2e6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Analysis">
+      <UniqueIdentifier>{cd888fab-4c23-4d96-a278-6a218bb1bf67}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\core\acCore.h">
       <Filter>include\core</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisCondition.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisConditionAtFrame.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisConditionCrossedDurationFraction.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisConditionDiscreteEventTriggered.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisConditionInSyncEventRange.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisConditionStateMachineInState.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisInterval.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisParameteriser.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisProperty.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyCustom.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyEulerAngleComponent.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyPositionArcDistance.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyPositionDeltaDistance.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyPositionDeltaInAxis.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyPositionValueInAxis.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyRateOfTurnWithForwardTravel.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyRotationDeltaInAxis.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertySpeed.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertySpeedForCutTurns.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertySpeedInPlane.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyStrideLength.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyTakeOffDirectionInPlane.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyTravelDirectionInPlane.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyTravelSlopeAngle.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyTurningRate.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyUtils.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\AnalysisPropertyVelocityInAxis.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\ControlParameterRegularSampleGrid.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\DemoPredictionModel.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\NDMeshAnalysisData.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\NDMeshAPResampleMapBuilder.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\NDMeshAPSearchMapBuilder.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\NDMeshBuilder.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\NDMeshQuantisationData.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\NDMeshResampleMapExportData.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\NDMeshResampleMapIntermediteData.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\NDMeshResampler.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\NetworkControlPlayer.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\PredictionModelNDMeshAnalyser.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\PredictionModelNDMeshBuilder.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\ScatterBlend1DTask.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\ScatterBlend2DBSPTreeAnalyser.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\ScatterBlendTriangleAnnotationAnalyser.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\ScatterBlendVertexSourceAnalyser.h">
-      <Filter>include\core\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Analysis\XMDNetworkControlTake.h">
-      <Filter>include\core\Analysis</Filter>
     </ClInclude>
     <ClInclude Include="include\core\BasicCharacterController.h">
       <Filter>include\core</Filter>
@@ -440,140 +315,145 @@
     <ClInclude Include="include\core\TransitDeadBlendDefBuilderDefault.h">
       <Filter>include\core</Filter>
     </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisCondition.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisConditionAtFrame.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisConditionCrossedDurationFraction.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisConditionDiscreteEventTriggered.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisConditionInSyncEventRange.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisConditionStateMachineInState.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisInterval.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisParameteriser.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisProperty.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyCustom.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyEulerAngleComponent.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyPositionArcDistance.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyPositionDeltaDistance.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyPositionDeltaInAxis.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyPositionValueInAxis.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyRateOfTurnWithForwardTravel.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyRotationDeltaInAxis.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertySpeed.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertySpeedForCutTurns.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertySpeedInPlane.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyStrideLength.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyTakeOffDirectionInPlane.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyTravelDirectionInPlane.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyTravelSlopeAngle.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyTurningRate.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyUtils.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\AnalysisPropertyVelocityInAxis.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\ControlParameterRegularSampleGrid.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\DemoPredictionModel.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\NDMeshAnalysisData.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\NDMeshAPResampleMapBuilder.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\NDMeshAPSearchMapBuilder.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\NDMeshBuilder.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\NDMeshQuantisationData.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\NDMeshResampleMapExportData.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\NDMeshResampleMapIntermediteData.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\NDMeshResampler.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\NetworkControlPlayer.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\PredictionModelNDMeshAnalyser.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\PredictionModelNDMeshBuilder.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\ScatterBlend1DTask.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\ScatterBlend2DBSPTreeAnalyser.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\ScatterBlendTriangleAnnotationAnalyser.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\ScatterBlendVertexSourceAnalyser.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\Analysis\XMDNetworkControlTake.h">
+      <Filter>include\core\Analysis</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="src\acCore.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisConditionAtFrame.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisConditionCrossedDurationFraction.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisConditionDiscreteEventTriggered.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisConditionInSyncEventRange.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisConditionStateMachineInState.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisInterval.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisParameteriser.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisProperty.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyCustom.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyEulerAngleComponent.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyPositionArcDistance.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyPositionDeltaDistance.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyPositionDeltaInAxis.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyPositionValueInAxis.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyRateOfTurnWithForwardTravel.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyRotationDeltaInAxis.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertySpeed.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertySpeedForCutTurns.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertySpeedInPlane.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyStrideLength.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyTakeOffDirectionInPlane.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyTravelDirectionInPlane.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyTravelSlopeAngle.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyTurningRate.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyUtils.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\AnalysisPropertyVelocityInAxis.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\ControlParameterRegularSampleGrid.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\DemoPredictionModel.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\NDMeshAnalysisData.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\NDMeshAPResampleMapBuilder.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\NDMeshAPSearchMapBuilder.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\NDMeshBuilder.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\NDMeshQuantisationData.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\NDMeshResampleMapExportData.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\NDMeshResampleMapIntermediteData.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\NDMeshResampler.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\NetworkControlPlayer.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\PredictionModelNDMeshAnalyser.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\PredictionModelNDMeshBuilder.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\ScatterBlend1DTask.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\ScatterBlend2DBSPTreeAnalyser.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\ScatterBlendTriangleAnnotationAnalyser.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\ScatterBlendVertexSourceAnalyser.cpp">
-      <Filter>src\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Analysis\XMDNetworkControlTake.cpp">
-      <Filter>src\Analysis</Filter>
     </ClCompile>
     <ClCompile Include="src\BasicCharacterController.cpp">
       <Filter>src</Filter>
@@ -868,6 +748,138 @@
     </ClCompile>
     <ClCompile Include="src\TransitDeadBlendDefBuilderDefault.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisConditionAtFrame.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisConditionCrossedDurationFraction.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisConditionDiscreteEventTriggered.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisConditionInSyncEventRange.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisConditionStateMachineInState.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisInterval.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisParameteriser.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisProperty.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyCustom.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyEulerAngleComponent.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyPositionArcDistance.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyPositionDeltaDistance.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyPositionDeltaInAxis.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyPositionValueInAxis.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyRateOfTurnWithForwardTravel.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyRotationDeltaInAxis.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertySpeed.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertySpeedForCutTurns.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertySpeedInPlane.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyStrideLength.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyTakeOffDirectionInPlane.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyTravelDirectionInPlane.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyTravelSlopeAngle.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyTurningRate.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyUtils.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\AnalysisPropertyVelocityInAxis.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\ControlParameterRegularSampleGrid.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\DemoPredictionModel.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\NDMeshAnalysisData.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\NDMeshAPResampleMapBuilder.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\NDMeshAPSearchMapBuilder.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\NDMeshBuilder.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\NDMeshQuantisationData.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\NDMeshResampleMapExportData.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\NDMeshResampleMapIntermediteData.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\NDMeshResampler.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\NetworkControlPlayer.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\PredictionModelNDMeshAnalyser.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\PredictionModelNDMeshBuilder.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\ScatterBlend1DTask.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\ScatterBlend2DBSPTreeAnalyser.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\ScatterBlendTriangleAnnotationAnalyser.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\ScatterBlendVertexSourceAnalyser.cpp">
+      <Filter>src\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Analysis\XMDNetworkControlTake.cpp">
+      <Filter>src\Analysis</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

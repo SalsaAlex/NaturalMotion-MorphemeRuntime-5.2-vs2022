@@ -8,6 +8,7 @@ namespace XM2
 #pragma warning(push)
 #ifdef _MSC_VER
 # pragma warning(disable:4328)
+# pragma warning(disable:4458) //salsa: shut up man
 #endif
 //----------------------------------------------------------------------------------------------------------------------
 XM2_INLINE XQuaternion::XQuaternion()

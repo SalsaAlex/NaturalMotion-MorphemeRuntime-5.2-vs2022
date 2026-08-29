@@ -5,4 +5,9 @@
     <LocalDebuggerWorkingDirectory>C:\Program Files (x86)\NaturalMotion\morphemeConnect 3.6.2\bin\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_connect362hook|Win32'">
+    <LocalDebuggerCommand>C:\Program Files (x86)\NaturalMotion\morphemeConnect 3.6.2\bin\morphemeConnect.exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>C:\Program Files (x86)\NaturalMotion\morphemeConnect 3.6.2\bin\</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>

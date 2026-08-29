@@ -148,9 +148,9 @@ bool RotVecTable::isChannelUnchanging(uint32_t channel, float eps) const
   for (uint32_t i = 1; i < m_numKeyFrames; ++i)
   {
     dv = keys[i] - keys[0];
-    dv.x = fabs(dv.x);
-    dv.y = fabs(dv.y);
-    dv.z = fabs(dv.z);
+    dv.x = fabsf(dv.x);
+    dv.y = fabsf(dv.y);
+    dv.z = fabsf(dv.z);
     if (dv.x > eps || dv.y > eps || dv.z > eps)
     {
       return false;

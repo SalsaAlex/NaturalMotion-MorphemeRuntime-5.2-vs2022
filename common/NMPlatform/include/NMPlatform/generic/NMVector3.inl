@@ -23,13 +23,13 @@ namespace NMP
   return Vector3(x op v.x, y op v.y, z op v.z);
 
 #define V3_OPR_FLOAT(op) \
-  return Vector3(x op f, y op f, z op f);
+  return Vector3(x op fVal, y op fVal, z op fVal);
 
 #define V3LOCAL_OPR_VEC(op) \
   x op v.x; y op v.y; z op v.z;
 
 #define V3LOCAL_OPR_FLOAT(op) \
-  x op f; y op f; z op f;
+  x op fVal; y op fVal; z op fVal;
 
 //----------------------------------------------------------------------------------------------------------------------
 NM_INLINE Vector3::Vector3()
@@ -222,7 +222,7 @@ NM_INLINE Vector3  Vector3::operator - (const NMP::Vector3& v) const
   V3_OPR_VEC(-);
 }
 //----------------------------------------------------------------------------------------------------------------------
-NM_INLINE Vector3  Vector3::operator * (float f) const
+NM_INLINE Vector3  Vector3::operator * (float fVal) const
 {
   V3_OPR_FLOAT(*);
 }
@@ -234,9 +234,9 @@ NM_INLINE Vector3  Vector3::operator * (const NMP::Vector3& v) const
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-NM_INLINE Vector3  Vector3::operator / (float f) const
+NM_INLINE Vector3  Vector3::operator / (float fVal) const
 {
-  float iF = (1.0f / f);
+  float iF = (1.0f / fVal);
   return Vector3(x * iF, y * iF, z * iF);
 }
 
@@ -253,7 +253,7 @@ NM_INLINE void     Vector3::operator -= (const NMP::Vector3& v)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-NM_INLINE void     Vector3::operator *= (float f)
+NM_INLINE void     Vector3::operator *= (float fVal)
 {
   V3LOCAL_OPR_FLOAT(*=)
 }
@@ -267,9 +267,9 @@ NM_INLINE void     Vector3::operator *= (const NMP::Vector3& v)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-NM_INLINE void     Vector3::operator /= (float f)
+NM_INLINE void     Vector3::operator /= (float fVal)
 {
-  float iF = (1.0f / f);
+  float iF = (1.0f / fVal);
   x *= iF;
   y *= iF;
   z *= iF;
@@ -447,29 +447,29 @@ NM_INLINE bool Vector3::clampMagnitude(float maxV)
 //----------------------------------------------------------------------------------------------------------------------
 NM_INLINE void Vector3::abs()
 {
-  x = fabs(x);
-  y = fabs(y);
-  z = fabs(z);
+  x = fabsf(x);
+  y = fabsf(y);
+  z = fabsf(z);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 NM_INLINE float Vector3::summedAbs() const
 {
-  return (fabs(x) + fabs(y) + fabs(z));
+  return (fabsf(x) + fabsf(y) + fabsf(z));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 NM_INLINE float Vector3::summedAbsDiff(const NMP::Vector3& b)
 {
-  return fabs(x - b.x) + fabs(y - b.y) + fabs(z - b.z);
+  return fabsf(x - b.x) + fabsf(y - b.y) + fabsf(z - b.z);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 NM_INLINE float Vector3::maxAbs() const
 {
-  float absx = fabs(x);
-  float absy = fabs(y);
-  float absz = fabs(z);
+  float absx = fabsf(x);
+  float absy = fabsf(y);
+  float absz = fabsf(z);
   return absx < absy ? NMP::maximum(absy, absz) : NMP::maximum(absx, absz);
 }
 
@@ -695,9 +695,9 @@ NM_INLINE void Vector3::lerp(const NMP::Vector3& vTo, float t)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-NM_INLINE Vector3  operator*(float f, const NMP::Vector3& b)
+NM_INLINE Vector3  operator*(float fVal, const NMP::Vector3& b)
 {
-  return Vector3(f * b.x, f * b.y, f * b.z);
+  return Vector3(fVal * b.x, fVal * b.y, fVal * b.z);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

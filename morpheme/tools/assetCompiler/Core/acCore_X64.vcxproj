@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Target LE64 Debug|x64">
       <Configuration>Target LE64 Debug</Configuration>
@@ -11,103 +11,115 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
     <ProjectName>acCore</ProjectName>
-    <ProjectGuid>{E02BF743-2306-4EB6-D5B9-ABF6A67628A6}</ProjectGuid>
+    <ProjectGuid>{000453E0-9E23-4D3F-5296-DC78BEFA56AF}</ProjectGuid>
     <RootNamespace>acCore</RootNamespace>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Target LE64 Debug|x64'">
-    <CharacterSet>Unicode</CharacterSet>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target LE64 Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
-    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Target LE64 Release|x64'">
-    <CharacterSet>Unicode</CharacterSet>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target LE64 Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
-    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Target LE64 Debug|x64'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Target LE64 Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Target LE64 Release|x64'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Target LE64 Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>17.0.36414.14</_ProjectFileVersion>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target LE64 Debug|x64'">
-    <TargetName>acCore_target_LE64_debug</TargetName>
-    <IntDir>..\..\..\..\obj\x64\vs$(VisualStudioVersion)\acCore\target_le64_debug\</IntDir>
-    <OutDir>..\..\..\..\bin\x64\vs$(VisualStudioVersion)\</OutDir>
-    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\..\..\..\bin\x64\vs9.0\</OutDir>
+    <IntDir>..\..\..\..\obj\x64\vs9.0\acCore\target_le64_debug\</IntDir>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
+    <LinkIncremental>false</LinkIncremental>
+    <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Target LE64 Release|x64'">
-    <TargetName>acCore_target_LE64</TargetName>
-    <IntDir>..\..\..\..\obj\x64\vs$(VisualStudioVersion)\acCore\target_le64_release\</IntDir>
-    <OutDir>..\..\..\..\bin\x64\vs$(VisualStudioVersion)\</OutDir>
-    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\..\..\..\bin\x64\vs9.0\</OutDir>
+    <IntDir>..\..\..\..\obj\x64\vs9.0\acCore\target_le64_release\</IntDir>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
+    <LinkIncremental>false</LinkIncremental>
+    <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Target LE64 Debug|x64'">
     <ClCompile>
+      <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.;include\core;..\..\..\SDK\assetProcessor\include;..\..\..\SDK\core\include;..\..\..\SDK;..\..\..\..\common\NMRuntimeUtils\include;..\..\..\SDK\export\include;..\..\..\..\common\tinyxml;..\..\..\..\common\NMNumerics\include;..\..\..\..\common\NMPlatform\include;..\..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\..\common\qhull\src;..\..\..\..\common\XMD\include;..\..\..\..\common\NMTL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CompileAs>Default</CompileAs>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <MinimalRebuild>false</MinimalRebuild>
       <PreprocessorDefinitions>AC_CORE_EXPORTS;NM_TARGET_BIGENDIAN=0;WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_USRDLL;_WIN64;_WINDLL;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <PrecompiledHeader />
       <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
-    <Link>
-      <AdditionalDependencies>"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE64_debug.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeCore_target_LE64_debug.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE64_debug.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeExport_debug.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTinyXML_debug.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMNumerics_debug.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMPlatform_target_LE64_debug.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\qhull_debug.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\XMD_debug.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTL_debug.lib";%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>..\..\..\..\lib\x64\vs$(VisualStudioVersion)\acCore_target_LE64_debug.lib</ImportLibrary>
-      <ManifestFile>$(IntDir)intermediate.manifest</ManifestFile>
-      <ProgramDatabaseFile>$(OutDir)acCore_target_LE64_debug.pdb</ProgramDatabaseFile>
-      <SubSystem>Windows</SubSystem>
-      <TargetMachine>MachineX64</TargetMachine>
-    </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
+    <Link>
+      <AdditionalDependencies>..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE64_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeCore_target_LE64_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE64_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeExport_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTinyXML_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMNumerics_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMPlatform_target_LE64_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\XMD_debug.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTL_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)acCore_target_LE64_debug.dll</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)acCore_target_LE64_debug.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <ImportLibrary>..\..\..\..\lib\x64\vs9.0\acCore_target_LE64_debug.lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Target LE64 Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;include\core;..\..\..\SDK\assetProcessor\include;..\..\..\SDK\core\include;..\..\..\SDK;..\..\..\..\common\NMRuntimeUtils\include;..\..\..\SDK\export\include;..\..\..\..\common\tinyxml;..\..\..\..\common\NMNumerics\include;..\..\..\..\common\NMPlatform\include;..\..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\..\common\qhull\src;..\..\..\..\common\XMD\include;..\..\..\..\common\NMTL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CompileAs>Default</CompileAs>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <MinimalRebuild>false</MinimalRebuild>
       <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>.;include\core;..\..\..\SDK\assetProcessor\include;..\..\..\SDK\core\include;..\..\..\SDK;..\..\..\..\common\NMRuntimeUtils\include;..\..\..\SDK\export\include;..\..\..\..\common\tinyxml;..\..\..\..\common\NMNumerics\include;..\..\..\..\common\NMPlatform\include;..\..\..\..\common\NMPlatform\include\NMPlatform\win32;..\..\..\..\common\qhull\src;..\..\..\..\common\XMD\include;..\..\..\..\common\NMTL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>AC_CORE_EXPORTS;NDEBUG;NM_ENABLE_EXCEPTIONS=1;NM_TARGET_BIGENDIAN=0;WIN32;_CRT_SECURE_NO_WARNINGS;_USRDLL;_WIN64;_WINDLL;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <PrecompiledHeader />
       <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
-    <Link>
-      <AdditionalDependencies>"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE64.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeCore_target_LE64.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE64.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeExport.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTinyXML.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMNumerics.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMPlatform_target_LE64.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\qhull.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\XMD.lib";"..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTL.lib";%(AdditionalDependencies)</AdditionalDependencies>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>..\..\..\..\lib\x64\vs$(VisualStudioVersion)\acCore_target_LE64.lib</ImportLibrary>
-      <ManifestFile>$(IntDir)intermediate.manifest</ManifestFile>
-      <OptimizeReferences>true</OptimizeReferences>
-      <ProgramDatabaseFile>$(OutDir)acCore_target_LE64.pdb</ProgramDatabaseFile>
-      <SubSystem>Windows</SubSystem>
-      <TargetMachine>MachineX64</TargetMachine>
-    </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
+    <Link>
+      <AdditionalDependencies>..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeAssetProcessor_target_LE64.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeCore_target_LE64.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMRuntimeUtils_target_LE64.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\morphemeExport.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTinyXML.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMNumerics.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMPlatform_target_LE64.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\XMD.lib;..\..\..\..\lib\x64\vs$(VisualStudioVersion)\NMTL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)acCore_target_LE64.dll</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)acCore_target_LE64.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <ImportLibrary>..\..\..\..\lib\x64\vs9.0\acCore_target_LE64.lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\core\acCore.h" />
@@ -254,6 +266,8 @@
     <ClInclude Include="include\core\TransitConditionDefBuilderOnMessage.h" />
     <ClInclude Include="include\core\TransitConditionDefBuilderRayHit.h" />
     <ClInclude Include="include\core\TransitDeadBlendDefBuilderDefault.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="src\acCore.cpp" />
     <ClCompile Include="src\Analysis\AnalysisConditionAtFrame.cpp" />
     <ClCompile Include="src\Analysis\AnalysisConditionCrossedDurationFraction.cpp" />
@@ -397,38 +411,6 @@
     <ClCompile Include="src\TransitConditionDefBuilderOnMessage.cpp" />
     <ClCompile Include="src\TransitConditionDefBuilderRayHit.cpp" />
     <ClCompile Include="src\TransitDeadBlendDefBuilderDefault.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\SDK\assetProcessor\morphemeAssetProcessor_X64.vcxproj">
-      <Project>{864F5EAC-3E7B-4518-89BA-2C3201C79690}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\SDK\core\morphemeCore_X64.vcxproj">
-      <Project>{D90ECD48-E518-4965-D5A1-487523A09108}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\common\NMRuntimeUtils\NMRuntimeUtils_X64.vcxproj">
-      <Project>{3C388267-640A-4D4B-C8B1-2361CDE77233}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\SDK\export\morphemeExport_X64.vcxproj">
-      <Project>{348A8659-5C73-4CB4-20A1-95EDAB98AE5D}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\common\tinyxml\NMTinyXML_X64.vcxproj">
-      <Project>{9121BE9D-8F56-4D9C-158F-1495BC741C2A}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\common\NMNumerics\NMNumerics_X64.vcxproj">
-      <Project>{E97AC720-CA8A-49CD-49A9-BBED3C23E192}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\common\NMPlatform\NMPlatform_X64.vcxproj">
-      <Project>{773E894A-FCA3-4312-37AF-0588248FC43F}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\common\qhull\qhull_X64.vcxproj">
-      <Project>{2A3758B7-E5C1-458F-948A-5DC4298A1CCA}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\common\XMD\XMD_X64.vcxproj">
-      <Project>{23D1C7B2-4F9B-401E-D08D-7E8CBE00A9B7}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\common\NMTL\NMTL_X64.vcxproj">
-      <Project>{5FF4A11E-1F9C-4999-1E8C-6616EF16DB1C}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

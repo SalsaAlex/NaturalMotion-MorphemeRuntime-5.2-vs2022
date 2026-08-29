@@ -14,6 +14,10 @@
   #error This file is Windows only!
 #endif // NM_HOST_WIN32 || NM_HOST_WIN64
 
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
+
 #include "windows.h"
 
 void NMP::FileLogger::AppendFileOutputDirToPath(char* out, const char* in)

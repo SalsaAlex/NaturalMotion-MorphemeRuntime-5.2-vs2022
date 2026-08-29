@@ -655,7 +655,7 @@ NM_INLINE void Quat::toAxisAngle(Vector3& axis, float& angle) const
   else
   {
     // Angle
-    angle = 2 * atan2(sinHalfAngle, w);
+    angle = 2 * atan2f(sinHalfAngle, w);
     // Axis
     axis.setScaledVector(v, 1 / sinHalfAngle);
   }
@@ -768,9 +768,9 @@ NM_INLINE Vector3 Quat::toRotationVector() const
     // positive w component (i.e. q and -q represent the same rotation).
     float A;
     if (w >= 0.0f)
-      A = 2 * atan2(sinHalfAngle, w);
+      A = 2 * atan2f(sinHalfAngle, w);
     else
-      A = -2 * atan2(sinHalfAngle, -w);
+      A = -2 * atan2f(sinHalfAngle, -w);
 
     // Compute the rotation vector theta * a
     float fac = A / sinHalfAngle;
@@ -1121,7 +1121,7 @@ NM_INLINE Vector3 Quat::log() const
     // Note: unlike toRotationVector() the log does not condition
     // the quat to be in the positive hemisphere, thus can encode
     // shortest or longest path rotation.
-    float fac = atan2(sinHalfAngle, w) / sinHalfAngle;
+    float fac = atan2f(sinHalfAngle, w) / sinHalfAngle;
     v.set(fac * x, fac * y, fac * z);
   }
   return v;

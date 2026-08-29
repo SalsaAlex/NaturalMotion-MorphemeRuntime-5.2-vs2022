@@ -85,7 +85,7 @@ static const NodeID NETWORK_NODE_ID = 0; ///< The network itself is a node. It a
 ///
 /// Each state has a unique ID assigned to it. State IDs are monotonically incrementing integer values that are
 ///  assigned in the asset compiler.
-typedef /*uint16_t*/ uint32_t StateID; //uint32_t in connect 3.6.2
+typedef /*uint16_t*/uint32_t StateID; //uint32_t in 3.6.2 ?
 
 /// Value used to indicate a bad state machine state ID.
 static const StateID INVALID_STATE_ID = 0xFFFF;

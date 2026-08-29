@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{70a1d6b0-39fb-4d92-bce9-c4f2be848266}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{facc0f29-9736-491e-90cb-f5977210b079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NMX2">
+      <UniqueIdentifier>{ebc91404-c611-49cb-9d84-67e6e77c554c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NMX2\widgets">
+      <UniqueIdentifier>{47d14c7a-fe86-41f8-8ab5-89a1b255a40e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NMX2\gl">
+      <UniqueIdentifier>{a7261993-823f-4f5a-8772-083c3855b9d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gl">
+      <UniqueIdentifier>{bcc6859b-4643-490e-b505-07f9595ef631}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\gl\FFProgram.cpp">
+      <Filter>Source Files\gl</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\NMX2\gl\FFProgram.h">
+      <Filter>Header Files\NMX2\gl</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
