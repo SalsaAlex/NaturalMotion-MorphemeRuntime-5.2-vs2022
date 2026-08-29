@@ -14,6 +14,7 @@
 JPH_NAMESPACE_BEGIN
 
 class PhysicsSystem;
+class BodyManager;
 class IslandBuilder;
 class Constraint;
 class TempAllocator;
@@ -100,7 +101,7 @@ public:
 		{
 							CCDBody(BodyID inBodyID1, Vec3Arg inDeltaPosition, float inLinearCastThresholdSq, float inMaxPenetration) : mDeltaPosition(inDeltaPosition), mBodyID1(inBodyID1), mLinearCastThresholdSq(inLinearCastThresholdSq), mMaxPenetration(inMaxPenetration) { }
 
-			Vec3			mDeltaPosition;											///< Desired rotation step
+			Vec3			mDeltaPosition;											///< Desired position step
 			Vec3			mContactNormal;											///< World space normal of closest hit (only valid if mFractionPlusSlop < 1)
 			RVec3			mContactPointOn2;										///< World space contact point on body 2 of closest hit (only valid if mFractionPlusSlop < 1)
 			BodyID			mBodyID1;												///< Body 1 (the body that is performing collision detection)
@@ -163,6 +164,7 @@ public:
 
 	BodyPair *				mBodyPairs = nullptr;									///< A list of body pairs found by the broadphase
 
+	BodyManager *			mBodyManager;											///< Keeps track of all bodies in the simulation
 	IslandBuilder *			mIslandBuilder;											///< Keeps track of connected bodies and builds islands for multithreaded velocity/position update
 
 	Steps					mSteps;

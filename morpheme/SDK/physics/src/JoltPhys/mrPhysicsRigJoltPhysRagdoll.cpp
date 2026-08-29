@@ -36,11 +36,11 @@
 #define MAX_STRENGTH 1e12f
 #define MAX_DAMPING 1e25f
 
-constexpr float JPH_JOINTSTRENGTH_SCALE = 0.6;
-constexpr float JPH_JOINTDAMP_SCALE = 0.75;
-constexpr float JPH_JOINTDRIVESTRENGTH_SCALE = 1.2;
-constexpr float JPH_JOINTDRIVEDAMPING_SCALE = 0.9;
-constexpr float JPH_JOINTDRIVECOMPENSATION_SCALE = 1.0;
+constexpr float JPH_JOINTSTRENGTH_SCALE = 2.7;
+constexpr float JPH_JOINTDAMP_SCALE = 2.1;
+constexpr float JPH_JOINTDRIVESTRENGTH_SCALE = 2.7;
+constexpr float JPH_JOINTDRIVEDAMPING_SCALE = 4.5;
+constexpr float JPH_JOINTDRIVECOMPENSATION_SCALE = 0.0;
 
 
 
@@ -247,7 +247,7 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
   {
       const PhysicsRigDef::CollisionGroup* group = &physicsRigDef->m_collisionGroups[i];
       MR::JPH_nocollide_entry &entry = nocollide_group.MakeEntry();
-      entry.m_enable = group->enabled;
+      entry.m_enable = true;
       for (int j = 0; j < group->numIndices; j++)
       {
           entry.AddBody(dynamic_cast<JPH::BodyCreationSettings*>(&ragdollsettings->mParts[group->indices[j]]));
@@ -399,7 +399,7 @@ void PhysicsRigJoltPhysRagdoll::createJoints(
                 swingmotor.mSpringSettings.mMode = JPH::ESpringMode::FrequencyAndDamping;
 #else
                 swingmotor.mSpringSettings.mStiffness = 30;
-                swingmotor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
+                swingmotor.mSpringSettings.mMode = JPH::ESpringMode::MassNormalizedStiffnessAndDamping;
 #endif
                 JPH::MotorSettings& twistmotor = csettings->mTwistMotorSettings;
                 twistmotor.mMinTorqueLimit = -100000;
@@ -410,7 +410,7 @@ void PhysicsRigJoltPhysRagdoll::createJoints(
                 twistmotor.mSpringSettings.mMode = JPH::ESpringMode::FrequencyAndDamping;
 #else
                 twistmotor.mSpringSettings.mStiffness = 30;
-                twistmotor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
+                twistmotor.mSpringSettings.mMode = JPH::ESpringMode::MassNormalizedStiffnessAndDamping;
 #endif
                 
                 childpart.mToParent = csettings;
@@ -1286,11 +1286,18 @@ uint32_t PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll::serializeTxFrameData(vo
     }
     JPH::SubShapeID remainder, id;
     JPH::TransformedShape firstshape;
+    NMP::Matrix34 capsuleConversionTx(NMP::Matrix34::kIdentity);
+    capsuleConversionTx.fromEulerXYZ(NMP::Vector3(0, NM_PI_OVER_TWO, 0));
 
     id.SetValue(0);
-    JPH::TransformedShape child = ts.GetSubShapeTransformedShape(id, remainder);
+    firstshape = ts.GetSubShapeTransformedShape(id, remainder);
 
     globalPose = firstshape.GetWorldTransform();
+    if (dynamic_cast<const JPH::CapsuleShape*>(firstshape.mShape.GetPtr()))
+    {
+        JPH::Mat44 capsuleConversionTx = capsuleConversionTx.sRotationX(-NM_PI_OVER_TWO);
+        globalPose = globalPose * capsuleConversionTx;
+    }
 
     partFrameData->m_globalPose = nmJPHMat44ToNmMatrix34(globalPose);
 

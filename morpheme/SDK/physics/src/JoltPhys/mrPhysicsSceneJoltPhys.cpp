@@ -12,6 +12,7 @@
 #include "mrPhysicsSceneJoltPhys.h"
 #include "mrJoltPhys.h"
 #include "mrPhysicsRigJoltPhys.h"
+#include "mrPhysicsRigJoltPhysRagdoll.h"
 #include "mrCharacterControllerInterfaceJoltPhys.h"
 #include "physics/mrPhysicsSerialisationBuffer.h"
 #include "mrJoltPhysIncludes.h"
@@ -21,6 +22,8 @@ MR::NM_ObjectLayerPairFilterImpl s_object_vs_object_layer_filter;
 static MR::NM_BPLayerInterfaceImpl s_broad_phase_layer_interface;
 
 static MR::NM_ObjectVsBroadPhaseLayerFilterImpl s_object_vs_broadphase_layer_filter;
+
+static MR::NM_ContactListener s_contact_listener;
 
 // max amount of rigid bodies that you can add to the physics system. If you try to add more you'll get an error.
 const uint32_t cMaxBodies = 32768;
@@ -45,6 +48,32 @@ namespace MR
 JoltPhysPerBodyData::BodyToDataMap* JoltPhysPerBodyData::s_bodyToDataMap = 0;
 NMP::HeapAllocator* JoltPhysPerBodyData::s_mapAllocator = 0;
 
+
+void NM_ContactListener::OnContactAdded(
+    const JPH::Body& inBody1, const JPH::Body& inBody2,
+    const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings)
+{
+    PhysicsRigJoltPhysBodyData* userdata = PhysicsRigJoltPhysBodyData::getFromBody(&inBody1);
+    //mimmick physx's external compliance
+    if (!userdata)
+    {
+        userdata = PhysicsRigJoltPhysBodyData::getFromBody(&inBody2);
+        if (!userdata)
+            return;
+        float externcompliance = ((PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll*)userdata->m_owningRigPart)->getExternalCompliance();
+        ioSettings.mInvMassScale2 = externcompliance * 1.0;
+        ioSettings.mInvInertiaScale2 = externcompliance * 1.0;
+    }
+    else
+    {
+        float externcompliance = ((PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll*)userdata->m_owningRigPart)->getExternalCompliance();
+        ioSettings.mInvMassScale1 = externcompliance * 1.0;
+        ioSettings.mInvInertiaScale1 = externcompliance * 1.0;
+    }
+
+}
+
+
 //----------------------------------------------------------------------------------------------------------------------
 PhysicsSceneJoltPhys::PhysicsSceneJoltPhys(JPH::TempAllocator* joltAllocator, 
     JPH::JobSystem* joltJobSystem, 
@@ -57,6 +86,8 @@ PhysicsSceneJoltPhys::PhysicsSceneJoltPhys(JPH::TempAllocator* joltAllocator,
     joltPhysScene->Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints,
         s_broad_phase_layer_interface, s_object_vs_broadphase_layer_filter,
         s_object_vs_object_layer_filter);
+
+    joltPhysScene->SetContactListener(&s_contact_listener);
 
     PhysicsRigJoltPhysBodyData::init();
 }

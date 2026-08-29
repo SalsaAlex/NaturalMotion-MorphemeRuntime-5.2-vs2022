@@ -90,6 +90,12 @@ public:
     }
 };
 
+class NM_ContactListener : public JPH::ContactListener
+{
+public:
+    void OnContactAdded(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings);
+};
+
 // BroadPhaseLayerInterface implementation
 // This defines a mapping between object and broadphase layers.
 class NM_BPLayerInterfaceImpl final : public JPH::BroadPhaseLayerInterface

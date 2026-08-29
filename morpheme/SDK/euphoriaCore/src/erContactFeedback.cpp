@@ -252,7 +252,7 @@ void ContactFeedback::OnContactAdded(const JPH::Body& inBody1,
   const NMP::Vector3 normal = MR::nmJPHVec3ToVector3(-inManifold.mWorldSpaceNormal);
   JPH::CollisionEstimationResult impulseestimate;
   JPH::EstimateCollisionResponse(inBody1, inBody2, inManifold, impulseestimate, ioSettings.mCombinedFriction, ioSettings.mCombinedRestitution);
-  float impulseMagnitude = impulseestimate.mImpulses[0].mContactImpulse;
+  float impulseMagnitude = impulseestimate.mContactImpulse[0];
 
   OnContact(bodyRefToPtr(inBody1), bodyRefToPtr(inBody2), point, normal, impulseMagnitude);
 }
@@ -266,7 +266,7 @@ void ContactFeedback::OnContactPersisted(const JPH::Body& inBody1,
     const NMP::Vector3 normal = MR::nmJPHVec3ToVector3(-inManifold.mWorldSpaceNormal);
     JPH::CollisionEstimationResult impulseestimate;
     JPH::EstimateCollisionResponse(inBody1, inBody2, inManifold, impulseestimate, ioSettings.mCombinedFriction, ioSettings.mCombinedRestitution);
-    float impulseMagnitude = impulseestimate.mImpulses[0].mContactImpulse;
+    float impulseMagnitude = impulseestimate.mContactImpulse[0];
 
     OnContact(bodyRefToPtr(inBody1), bodyRefToPtr(inBody2), point, normal, impulseMagnitude);
 }

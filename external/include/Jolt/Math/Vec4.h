@@ -145,7 +145,7 @@ public:
 	/// Test if vector is near zero
 	JPH_INLINE bool				IsNearZero(float inMaxDistSq = 1.0e-12f) const;
 
-	/// Test if vector is normalized
+	/// Test if length^2 of this vector is within the range [1 - inTolerance, 1 + inTolerance]
 	JPH_INLINE bool				IsNormalized(float inTolerance = 1.0e-6f) const;
 
 	/// Test if vector contains NaN elements
@@ -230,6 +230,9 @@ public:
 	/// Reciprocal vector (1 / value) for each of the components
 	JPH_INLINE Vec4				Reciprocal() const;
 
+	/// Calculates inA * inB - inC * inD with more precision when FMA instructions are available. See DifferenceOfProducts.
+	JPH_INLINE static Vec4		sDifferenceOfProducts(Vec4Arg inA, Vec4Arg inB, Vec4Arg inC, Vec4Arg inD);
+
 	/// Dot product, returns the dot product in X, Y, Z and W components
 	JPH_INLINE Vec4				DotV(Vec4Arg inV2) const;
 
@@ -262,6 +265,9 @@ public:
 
 	/// Get the maximum of X, Y, Z and W
 	JPH_INLINE float			ReduceMax() const;
+
+	/// Sum X, Y, Z and W
+	JPH_INLINE float			ReduceSum() const;
 
 	/// Component wise square root
 	JPH_INLINE Vec4				Sqrt() const;
@@ -313,7 +319,7 @@ public:
 	};
 };
 
-static_assert(std::is_trivial<Vec4>(), "Is supposed to be a trivial type!");
+static_assert(std::is_trivially_default_constructible<Vec4>() && std::is_trivially_copyable<Vec4>(), "Is supposed to be a trivial type!");
 
 JPH_NAMESPACE_END
 

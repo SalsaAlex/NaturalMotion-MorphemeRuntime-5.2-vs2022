@@ -53,6 +53,7 @@
 #include <Jolt/Physics/Character/Character.h>
 #include <Jolt/Physics/Character/CharacterVirtual.h>
 #include <Jolt/Physics/Ragdoll/Ragdoll.h>
+#include <Jolt/Physics/Collision/ContactListener.h>
 
 // These includes are not in PxPhysicsAPI
 #ifdef NM_HOST_CELL_PPU

@@ -218,7 +218,7 @@ struct PhysicsRigJoltPhysBodyData
   static void destroy(PhysicsRigJoltPhysBodyData *data, JPH::Body* body);
   PhysicsRigJoltPhysBodyData(JPH::Body *body, PhysicsRig::Part* owningRigPart, PhysicsRig* owningRig);
   /// More application-specific user data structures will have a function like this - so mirror their API
-  static PhysicsRigJoltPhysBodyData *getFromBody(JPH::Body *body);
+  static PhysicsRigJoltPhysBodyData *getFromBody(const JPH::Body *body);
 
   /// If non-zero, this will point to the physics rig part associated with this body/shape etc
   PhysicsRig::Part* m_owningRigPart;
@@ -228,7 +228,7 @@ struct PhysicsRigJoltPhysBodyData
   /// For application use
   void *m_userData;
 
-  typedef NMP::hash_map<JPH::Body*, PhysicsRigJoltPhysBodyData*> BodyToPhysicsRigJoltPhysBodyData;
+  typedef NMP::hash_map<const JPH::Body*, PhysicsRigJoltPhysBodyData*> BodyToPhysicsRigJoltPhysBodyData;
 
 private:
     static BodyToPhysicsRigJoltPhysBodyData* m_bodyToMorphemeMap;

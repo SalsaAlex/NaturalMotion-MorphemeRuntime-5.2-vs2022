@@ -74,6 +74,12 @@ public:
 		return true;
 	}
 
+	/// Test if vector is near zero
+	inline bool					IsNearZero(float inMaxDistSq = 1.0e-12f) const
+	{
+		return LengthSq() <= inMaxDistSq;
+	}
+
 	/// Test if two vectors are close to each other
 	inline bool					IsClose(const Vector &inV2, float inMaxDistSq = 1.0e-12f) const
 	{
@@ -180,10 +186,10 @@ public:
 	/// Length of vector
 	inline float				Length() const
 	{
-		return sqrt(LengthSq());
+		return Sqrt(LengthSq());
 	}
 
-	/// Check if vector is normalized
+	/// Test if length^2 of this vector is within the range [1 - inTolerance, 1 + inTolerance]
 	inline bool					IsNormalized(float inToleranceSq = 1.0e-6f)
 	{
 		return abs(LengthSq() - 1.0f) <= inToleranceSq;

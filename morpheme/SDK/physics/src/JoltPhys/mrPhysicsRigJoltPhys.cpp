@@ -683,7 +683,7 @@ PhysicsRigJoltPhysBodyData::PhysicsRigJoltPhysBodyData(
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-PhysicsRigJoltPhysBodyData *PhysicsRigJoltPhysBodyData::getFromBody(JPH::Body* body)
+PhysicsRigJoltPhysBodyData *PhysicsRigJoltPhysBodyData::getFromBody(const JPH::Body* body)
 {
     PhysicsRigJoltPhysBodyData* data = NULL;
     m_bodyToMorphemeMap->find(body, &data);
