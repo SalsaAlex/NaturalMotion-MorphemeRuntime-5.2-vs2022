@@ -32,23 +32,36 @@
 //----------------------------------------------------------------------------------------------------------------------
 #define MINIMUM_COMPLIANCE 0.001f
 
+#define JPH_MASSNORMALIZED
+
 // Sanity checks on passing strength/damping to physx
 #define MAX_STRENGTH 1e12f
 #define MAX_DAMPING 1e25f
 
-constexpr float JPH_JOINTSTRENGTH_SCALE = 2.7;
-constexpr float JPH_JOINTDAMP_SCALE = 2.1;
-constexpr float JPH_JOINTDRIVESTRENGTH_SCALE = 2.7;
-constexpr float JPH_JOINTDRIVEDAMPING_SCALE = 4.5;
-constexpr float JPH_JOINTDRIVECOMPENSATION_SCALE = 0.0;
+#ifdef JPH_MASSNORMALIZED
 
+float JPH_JOINTSTRENGTH_SCALE = 1.0;
+float JPH_JOINTDAMP_SCALE = 1.0;
+float JPH_JOINTDRIVESTRENGTH_SCALE = 1.0;
+float JPH_JOINTDRIVEDAMPING_SCALE = 0.45;
+float JPH_JOINTDRIVECOMPENSATION_SCALE = 0.31;
 
+#else
 
-//uncomment to use frequency & damping mode on joints instead
-//#define JPH_USE_FREQUENCY
+float JPH_JOINTSTRENGTH_SCALE = 1.0;
+float JPH_JOINTDAMP_SCALE = 1.0;
+float JPH_JOINTDRIVESTRENGTH_SCALE = 1.0;
+float JPH_JOINTDRIVEDAMPING_SCALE = 0.65;
+float JPH_JOINTDRIVECOMPENSATION_SCALE = 0.31;
+
+#endif
 
 namespace MR 
 {
+
+float PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::getDriveStrengthScale() const { return JPH_JOINTDRIVESTRENGTH_SCALE; }
+float PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::getDriveDampingScale() const { return JPH_JOINTDRIVEDAMPING_SCALE; }
+float PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::getDriveCompensationScale() const { return JPH_JOINTDRIVECOMPENSATION_SCALE; }
 
 //----------------------------------------------------------------------------------------------------------------------
 NMP::Memory::Format PhysicsRigJoltPhysRagdoll::getMemoryRequirements(PhysicsRigDef *physicsRigDef)
@@ -263,8 +276,8 @@ PhysicsRigJoltPhysRagdoll*PhysicsRigJoltPhysRagdoll::init(
   {
       JPH::SwingTwistConstraint* swingtwistconstraint = (JPH::SwingTwistConstraint*)result->m_ragdoll->GetConstraint(i);
 
-      swingtwistconstraint->SetSwingMotorState(JPH::EMotorState::Position);
-      swingtwistconstraint->SetTwistMotorState(JPH::EMotorState::Position);
+      swingtwistconstraint->SetSwingMotorState(JPH::EMotorState::PositionAndVelocity);
+      swingtwistconstraint->SetTwistMotorState(JPH::EMotorState::PositionAndVelocity);
   }
   for (int i = 0; i < physicsRigDef->getNumJoints(); i++)
   {
@@ -394,23 +407,23 @@ void PhysicsRigJoltPhysRagdoll::createJoints(
                 swingmotor.mMinTorqueLimit = -100000; 
                 swingmotor.mMaxTorqueLimit = 100000;
                 swingmotor.mSpringSettings.mDamping = 1;
-#ifdef JPH_USE_FREQUENCY
-                swingmotor.mSpringSettings.mFrequency = 30;
-                swingmotor.mSpringSettings.mMode = JPH::ESpringMode::FrequencyAndDamping;
-#else
                 swingmotor.mSpringSettings.mStiffness = 30;
+#ifdef JPH_MASSNORMALIZED
                 swingmotor.mSpringSettings.mMode = JPH::ESpringMode::MassNormalizedStiffnessAndDamping;
+#else
+                swingmotor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
+
 #endif
                 JPH::MotorSettings& twistmotor = csettings->mTwistMotorSettings;
                 twistmotor.mMinTorqueLimit = -100000;
                 twistmotor.mMaxTorqueLimit = 100000;
                 twistmotor.mSpringSettings.mDamping = 1;
-#ifdef JPH_USE_FREQUENCY
-                twistmotor.mSpringSettings.mFrequency = 30;
-                twistmotor.mSpringSettings.mMode = JPH::ESpringMode::FrequencyAndDamping;
-#else
                 twistmotor.mSpringSettings.mStiffness = 30;
+#ifdef JPH_MASSNORMALIZED
                 twistmotor.mSpringSettings.mMode = JPH::ESpringMode::MassNormalizedStiffnessAndDamping;
+#else
+                twistmotor.mSpringSettings.mMode = JPH::ESpringMode::StiffnessAndDamping;
+
 #endif
                 
                 childpart.mToParent = csettings;
@@ -786,7 +799,7 @@ void PhysicsRigJoltPhysRagdoll::PartJoltPhysRagdoll::setMassSpaceInertia(const N
 {
   // Node that this does little more than copying the data on the PhysX side, so should be pretty
   // fast.
-
+  
   JPH::Vec3 inv_inertia = nmVector3ToJPHVec3(inertia).Reciprocal();
 
   m_rigidBody->GetMotionProperties()->SetInverseInertia(inv_inertia, JPH::Quat::sIdentity());
@@ -1409,24 +1422,18 @@ JPH_INLINE float CalculateInverseEffectiveMass(const JPH::Body* inBody1, const J
     return inWorldSpaceAxis.Dot(mInvI1_Axis + mInvI2_Axis);
 }
 
-#ifdef JPH_USE_FREQUENCY
-struct SpringFreqDamp
+static float GetEffectiveInertia(
+    const JPH::Body* body1,
+    const JPH::Body* body2,
+    JPH::Vec3Arg worldAxis)
 {
-    float frequency;
-    float dampingRatio;
-};
-SpringFreqDamp stiffnessDampingToFreqDamp(float stiffness, float damping, float effectiveMass)
-{
-    if (stiffness <= 0.0f || effectiveMass <= 0.0f)
-        return { 0.0f, 1.0f };
+    float invIeff = CalculateInverseEffectiveMass(body1, body2, worldAxis);
 
-    float omega = sqrt(stiffness / effectiveMass);
-    float frequency = omega / (2.0f * JPH::JPH_PI);
-    float dampingRatio = damping / (2.0f * effectiveMass * omega);
+    if (invIeff <= 0.0f)
+        return 0.0f;
 
-    return { frequency, dampingRatio };
+    return 1.0f / invIeff;
 }
-#endif
 
 //----------------------------------------------------------------------------------------------------------------------
 void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setStrength(float strength)
@@ -1434,19 +1441,18 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setStrength(float strength
   //NMP_ASSERT(m_jointInternal);
   NMP_ASSERT(strength >= 0.0f && strength < MAX_STRENGTH);
 
-  m_strength = strength * JPH_JOINTSTRENGTH_SCALE;
+  m_strength = strength;
 
   JPH::SwingTwistConstraintSettings* settings = (JPH::SwingTwistConstraintSettings*)m_jointInternal->GetConstraintSettings().GetPtr();
 
-#ifdef JPH_USE_FREQUENCY
-  float I_eff = 1.0 / CalculateInverseEffectiveMass(m_jointInternal->GetBody1(), m_jointInternal->GetBody2(), settings->mTwistAxis1.GetNormalizedPerpendicular());
-  SpringFreqDamp data = stiffnessDampingToFreqDamp(m_strength, m_damping, I_eff);
-  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mFrequency = data.frequency;
-  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mFrequency = data.frequency;
-#else
-  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mStiffness = m_strength;
-  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mStiffness = m_strength;
-#endif
+  JPH::Vec3 worldAxis =
+      m_jointInternal->GetBody1()->GetRotation() * settings->mTwistAxis1;
+  float Ieff = pow(GetEffectiveInertia(m_jointInternal->GetBody1(), m_jointInternal->GetBody2(), worldAxis), 0.65);
+
+  float normalizedStiffness = (m_strength * JPH_JOINTSTRENGTH_SCALE) / Ieff;
+
+  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mStiffness = normalizedStiffness;
+  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mStiffness = normalizedStiffness;
   
 }
 
@@ -1455,25 +1461,23 @@ void PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::setDamping(float damping)
 {
   NMP_ASSERT(m_jointInternal);
   NMP_ASSERT(damping >= 0.0f && damping < MAX_DAMPING);
-  m_damping = damping * JPH_JOINTDAMP_SCALE;
+  m_damping = damping;
 
   JPH::SwingTwistConstraintSettings* settings = (JPH::SwingTwistConstraintSettings*)m_jointInternal->GetConstraintSettings().GetPtr();
 
-#ifdef JPH_USE_FREQUENCY
-  float I_eff = 1.0 / CalculateInverseEffectiveMass(m_jointInternal->GetBody1(), m_jointInternal->GetBody2(), settings->mTwistAxis1.GetNormalizedPerpendicular());
-  SpringFreqDamp data = stiffnessDampingToFreqDamp(m_strength, m_damping, I_eff);
-  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mDamping = data.dampingRatio;
-  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mDamping = data.dampingRatio;
-#else
-  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mDamping = m_damping;
-  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mDamping = m_damping;
-#endif
+  JPH::Vec3 worldAxis =
+      m_jointInternal->GetBody1()->GetRotation() * settings->mTwistAxis1;
+  float Ieff = pow(GetEffectiveInertia(m_jointInternal->GetBody1(), m_jointInternal->GetBody2(), worldAxis), 0.65);
+
+  float normalizedDamping = (m_damping * JPH_JOINTDAMP_SCALE) / Ieff;
+  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetSwingMotorSettings().mSpringSettings.mDamping = normalizedDamping;
+  ((JPH::SwingTwistConstraint*)m_jointInternal)->GetTwistMotorSettings().mSpringSettings.mDamping = normalizedDamping;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 bool PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll::supportsDriveCompensation()
 {
-  return true;
+  return false;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

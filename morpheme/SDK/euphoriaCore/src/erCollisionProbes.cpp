@@ -76,7 +76,7 @@ bool SweepResult::applySweep(
   float distance[2] = { motionDir[0].Length(), motionDir[1].Length()};
   uint32_t contacted = false;
 
-  uint32_t temp_ignoremask = (1 << MR::GROUP_CHARACTER_PART);
+  uint32_t temp_ignoremask = (1 << MR::GROUP_CHARACTER_PART) | (1 << MR::GROUP_NON_COLLIDABLE);
 
   MR::CastData::perbodydata castresult;
   int i = 0;

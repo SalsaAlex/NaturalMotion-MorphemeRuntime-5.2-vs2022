@@ -56,9 +56,11 @@ NM_INLINE void bufferPacketOnListeningConnections(CommsServer* commsServer, T& p
 //----------------------------------------------------------------------------------------------------------------------
 CommsDebugClient::CommsDebugClient(CommsServer* commsServer)
 : m_commsServer(commsServer),
-  m_tempBufferSize(0),
+  m_tempBufferSize(16384),
   m_tempBuffer(NULL)
 {
+    m_tempBuffer = NMPMemoryAlloc(m_tempBufferSize);
+    NMP_ASSERT(m_tempBuffer);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

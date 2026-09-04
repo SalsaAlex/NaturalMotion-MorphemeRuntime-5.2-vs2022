@@ -1733,8 +1733,8 @@ void DefaultPhysicsMgr::resetSDKS()
 
   JPH::PhysicsSystem* phys_system = new JPH::PhysicsSystem();
   JPH::PhysicsSettings physsettings;
-  physsettings.mBaumgarte = 0.2f;
-  physsettings.mNumVelocitySteps = physsettings.mNumPositionSteps = 48;
+  physsettings.mBaumgarte = 0.25f;
+  physsettings.mNumVelocitySteps = physsettings.mNumPositionSteps = 64;
 
   phys_system->SetPhysicsSettings(physsettings);
 

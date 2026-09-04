@@ -59,6 +59,9 @@
   #include <android_native_app_glue.h>
 #endif // NM_HOST_ANDROID
 
+//enable for help in tweaking jolt physics for euphoria
+//#define JOLTPHYS_TWEAKING
+
 //----------------------------------------------------------------------------------------------------------------------
 static void pause(float fps)
 {
@@ -266,6 +269,286 @@ bool PluginValidator::validatePluginList(const NMP::OrderedStringTable& pluginLi
   return true;
 }
 
+#ifdef JOLTPHYS_TWEAKING
+#define ID_SLIDER_1 1001
+#define ID_SLIDER_2 1002
+#define ID_SLIDER_3 1003
+#define ID_SLIDER_4 1004
+#define ID_SLIDER_5 1005
+#define ID_SLIDER_6 1006
+HWND g_slider1;
+HWND g_slider2;
+HWND g_slider3;
+HWND g_slider4;
+HWND g_slider5;
+HWND g_slider6;
+
+extern float JPH_JOINTSTRENGTH_SCALE;
+extern float JPH_JOINTDAMP_SCALE;
+extern float JPH_JOINTDRIVESTRENGTH_SCALE;
+extern float JPH_JOINTDRIVEDAMPING_SCALE;
+extern float JPH_JOINTDRIVECOMPENSATION_SCALE;
+extern float JPH_EXTERNALCOMPLIANCE_SCALE;
+
+#pragma comment(lib, "comctl32.lib")
+#include <commctrl.h>
+LRESULT CALLBACK WindowProc(
+    HWND hwnd,
+    UINT uMsg,
+    WPARAM wParam,
+    LPARAM lParam)
+{
+    switch (uMsg)
+    {
+    case WM_CREATE:
+    {
+        // Slider 1
+
+         CreateWindowEx(
+            0,
+            L"STATIC",
+            L"jointstrength_scale",
+            WS_CHILD | WS_VISIBLE,
+            20, 0,
+            150, 20,
+            hwnd,
+            NULL,
+            GetModuleHandle(NULL),
+            NULL
+        );
+        g_slider1 = CreateWindowEx(
+            0,
+            TRACKBAR_CLASS,
+            NULL,
+            WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS,
+            20, 30, 
+            300, 20,
+            hwnd,
+            (HMENU)ID_SLIDER_1,
+            GetModuleHandle(NULL),
+            NULL
+        );
+
+        // Slider 2
+        CreateWindowEx(
+            0,
+            L"STATIC",
+            L"jointdamp_scale",
+            WS_CHILD | WS_VISIBLE,
+            20, 60,
+            150, 20,
+            hwnd,
+            NULL,
+            GetModuleHandle(NULL),
+            NULL
+        );
+        g_slider2 = CreateWindowEx(
+            0,
+            TRACKBAR_CLASS,
+            NULL,
+            WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS,
+            20, 90, 
+            300, 20,
+            hwnd,
+            (HMENU)ID_SLIDER_2,
+            GetModuleHandle(NULL),
+            NULL
+        );
+
+        // Slider 3
+        CreateWindowEx(
+            0,
+            L"STATIC",
+            L"jointdrivestrength_scale",
+            WS_CHILD | WS_VISIBLE,
+            20, 120,
+            150, 20,
+            hwnd,
+            NULL,
+            GetModuleHandle(NULL),
+            NULL
+        );
+        g_slider3 = CreateWindowEx(
+            0,
+            TRACKBAR_CLASS,
+            NULL,
+            WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS,
+            20, 150, 
+            300, 20,
+            hwnd,
+            (HMENU)ID_SLIDER_3,
+            GetModuleHandle(NULL),
+            NULL
+        );
+        // Slider 4
+        CreateWindowEx(
+            0,
+            L"STATIC",
+            L"jointdrivedamp_scale",
+            WS_CHILD | WS_VISIBLE,
+            20, 180,
+            150, 20,
+            hwnd,
+            NULL,
+            GetModuleHandle(NULL),
+            NULL
+        );
+        g_slider4 = CreateWindowEx(
+            0,
+            TRACKBAR_CLASS,
+            NULL,
+            WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS,
+            20, 210, 
+            300, 20,
+            hwnd,
+            (HMENU)ID_SLIDER_4,
+            GetModuleHandle(NULL),
+            NULL
+        );
+        // Slider 5
+        CreateWindowEx(
+            0,
+            L"STATIC",
+            L"jointdrivecompensation_scale",
+            WS_CHILD | WS_VISIBLE,
+            20, 240,
+            150, 20,
+            hwnd,
+            NULL,
+            GetModuleHandle(NULL),
+            NULL
+        );
+        g_slider5 = CreateWindowEx(
+            0,
+            TRACKBAR_CLASS,
+            NULL,
+            WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS,
+            20, 270, 
+            300, 20,
+            hwnd,
+            (HMENU)ID_SLIDER_5,
+            GetModuleHandle(NULL),
+            NULL
+        );
+        // Slider 6
+        CreateWindowEx(
+            0,
+            L"STATIC",
+            L"externalcompliance_scale",
+            WS_CHILD | WS_VISIBLE,
+            20, 300,
+            150, 20,
+            hwnd,
+            NULL,
+            GetModuleHandle(NULL),
+            NULL
+        );
+        g_slider6 = CreateWindowEx(
+            0,
+            TRACKBAR_CLASS,
+            NULL,
+            WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS,
+            20, 330,
+            300, 20,
+            hwnd,
+            (HMENU)ID_SLIDER_6,
+            GetModuleHandle(NULL),
+            NULL
+        );
+
+        // Set ranges: 0 -> 100
+        SendMessage(g_slider1, TBM_SETRANGE, TRUE, MAKELPARAM(0, 100));
+        SendMessage(g_slider2, TBM_SETRANGE, TRUE, MAKELPARAM(0, 100));
+        SendMessage(g_slider3, TBM_SETRANGE, TRUE, MAKELPARAM(0, 100));
+        SendMessage(g_slider4, TBM_SETRANGE, TRUE, MAKELPARAM(0, 100));
+        SendMessage(g_slider5, TBM_SETRANGE, TRUE, MAKELPARAM(0, 100));
+        SendMessage(g_slider6, TBM_SETRANGE, TRUE, MAKELPARAM(0, 100));
+
+        // Initial positions
+        SendMessage(g_slider1, TBM_SETPOS, TRUE, JPH_JOINTSTRENGTH_SCALE * 100);
+        SendMessage(g_slider2, TBM_SETPOS, TRUE, JPH_JOINTDAMP_SCALE * 100);
+        SendMessage(g_slider3, TBM_SETPOS, TRUE, JPH_JOINTDRIVESTRENGTH_SCALE * 100);
+        SendMessage(g_slider4, TBM_SETPOS, TRUE, JPH_JOINTDRIVEDAMPING_SCALE * 100);
+        SendMessage(g_slider5, TBM_SETPOS, TRUE, JPH_JOINTDRIVECOMPENSATION_SCALE * 100);
+        SendMessage(g_slider6, TBM_SETPOS, TRUE, JPH_EXTERNALCOMPLIANCE_SCALE * 100);
+
+        break;
+    }
+
+    case WM_HSCROLL:
+    {
+        // A slider was moved
+        HWND slider = (HWND)lParam;
+        float value = SendMessage(slider, TBM_GETPOS, 0, 0);
+        if (value != 0)
+            value /= 100;
+
+       if (slider == g_slider1)
+       {
+           JPH_JOINTSTRENGTH_SCALE = value;
+       }
+       else if (slider == g_slider2)
+       {
+           JPH_JOINTDAMP_SCALE = value;
+       }
+       else if (slider == g_slider3)
+       {
+           JPH_JOINTDRIVESTRENGTH_SCALE = value;
+       }
+       else if (slider == g_slider4)
+       {
+           JPH_JOINTDRIVEDAMPING_SCALE = value;
+       }
+       else if (slider == g_slider5)
+       {
+           JPH_JOINTDRIVECOMPENSATION_SCALE = value;
+       }
+       else if (slider == g_slider6)
+       {
+           JPH_EXTERNALCOMPLIANCE_SCALE = value;
+       }
+    }
+
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        return 0;
+    }
+
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+static void create_tweaking_window()
+{
+    INITCOMMONCONTROLSEX icc = {};
+    icc.dwSize = sizeof(icc);
+    icc.dwICC = ICC_BAR_CLASSES;
+    InitCommonControlsEx(&icc);
+
+    WNDCLASS wc = {};
+    wc.lpfnWndProc = WindowProc;
+    wc.hInstance = GetModuleHandle(NULL);
+    wc.lpszClassName = L"MyWindowClass";
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+
+    RegisterClass(&wc);
+
+    HWND hwnd = CreateWindowEx(
+        0,
+        L"MyWindowClass",
+        L"Slider Example",
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, CW_USEDEFAULT,
+        500, 400,
+        NULL,
+        NULL,
+        GetModuleHandle(NULL),
+        NULL
+    );
+
+    ShowWindow(hwnd, 1);
+}
+
+#endif
+
 //----------------------------------------------------------------------------------------------------------------------
 static int runtimeTarget(const NMP::CommandLineProcessor& commandLineArguments)
 {
@@ -354,6 +637,10 @@ static int runtimeTarget(const NMP::CommandLineProcessor& commandLineArguments)
   bool autoKillTarget = false;
   commandLineArguments.getOptionValue("-autoKillTarget", &autoKillTarget);
 
+#ifdef JOLTPHYS_TWEAKING
+  create_tweaking_window();
+#endif
+
   bool finished = false;
   while (!finished)
   {
@@ -362,6 +649,15 @@ static int runtimeTarget(const NMP::CommandLineProcessor& commandLineArguments)
     update(physicsManager, dataManager, networkManager);
 
     finished = (connectionManager.connectionsReducedToZero() && autoKillTarget);
+
+#ifdef JOLTPHYS_TWEAKING
+    MSG msg;
+    while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+#endif
   }
 
   // Remove the COMMS debug client.

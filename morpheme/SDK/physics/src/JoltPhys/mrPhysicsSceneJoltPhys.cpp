@@ -17,6 +17,8 @@
 #include "physics/mrPhysicsSerialisationBuffer.h"
 #include "mrJoltPhysIncludes.h"
 
+float JPH_EXTERNALCOMPLIANCE_SCALE = 1.0;
+
 MR::NM_ObjectLayerPairFilterImpl s_object_vs_object_layer_filter;
 
 static MR::NM_BPLayerInterfaceImpl s_broad_phase_layer_interface;
@@ -61,14 +63,14 @@ void NM_ContactListener::OnContactAdded(
         if (!userdata)
             return;
         float externcompliance = ((PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll*)userdata->m_owningRigPart)->getExternalCompliance();
-        ioSettings.mInvMassScale2 = externcompliance * 1.0;
-        ioSettings.mInvInertiaScale2 = externcompliance * 1.0;
+        ioSettings.mInvMassScale2 = externcompliance * JPH_EXTERNALCOMPLIANCE_SCALE;
+        ioSettings.mInvInertiaScale2 = externcompliance * JPH_EXTERNALCOMPLIANCE_SCALE;
     }
     else
     {
         float externcompliance = ((PhysicsRigJoltPhysRagdoll::JointJoltPhysRagdoll*)userdata->m_owningRigPart)->getExternalCompliance();
-        ioSettings.mInvMassScale1 = externcompliance * 1.0;
-        ioSettings.mInvInertiaScale1 = externcompliance * 1.0;
+        ioSettings.mInvMassScale1 = externcompliance * JPH_EXTERNALCOMPLIANCE_SCALE;
+        ioSettings.mInvInertiaScale1 = externcompliance * JPH_EXTERNALCOMPLIANCE_SCALE;
     }
 
 }

@@ -218,9 +218,9 @@ public:
     float getMaxDamping() const {return m_maxDamping;}
     float getMaxStrength() const {return m_maxStrength;}
 
-    float getDriveStrengthScale() const NM_OVERRIDE {return m_driveStrengthScale;}
-    float getDriveDampingScale() const NM_OVERRIDE {return m_driveDampingScale;}
-    float getDriveCompensationScale() const NM_OVERRIDE {return m_driveCompensationScale;}
+    float getDriveStrengthScale() const NM_OVERRIDE;
+    float getDriveDampingScale() const NM_OVERRIDE;
+    float getDriveCompensationScale() const NM_OVERRIDE;
 
     // This sets the internal/external compliance appropriately to provide drive compensation
     bool supportsDriveCompensation() NM_OVERRIDE;
